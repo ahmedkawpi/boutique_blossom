@@ -1535,10 +1535,18 @@ function renderOrdersTab(sortedOrders){
         </span>
       </div>
 
-      <div class="order-title">
-        ${escapeHtml(o.productName)}
-        <span class="order-qty">&times; ${o.qty}</span>
-      </div>
+<div class="order-title">
+  ${escapeHtml(o.productName)}
+  <span class="order-qty">&times; ${o.qty}</span>
+</div>
+
+<div class="order-price">
+  💰 ${Number(o.price || 0).toLocaleString()} DA
+</div>
+
+<div class="order-total">
+  Total: ${Number(o.price || 0) * Number(o.qty || 1)} DA
+</div>
 
       <div class="order-info-grid">
 
