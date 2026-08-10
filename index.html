@@ -1364,8 +1364,19 @@ function renderOrdersTab(sortedOrders){
         </div>
       </div>
       <div class="order-actions">
-        <span class="order-status-pill ${o.status}">${o.status==='done'?t('status_done'):t('status_new')}</span>
-        <button class="small-btn" data-toggle-order="${o.id}">${o.status==='done'?t('mark_new'):t('mark_done')}</button>
+        <span class="order-status-pill ${o.status}">
+  ${o.status==='done'?t('status_done'):t('status_new')}
+</span>
+
+<div class="order-action-buttons">
+  <button class="small-btn" data-toggle-order="${o.id}">
+    ${o.status==='done'?t('mark_new'):t('mark_done')}
+  </button>
+
+  <button class="small-btn danger-btn" data-delete-order="${o.id}">
+    ${t('del')}
+  </button>
+</div>
       </div>
     </div>
   `).join('');
