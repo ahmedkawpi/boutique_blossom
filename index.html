@@ -1774,7 +1774,29 @@ render();
     const o = state.orders.find(x=>x.id===id);
     if(o){ o.status = o.status==='done' ? 'new' : 'done'; await saveOrders(); render(); }
   });
+document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async ()=>{
+  const id = b.dataset.deleteOrder;
 
+  if(!confirm(t('confirm_delete'))){
+    return;
+  }
+
+  try{
+    const { error } = await supabaseClient
+      .from('orders')
+      .delete()
+      .eq('id', id);
+
+    if(error) throw error;
+
+    state.orders = state.orders.filter(o => o.id !== id);
+    render();
+
+  }catch(e){
+    console.error('deleteOrder error:', e);
+    showToast('Could not delete order — please retry.');
+  }
+});
   const addBtn = document.getElementById('add-product-btn');
   if(addBtn) addBtn.onclick = ()=>{ state.editingProduct='new'; render(); };
   document.querySelectorAll('[data-edit]').forEach(b=> b.onclick = ()=>{ state.editingProduct=b.dataset.edit; render(); });
