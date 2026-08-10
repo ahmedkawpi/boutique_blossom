@@ -898,7 +898,20 @@ async function saveOrders(){
   try{ await window.storage.set(STORAGE_ORDERS_KEY, JSON.stringify(state.orders), true); }catch(e){ showToast('Could not save — please retry.'); }
 }
 async function saveSettings(){
-  try{ await window.storage.set(STORAGE_SETTINGS_KEY, JSON.stringify(state.settings), true); }catch(e){ showToast('Could not save — please retry.'); }
+  try{
+    const { error } = await supabaseClient
+      .from('store_settings')
+      .upsert({
+        id: 1,
+        data: state.settings,
+        updated_at: new Date().toISOString()
+      });
+
+    if(error) throw error;
+  }catch(e){
+    console.error('saveSettings error:', e);
+    showToast('Could not save — please retry.');
+  }
 }
 async function refreshOrders(){
   try{
