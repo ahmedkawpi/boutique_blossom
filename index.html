@@ -941,13 +941,25 @@ async function saveSettings(){
 }
 async function refreshOrders(){
   try{
-    const r = await window.storage.get(STORAGE_ORDERS_KEY, true);
-    const fresh = r && r.value ? JSON.parse(r.value) : [];
+    const { data, error } = await supabaseClient
+      .from('orders')
+      .select('id, data, created_at, updated_at')
+      .order('created_at', { ascending: false });
+
+    if(error) throw error;
+
+    const fresh = (data || []).map(row => ({
+      ...row.data,
+      id: row.id
+    }));
+
     if(JSON.stringify(fresh) !== JSON.stringify(state.orders)){
       state.orders = fresh;
-      if(state.view === 'admin') render();
+      render();
     }
-  }catch(e){}
+  }catch(e){
+    console.error('refreshOrders error:', e);
+  }
 }
 setInterval(()=>{ if(state.view === 'admin' && state.adminAuthed) refreshOrders(); }, 6000);
 
