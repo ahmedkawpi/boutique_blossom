@@ -569,7 +569,12 @@ const STORAGE_ORDERS_KEY = 'blossom07:orders';
 const STORAGE_SETTINGS_KEY = 'blossom07:settings';
 const ADMIN_PASSWORD = 'blossom2026';
 const SHOP_PHONE = '213565968392';
-
+const SUPABASE_URL = 'https://wvhflttbfjmpbietdesz.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_1WtyyuxzYgJIDqZKGKmMsg_K9nT0oeI';
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 const CATEGORY_LIST = ['dresses','sets','shirts','pants','accessories'];
 
 const HERO_IMAGE = 'https://images.pexels.com/photos/38472465/pexels-photo-38472465.jpeg?auto=compress&cs=tinysrgb&w=1600';
