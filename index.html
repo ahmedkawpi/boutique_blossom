@@ -1503,10 +1503,32 @@ function renderOrdersTab(sortedOrders){
           <b>${escapeHtml(o.name)}</b>
         </div>
 
-        <div class="order-info-item">
-          <span>${t('order_field_phone')}</span>
-          <b>${escapeHtml(o.phone)}</b>
-        </div>
+<div class="order-info-item">
+  <span>${t('order_field_phone')}</span>
+  <b>
+    <a href="tel:${escapeHtml(o.phone)}" class="order-phone-link">
+      ${escapeHtml(o.phone)}
+    </a>
+  </b>
+
+  <div class="order-contact-buttons">
+    <a
+      href="tel:${escapeHtml(o.phone)}"
+      class="contact-btn call-btn"
+    >
+      📞 Call
+    </a>
+
+    <a
+      href="https://wa.me/${String(o.phone).replace(/\D/g,'')}"
+      target="_blank"
+      rel="noopener"
+      class="contact-btn whatsapp-btn"
+    >
+      💬 WhatsApp
+    </a>
+  </div>
+</div>
 
         <div class="order-info-item">
           <span>${t('order_field_address')}</span>
