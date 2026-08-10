@@ -1417,8 +1417,13 @@ function renderAdminLogin(){
 
 function renderAdmin(){
   const total = state.orders.length;
-  const news = state.orders.filter(o=>o.status!=='done').length;
-  const sortedOrders = [...state.orders].sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+const news = state.orders.filter(o=>o.status!=='done').length;
+
+const sortedOrders = [...state.orders]
+  .sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+
+const newOrders = sortedOrders.filter(o => o.status !== 'done');
+const doneOrders = sortedOrders.filter(o => o.status === 'done');
   return `
   <div class="admin-shell">
     <div class="admin-header">
