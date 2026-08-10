@@ -713,45 +713,8 @@ a{color:inherit;text-decoration:none;}
   text-decoration: underline;
 }
 
-/* ===== Cart & Delivery ===== */
-.cart-header-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1.5px solid var(--line);background:var(--white);color:var(--plum);border-radius:999px;padding:8px 13px;font-size:12.5px;font-weight:700;transition:.2s;cursor:pointer;}
-.cart-header-btn:hover{border-color:var(--pink);color:var(--pink-deep);transform:translateY(-1px);}
-.cart-count{min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--pink);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;}
-.cart-empty{text-align:center;padding:28px 12px;color:var(--plum-soft);}
-.cart-list{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
-.cart-item{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);background:var(--white);border-radius:14px;padding:10px;}
-.cart-item img{width:64px;height:72px;object-fit:cover;border-radius:10px;background:var(--pink-pale);}
-.cart-item > .thumb{width:64px;height:72px;aspect-ratio:auto;border-radius:10px;margin:0;box-shadow:none;}
-.cart-item > .thumb::after{display:none;}
-.cart-item > .thumb img{width:100%;height:100%;object-fit:cover;}
-.cart-item-name{font-size:13.5px;font-weight:700;color:var(--plum);}
-.cart-item-meta{font-size:11.5px;color:var(--plum-soft);margin-top:3px;line-height:1.6;}
-.cart-item-price{font-size:12px;font-weight:700;color:var(--pink-deep);margin-top:4px;}
-.cart-qty{display:flex;align-items:center;gap:6px;margin-top:7px;}
-.cart-qty button{width:25px;height:25px;border:1px solid var(--line);border-radius:7px;background:var(--white);font-weight:800;color:var(--plum);}
-.cart-remove{border:none;background:transparent;color:#b42318;font-size:11px;font-weight:700;padding:4px 0;cursor:pointer;}
-.cart-totals{border-top:1px solid var(--line);padding-top:14px;margin-top:14px;}
-.cart-total-row{display:flex;justify-content:space-between;gap:16px;font-size:13px;margin:7px 0;color:var(--plum-soft);}
-.cart-total-row strong{color:var(--plum);}
-.cart-total-row.grand{font-size:16px;font-weight:800;padding-top:7px;margin-top:10px;border-top:1px dashed var(--line-strong);}
-.cart-total-row.grand strong{color:var(--pink-deep);}
-.delivery-note{font-size:11.5px;color:var(--plum-soft);margin-top:6px;line-height:1.5;}
-.delivery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
-.delivery-card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:13px;}
-.delivery-card .wilaya-name{font-size:13px;font-weight:700;color:var(--plum);margin-bottom:3px;}
-.delivery-card .wilaya-code{font-size:11px;color:var(--plum-soft);}
-.delivery-card input{width:100%;margin-top:9px;padding:9px 10px;border:1.5px solid var(--line);border-radius:9px;background:var(--input-bg);color:var(--plum);outline:none;}
-.delivery-card input:focus{border-color:var(--pink);}
-.delivery-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:16px;position:sticky;bottom:0;background:linear-gradient(0deg,var(--cream) 65%,transparent);padding:16px 0 4px;}
-.cart-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;}
-.cart-actions .submit-btn{flex:1;margin-top:0;}
-.cart-clear-btn{border:1.5px solid var(--line);background:var(--white);color:var(--plum-soft);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:700;cursor:pointer;}
-.order-items-list{display:flex;flex-direction:column;gap:5px;margin:6px 0 10px;}
-.order-item-line{display:flex;justify-content:space-between;gap:12px;padding:7px 9px;border-radius:8px;background:var(--pink-pale);font-size:12px;color:var(--plum-soft);}
-.order-item-line b{color:var(--plum);white-space:nowrap;}
-.order-total{font-size:12.5px;color:var(--plum-soft);line-height:1.8;margin:4px 0 12px;}
-.order-total b{color:var(--plum);}
-@media(max-width:600px){.cart-item{grid-template-columns:52px 1fr;}.cart-item img{width:52px;height:62px;} .cart-item > .thumb{width:52px;height:62px;}.cart-item > .cart-item-right{grid-column:2;}.header-right{gap:8px;}.cart-header-btn{padding:8px 10px;}}
+.cart-header-btn{border:1px solid var(--line);background:var(--card);color:var(--plum);border-radius:999px;padding:8px 12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-weight:600}.cart-header-btn b{min-width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--pink);font-size:11px}.product-clickable{cursor:pointer}.cart-modal,.checkout-modal{max-width:560px}.cart-items{display:flex;flex-direction:column;gap:10px;margin:18px 0}.cart-item{display:grid;grid-template-columns:58px 1fr auto;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:12px}.cart-item-img{width:58px;height:68px;border-radius:9px;overflow:hidden;background:var(--soft)}.cart-item-img img{width:100%;height:100%;object-fit:cover}.cart-item-main{display:flex;flex-direction:column;gap:3px}.cart-item-main small{color:var(--plum-soft)}.cart-item-main strong{color:var(--pink-deep)}.cart-item-actions{display:flex;gap:5px;align-items:center}.cart-item-actions button{border:1px solid var(--line);background:var(--card);border-radius:7px;min-width:30px;height:30px;cursor:pointer}.cart-summary,.checkout-totals{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}.cart-summary>div,.checkout-totals>div{display:flex;justify-content:space-between;padding:5px 0}.checkout-totals .grand{font-size:17px;border-top:1px solid var(--line);margin-top:5px;padding-top:10px}.delivery-table{border:1px solid var(--line);border-radius:12px;overflow:auto;max-height:520px;margin-top:15px}.delivery-head,.delivery-row{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:10px;padding:9px 10px;align-items:center}.delivery-head{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);z-index:1}.delivery-row{border-bottom:1px solid var(--line)}.delivery-row:last-child{border-bottom:0}.delivery-row input{width:100%}.translation-note{font-size:12px;line-height:1.5;color:var(--plum-soft);background:var(--soft);padding:9px 11px;border-radius:9px}.quick-order{pointer-events:none}.thumb.product-clickable{position:relative}.thumb.product-clickable:hover .quick-order{opacity:1}.quick-order{opacity:.95}.delivery-admin .hint{margin-bottom:14px}.order-items-list{display:flex;flex-direction:column;gap:6px;margin:10px 0}.admin-order-item{display:grid;grid-template-columns:1fr;gap:10px;align-items:center;padding:7px 9px;background:var(--soft);border-radius:8px;font-size:13px}.admin-order-item small{grid-column:1/-1;color:var(--plum-soft)}.order-delivery-summary{display:flex;justify-content:space-between;padding:7px 0;font-size:13px}.order-total.grand{font-size:16px;border-top:1px solid var(--line);padding-top:8px}.delivery-admin .hint{margin-bottom:14px}.admin-grid .admin-card .thumb.product-clickable{cursor:default}
+@media(max-width:720px){.cart-header-btn span{display:none}.cart-item{grid-template-columns:48px 1fr}.cart-item-img{width:48px;height:58px}.cart-item-actions{grid-column:2}.delivery-head,.delivery-row{grid-template-columns:1.2fr .8fr .8fr;font-size:12px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -773,9 +736,43 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY
 );
-const CATEGORY_LIST = ['dresses','sets','shirts','pants','accessories'];
-const WILAYAS = [['01','أدرار'],['02','الشلف'],['03','الأغواط'],['04','أم البواقي'],['05','باتنة'],['06','بجاية'],['07','بسكرة'],['08','بشار'],['09','البليدة'],['10','البويرة'],['11','تمنراست'],['12','تبسة'],['13','تلمسان'],['14','تيارت'],['15','تيزي وزو'],['16','الجزائر'],['17','الجلفة'],['18','جيجل'],['19','سطيف'],['20','سعيدة'],['21','سكيكدة'],['22','سيدي بلعباس'],['23','عنابة'],['24','قالمة'],['25','قسنطينة'],['26','المدية'],['27','مستغانم'],['28','المسيلة'],['29','معسكر'],['30','ورقلة'],['31','وهران'],['32','البيض'],['33','اليزي'],['34','برج بوعريريج'],['35','بومرداس'],['36','الطارف'],['37','تندوف'],['38','تسمسيلت'],['39','الوادي'],['40','خنشلة'],['41','سوق أهراس'],['42','تيبازة'],['43','ميلة'],['44','عين الدفلى'],['45','النعامة'],['46','عين تموشنت'],['47','غرداية'],['48','غليزان'],['49','تيميمون'],['50','برج باجي مختار'],['51','أولاد جلال'],['52','بني عباس'],['53','عين صالح'],['54','عين قزام'],['55','تقرت'],['56','جانت'],['57','المغير'],['58','المنيعة'],['59','أفلو'],['60','الأبيض سيدي الشيخ'],['61','العريشة'],['62','القنطرة'],['63','بريكة'],['64','بوسعادة'],['65','بئر العاتر'],['66','قصر البخاري'],['67','قصر الشلالة'],['68','عين وسارة'],['69','مسعد']];
-function defaultDeliveryRates(){return Object.fromEntries(WILAYAS.map(([code])=>[code,0]));}
+const CATEGORY_LIST = ['dresses','sets','shirts','pants'];
+
+const WILAYAS = [
+['01','أدرار'],['02','الشلف'],['03','الأغواط'],['04','أم البواقي'],['05','باتنة'],['06','بجاية'],['07','بسكرة'],['08','بشار'],['09','البليدة'],['10','البويرة'],
+['11','تمنراست'],['12','تبسة'],['13','تلمسان'],['14','تيارت'],['15','تيزي وزو'],['16','الجزائر'],['17','الجلفة'],['18','جيجل'],['19','سطيف'],['20','سعيدة'],
+['21','سكيكدة'],['22','سيدي بلعباس'],['23','عنابة'],['24','قالمة'],['25','قسنطينة'],['26','المدية'],['27','مستغانم'],['28','المسيلة'],['29','معسكر'],['30','ورقلة'],
+['31','وهران'],['32','البيض'],['33','اليزي'],['34','برج بوعريريج'],['35','بومرداس'],['36','الطارف'],['37','تندوف'],['38','تسمسيلت'],['39','الوادي'],['40','خنشلة'],
+['41','سوق أهراس'],['42','تيبازة'],['43','ميلة'],['44','عين الدفلى'],['45','النعامة'],['46','عين تموشنت'],['47','غرداية'],['48','غليزان'],['49','تيميمون'],['50','برج باجي مختار'],
+['51','أولاد جلال'],['52','بني عباس'],['53','عين صالح'],['54','عين قزام'],['55','تقرت'],['56','جانت'],['57','المغير'],['58','المنيعة'],['59','أفلو'],['60','الأبيض سيدي الشيخ'],
+['61','العريشة'],['62','القنطرة'],['63','بريكة'],['64','بوسعادة'],['65','بئر العاتر'],['66','قصر البخاري'],['67','قصر الشلالة'],['68','عين وسارة'],['69','مسعد']
+];
+function visibleProducts(){ return state.products.filter(p=>p.category!=='accessories'); }
+function defaultDelivery(){
+  const home={}, office={};
+  WILAYAS.forEach(([code])=>{ home[code]=0; office[code]=0; });
+  return { home, office, defaultHome:0, defaultOffice:0 };
+}
+function normalizeDelivery(d){
+  const base=defaultDelivery();
+  if(d){
+    Object.assign(base.home, d.home||{}); Object.assign(base.office, d.office||{});
+    if(Number.isFinite(Number(d.defaultHome))) base.defaultHome=Number(d.defaultHome);
+    if(Number.isFinite(Number(d.defaultOffice))) base.defaultOffice=Number(d.defaultOffice);
+  }
+  return base;
+}
+function cartCount(){ return state.cart.reduce((n,i)=>n+Number(i.qty||0),0); }
+function cartSubtotal(){ return state.cart.reduce((n,i)=>n+Number(i.price||0)*Number(i.qty||0),0); }
+function phoneIsValid(v){ return /^0[567]\d{8}$/.test(String(v||'').replace(/\s+/g,'')); }
+function deliveryPrice(type, code){
+  const d=normalizeDelivery(state.settings && state.settings.delivery);
+  const table=type==='home'?d.home:d.office;
+  const specific=code && Number(table[code]);
+  if(code && Number.isFinite(specific) && specific>0) return specific;
+  return type==='home'?Number(d.defaultHome||0):Number(d.defaultOffice||0);
+}
+
 
 const HERO_IMAGE = 'https://images.pexels.com/photos/38472465/pexels-photo-38472465.jpeg?auto=compress&cs=tinysrgb&w=1600';
 const LOOKBOOK_IMAGES_DEFAULT = [
@@ -787,7 +784,7 @@ function defaultSettings(){
   return {
     heroImage: HERO_IMAGE,
     lookbookImages: LOOKBOOK_IMAGES_DEFAULT.slice(),
-    deliveryRates: defaultDeliveryRates()
+    delivery: defaultDelivery()
   };
 }
 
@@ -885,8 +882,9 @@ const i18n = {
     form_photo:'Product photo', form_photo_cta:'Click to upload', form_photo_hint:'or drag a photo here — JPG or PNG',
     form_photo_remove:'Remove photo',
     form_in_stock:'In stock', form_save:'Save product', form_cancel:'Cancel', required:'Please fill in all required fields.',
+    cart_title:'Cart', cart_add_title:'Add to cart', cart_add_sub:'Choose your size and quantity.', cart_add:'Add to cart', cart_added:'Added to cart', cart_empty:'Your cart is empty.', cart_subtotal:'Products total', cart_checkout:'Checkout', cart_items:'items', checkout_title:'Checkout', checkout_sub:'Enter your contact and delivery details.', delivery_type:'Delivery type', delivery_home:'Home delivery', delivery_office:'Office delivery', wilaya:'Wilaya', wilaya_optional:'Wilaya', address_optional:'Address', delivery_fee:'Delivery', grand_total:'Grand total', phone_invalid:'Phone must be exactly 10 digits and start with 05, 06 or 07.', required_size:'Please choose a size.', tab_delivery:'Delivery', delivery_admin_hint:'Set a separate delivery price for home and office delivery. You can set a default and override it per wilaya.', delivery_default_home:'Default home delivery (DA)', delivery_default_office:'Default office delivery (DA)', delivery_save:'Save delivery prices', delivery_saved:'Delivery prices saved.', form_source_lang:'Product language', form_name_one:'Product name', form_desc_one:'Product description', form_translate_note:'The other two languages will be translated automatically when you save.', translation_failed:'Automatic translation failed. Please retry.',
     order_field_size:'Size', order_field_qty:'Qty', order_field_name:'Name', order_field_phone:'Phone',
-    order_field_address:'Address', order_field_note:'Note', cart:'Cart', cart_empty:'Your cart is empty.', cart_add:'Add to cart', cart_title:'Your cart', cart_sub:'Review your items before checkout.', cart_remove:'Remove', cart_clear:'Clear cart', cart_subtotal:'Products total', cart_delivery:'Delivery', cart_grand:'Total', cart_checkout:'Place order', cart_wilaya:'Wilaya', cart_wilaya_ph:'Choose your wilaya', cart_delivery_unset:'Delivery fee not set yet', checkout_title:'Complete your order', checkout_sub:'Choose your wilaya and enter your contact details.', delivery_tab:'Delivery', delivery_sub:'Set the delivery fee for each wilaya. Customers will see the selected fee at checkout.', delivery_save:'Save delivery prices', delivery_saved:'Delivery prices saved.', delivery_amount:'Delivery fee (DA)', order_field_wilaya:'Wilaya', order_field_delivery:'Delivery', order_field_total:'Grand total', order_field_products_total:'Products total', order_items:'Items'
+    order_field_address:'Address', order_field_note:'Note'
   },
   fr:{
     dir:'ltr',
@@ -928,8 +926,9 @@ const i18n = {
     form_photo:'Photo du produit', form_photo_cta:'Cliquez pour importer', form_photo_hint:'ou glissez une photo ici — JPG ou PNG',
     form_photo_remove:'Retirer la photo',
     form_in_stock:'En stock', form_save:'Enregistrer', form_cancel:'Annuler', required:'Merci de remplir tous les champs requis.',
+    cart_title:'Panier', cart_add_title:'Ajouter au panier', cart_add_sub:'Choisissez la taille et la quantité.', cart_add:'Ajouter au panier', cart_added:'Ajouté au panier', cart_empty:'Votre panier est vide.', cart_subtotal:'Total produits', cart_checkout:'Commander', cart_items:'articles', checkout_title:'Finaliser la commande', checkout_sub:'Entrez vos coordonnées et les détails de livraison.', delivery_type:'Type de livraison', delivery_home:'Livraison à domicile', delivery_office:'Livraison au bureau', wilaya:'Wilaya', wilaya_optional:'Wilaya', address_optional:'Adresse', delivery_fee:'Livraison', grand_total:'Total final', phone_invalid:'Le numéro doit contenir exactement 10 chiffres et commencer par 05, 06 ou 07.', required_size:'Choisissez une taille.', tab_delivery:'Livraison', delivery_admin_hint:'Définissez un prix différent pour domicile et bureau. Vous pouvez définir un prix par défaut et le remplacer par wilaya.', delivery_default_home:'Livraison domicile par défaut (DA)', delivery_default_office:'Livraison bureau par défaut (DA)', delivery_save:'Enregistrer les prix', delivery_saved:'Prix de livraison enregistrés.', form_source_lang:'Langue du produit', form_name_one:'Nom du produit', form_desc_one:'Description du produit', form_translate_note:'Les deux autres langues seront traduites automatiquement à l’enregistrement.', translation_failed:'La traduction automatique a échoué. Réessayez.',
     order_field_size:'Taille', order_field_qty:'Qté', order_field_name:'Nom', order_field_phone:'Téléphone',
-    order_field_address:'Adresse', order_field_note:'Note', cart:'Panier', cart_empty:'Votre panier est vide.', cart_add:'Ajouter au panier', cart_title:'Votre panier', cart_sub:'Vérifiez vos articles avant de commander.', cart_remove:'Retirer', cart_clear:'Vider le panier', cart_subtotal:'Total produits', cart_delivery:'Livraison', cart_grand:'Total', cart_checkout:'Passer la commande', cart_wilaya:'Wilaya', cart_wilaya_ph:'Choisir votre wilaya', cart_delivery_unset:'Frais de livraison non définis', checkout_title:'Finaliser la commande', checkout_sub:'Choisissez votre wilaya et saisissez vos coordonnées.', delivery_tab:'Livraison', delivery_sub:'Définissez le prix de livraison pour chaque wilaya.', delivery_save:'Enregistrer les prix', delivery_saved:'Prix de livraison enregistrés.', delivery_amount:'Frais de livraison (DA)', order_field_wilaya:'Wilaya', order_field_delivery:'Livraison', order_field_total:'Total général', order_field_products_total:'Total produits', order_items:'Articles'
+    order_field_address:'Adresse', order_field_note:'Note'
   },
   ar:{
     dir:'rtl',
@@ -971,8 +970,9 @@ const i18n = {
     form_photo:'صورة المنتج', form_photo_cta:'انقري للرفع', form_photo_hint:'أو اسحبي صورة هنا — JPG أو PNG',
     form_photo_remove:'إزالة الصورة',
     form_in_stock:'متوفر', form_save:'حفظ المنتج', form_cancel:'إلغاء', required:'يرجى ملء جميع الحقول المطلوبة.',
+    cart_title:'السلة', cart_add_title:'إضافة إلى السلة', cart_add_sub:'اختاري المقاس والكمية.', cart_add:'أضف إلى السلة', cart_added:'تمت الإضافة إلى السلة', cart_empty:'السلة فارغة.', cart_subtotal:'مجموع المنتجات', cart_checkout:'إتمام الطلب', cart_items:'منتجات', checkout_title:'إتمام الطلب', checkout_sub:'أدخلي بيانات الاتصال والتوصيل.', delivery_type:'طريقة التوصيل', delivery_home:'توصيل إلى المنزل', delivery_office:'توصيل إلى المكتب', wilaya:'الولاية', wilaya_optional:'الولاية', address_optional:'العنوان', delivery_fee:'التوصيل', grand_total:'المجموع النهائي', phone_invalid:'رقم الهاتف يجب أن يكون 10 أرقام ويبدأ بـ 05 أو 06 أو 07.', required_size:'اختاري المقاس.', tab_delivery:'التوصيل', delivery_admin_hint:'حددي سعرًا مختلفًا للتوصيل للمنزل وللمكتب، مع إمكانية تحديد سعر افتراضي وسعر خاص لكل ولاية.', delivery_default_home:'سعر المنزل الافتراضي (دج)', delivery_default_office:'سعر المكتب الافتراضي (دج)', delivery_save:'حفظ أسعار التوصيل', delivery_saved:'تم حفظ أسعار التوصيل.', form_source_lang:'لغة المنتج', form_name_one:'اسم المنتج', form_desc_one:'وصف المنتج', form_translate_note:'سيتم ترجمة اللغتين الأخريين تلقائيًا عند الحفظ.', translation_failed:'فشلت الترجمة التلقائية. حاولي مرة أخرى.',
     order_field_size:'المقاس', order_field_qty:'الكمية', order_field_name:'الاسم', order_field_phone:'الهاتف',
-    order_field_address:'العنوان', order_field_note:'ملاحظة', cart:'السلة', cart_empty:'السلة فارغة.', cart_add:'أضيفي للسلة', cart_title:'سلة المشتريات', cart_sub:'راجعي منتجاتك قبل تأكيد الطلب.', cart_remove:'حذف', cart_clear:'إفراغ السلة', cart_subtotal:'مجموع المنتجات', cart_delivery:'التوصيل', cart_grand:'المجموع النهائي', cart_checkout:'تأكيد الطلب', cart_wilaya:'الولاية', cart_wilaya_ph:'اختاري الولاية', cart_delivery_unset:'سعر التوصيل غير محدد بعد', checkout_title:'إتمام الطلب', checkout_sub:'اختاري الولاية وأدخلي معلومات التواصل.', delivery_tab:'التوصيل', delivery_sub:'حددي سعر التوصيل لكل ولاية، وسيظهر السعر للعميلة عند إتمام الطلب.', delivery_save:'حفظ أسعار التوصيل', delivery_saved:'تم حفظ أسعار التوصيل.', delivery_amount:'سعر التوصيل (دج)', order_field_wilaya:'الولاية', order_field_delivery:'التوصيل', order_field_total:'المجموع النهائي', order_field_products_total:'مجموع المنتجات', order_items:'المنتجات'
+    order_field_address:'العنوان', order_field_note:'ملاحظة'
   }
 };
 
@@ -1011,11 +1011,11 @@ let state = {
   adminAuthed: false,
   adminTab: 'orders',
   orderTarget: null,
-  cart: [],
-  cartOpen: false,
-  cartDeliveryWilaya: '',
   editingProduct: null,
   showSuccess: false,
+  cart: [],
+  cartOpen: false,
+  checkoutOpen: false,
   loaded: false
 };
 
@@ -1073,13 +1073,15 @@ async function loadData(){
 
   if(error) throw error;
 
-  state.settings = data && data.data ? Object.assign(defaultSettings(), data.data, {deliveryRates:Object.assign(defaultDeliveryRates(), data.data.deliveryRates || {})}) : defaultSettings();
+  state.settings = data && data.data
+    ? Object.assign(defaultSettings(), data.data)
+    : defaultSettings();
+  state.settings.delivery = normalizeDelivery(state.settings.delivery);
 
 }catch(e){
   console.error('loadSettings error:', e);
   state.settings = defaultSettings();
 }
-  try{ state.cart = JSON.parse(localStorage.getItem('blossom07:cart') || '[]'); }catch(e){ state.cart=[]; }
   state.loaded = true;
   render();
   requestAnimationFrame(setupHeroParallax);
@@ -1167,13 +1169,6 @@ async function refreshOrders(){
 }
 setInterval(()=>{ if(state.view === 'admin' && state.adminAuthed) refreshOrders(); }, 6000);
 
-function saveCart(){try{localStorage.setItem('blossom07:cart',JSON.stringify(state.cart));}catch(e){}}
-function cartCount(){return state.cart.reduce((sum,item)=>sum+Number(item.qty||0),0);}
-function cartProductsTotal(){return state.cart.reduce((sum,item)=>sum+(Number(item.price)||0)*(Number(item.qty)||1),0);}
-function deliveryRate(code){return Number(((state.settings&&state.settings.deliveryRates)||{})[code]||0);}
-function wilayaName(code){const found=WILAYAS.find(w=>w[0]===code);return found?found[1]:'';}
-function cartItemKey(productId,size){return `${productId}__${size||''}`;}
-
 /* ============ TOAST ============ */
 let toastTimer = null;
 function showToast(msg){
@@ -1211,7 +1206,8 @@ function renderHeader(){
       </div>
     </div>
     <div class="header-right">
-      ${state.view==='admin' ? `<button class="top-nav-tab" data-nav="shop">${t('nav_shop')}</button>` : `<button class="cart-header-btn" id="cart-open-btn">🛒 ${t('cart')} <span class="cart-count">${cartCount()}</span></button>`}
+      ${state.view==='shop' && !state.adminAuthed ? `<button class="cart-header-btn" id="open-cart-btn" aria-label="${t('cart_title')}">🛒 <span>${t('cart_title')}</span><b>${cartCount()}</b></button>` : ''}
+      
       <div class="lang-switch">
         ${langs.map(([code,label])=>`<button data-lang="${code}" class="${state.lang===code?'active':''}">${label}</button>`).join('')}
       </div>
@@ -1261,7 +1257,7 @@ function renderTicker(){
     state.lang==='ar' ? 'استلام من المتجر' : (state.lang==='fr' ? 'Retrait en boutique' : 'Pickup in store'),
     state.lang==='ar' ? 'الدفع عند الاستلام' : (state.lang==='fr' ? 'Paiement à la livraison' : 'Cash on delivery'),
     state.lang==='ar' ? 'وصولات جديدة كل أسبوع' : (state.lang==='fr' ? 'Nouveautés chaque semaine' : 'New arrivals every week'),
-    state.lang==='ar' ? 'توصيل لـ69 ولاية' : (state.lang==='fr' ? 'Livraison 69 wilayas' : 'Delivery to 69 wilayas')
+    state.lang==='ar' ? 'توصيل ل58 ولاية' : (state.lang==='fr' ? 'Livraison 58 wilayas' : 'Delivery to 58 wilayas')
   ];
   const track = items.map(i=>`<span>${i}</span>`).join('');
   return `
@@ -1283,7 +1279,7 @@ function renderCategoriesSection(){
     </div>
     <div class="cat-grid">
       ${CATEGORY_LIST.map((c,i)=>{
-        const count = state.products.filter(p=>p.category===c).length;
+        const count = visibleProducts().filter(p=>p.category===c).length;
         return `
         <div class="cat-card reveal" data-cat-jump="${c}" style="transition-delay:${i*0.05}s;cursor:pointer;">
           <div>
@@ -1298,7 +1294,7 @@ function renderCategoriesSection(){
 }
 
 function renderBestsellers(){
-  const items = state.products.slice(0, 4);
+  const items = visibleProducts().slice(0, 4);
   const kicker = state.lang==='ar' ? 'مختارات' : (state.lang==='fr' ? 'Sélection' : 'Selection');
   const title = state.lang==='ar' ? 'الأكثر مبيعًا' : (state.lang==='fr' ? "Les pièces que l'on s'arrache" : "The pieces everyone wants");
   if(items.length===0) return '';
@@ -1322,7 +1318,7 @@ function renderBestsellers(){
             <h3 class="card-name">${escapeHtml(p.name[state.lang] || p.name.en)}</h3>
             <div class="card-foot">
               <div class="price">${fmtPrice(p.price)} <small>${t('price_da')}</small></div>
-              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${t('cart_add')}</button>
+              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${t('order_now')}</button>
             </div>
           </div>
         </div>
@@ -1340,7 +1336,7 @@ function renderFeatureRow(){
      title: state.lang==='ar'?'نصيحة المقاس':(state.lang==='fr'?'Conseil taille':'Size advice'),
      desc: state.lang==='ar'?'نساعدك على اختيار المقاس الأنسب لك عبر واتساب.':(state.lang==='fr'?"On vous aide à choisir la bonne taille par téléphone.":"We help you pick the right size before you order.")},
     {icon:'<rect x="3" y="7" width="14" height="10" rx="2"/><path d="M17 10h2.5l2.5 3v4h-5"/><circle cx="7" cy="19" r="1.6"/><circle cx="17.5" cy="19" r="1.6"/>',
-     title: state.lang==='ar'?'توصيل لـ69 ولاية':(state.lang==='fr'?'Livraison 69 wilayas':'Delivery to 69 wilayas'),
+     title: state.lang==='ar'?'توصيل ل58 ولاية':(state.lang==='fr'?'Livraison 58 wilayas':'Delivery to 58 wilayas'),
      desc: state.lang==='ar'?'شحن آمن إلى كل الولايات مع الدفع عند الاستلام.':(state.lang==='fr'?'Expédition partout en Algérie, paiement à la livraison.':'Shipping nationwide, cash on delivery.')},
     {icon:'<path d="M12 21s-7.5-4.6-10-9.3C.5 8 2.4 4.5 6 4c2-.3 3.6.6 6 3 2.4-2.4 4-3.3 6-3 3.6.5 5.5 4 4 7.7-2.5 4.7-10 9.3-10 9.3z"/>',
      title: state.lang==='ar'?'اختيار بعناية':(state.lang==='fr'?'Sélection à la main':'Hand-picked selection'),
@@ -1361,7 +1357,7 @@ function renderFeatureRow(){
 }
 
 function renderNewArrivals(){
-  const items = state.products.slice(-2);
+  const items = visibleProducts().slice(-2);
   const kicker = state.lang==='ar' ? 'وصل حديثًا' : (state.lang==='fr' ? 'Nouveautés' : 'New in');
   const title = state.lang==='ar' ? 'جديد هذا الأسبوع' : (state.lang==='fr' ? 'Nouveau cette semaine' : 'New this week');
   if(items.length===0) return '';
@@ -1422,15 +1418,15 @@ function productThumb(p, opts){
   opts = opts || {};
   const colors = THUMB_COLORS[p.category] || THUMB_COLORS.dresses;
   const src = p.image || CATEGORY_IMAGES[p.category] || '';
-  const hint = opts.hint ? `<div class="quick-order">${t('cart_add')}</div>` : '';
+  const hint = opts.hint ? `<div class="quick-order">${t('cart_add')}</div>` : `<div class="quick-order">${t('cart_add')}</div>`;
   if(src){
-    return `<div class="thumb" style="--tc1:${colors[0]};--tc2:${colors[1]}"><img src="${escapeHtml(src)}" alt="${escapeHtml(p.name[state.lang]||p.name.en)}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('img-broken');">${hint}</div>`;
+    return `<div class="thumb product-clickable" data-order="${p.id}" style="--tc1:${colors[0]};--tc2:${colors[1]}"><img src="${escapeHtml(src)}" alt="${escapeHtml(p.name[state.lang]||p.name.en)}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('img-broken');">${hint}</div>`;
   }
-  return `<div class="thumb" style="--tc1:${colors[0]};--tc2:${colors[1]}">${ICONS[p.category]||ICONS.dresses}${hint}</div>`;
+  return `<div class="thumb product-clickable" data-order="${p.id}" style="--tc1:${colors[0]};--tc2:${colors[1]}">${ICONS[p.category]||ICONS.dresses}${hint}</div>`;
 }
 
 function renderShop(){
-  const items = state.products.filter(p => state.category==='all' || p.category===state.category);
+  const items = visibleProducts().filter(p => state.category==='all' || p.category===state.category);
   const kicker = state.lang==='ar' ? 'المجموعة' : (state.lang==='fr' ? 'La collection' : 'The collection');
   return `
   <div class="shop-wrap" id="shop-grid">
@@ -1529,23 +1525,33 @@ const doneOrders = sortedOrders.filter(o => o.status === 'done');
     <div class="stat-grid">
       <div class="stat-card"><div class="num">${total}</div><div class="lbl">${t('stat_orders')}</div></div>
       <div class="stat-card"><div class="num">${news}</div><div class="lbl">${t('stat_new')}</div></div>
-      <div class="stat-card"><div class="num">${state.products.length}</div><div class="lbl">${t('stat_products')}</div></div>
+      <div class="stat-card"><div class="num">${visibleProducts().length}</div><div class="lbl">${t('stat_products')}</div></div>
     </div>
     <div class="tabs">
       <button class="tab-btn ${state.adminTab==='orders'?'active':''}" data-tab="orders">${t('tab_orders')}</button>
       <button class="tab-btn ${state.adminTab==='products'?'active':''}" data-tab="products">${t('tab_products')}</button>
-      <button class="tab-btn ${state.adminTab==='design'?'active':''}" data-tab="design">${t('tab_design')}</button><button class="tab-btn ${state.adminTab==='delivery'?'active':''}" data-tab="delivery">${t('delivery_tab')}</button>
+      <button class="tab-btn ${state.adminTab==='delivery'?'active':''}" data-tab="delivery">${t('tab_delivery')}</button>
+      <button class="tab-btn ${state.adminTab==='design'?'active':''}" data-tab="design">${t('tab_design')}</button>
     </div>
     ${state.adminTab==='orders' ? `
   <div class="orders-section-title">🆕 New Orders</div>
   ${renderOrdersTab(newOrders)}
-
   <div class="orders-section-title done-orders-title">✅ Done Orders</div>
   ${renderOrdersTab(doneOrders)}
-` : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='design' ? renderDesignTab() : renderDeliveryTab()))}
+` : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : renderDesignTab()))}
   </div>`;
 }
 
+
+function renderDeliveryTab(){
+  const d=normalizeDelivery(state.settings.delivery);
+  return `<form id="delivery-form" class="delivery-admin"><p class="hint">${t('delivery_admin_hint')}</p>
+    <div class="field-row"><div class="field"><label>${t('delivery_default_home')}</label><input type="number" min="0" id="dd-home" value="${d.defaultHome}"></div><div class="field"><label>${t('delivery_default_office')}</label><input type="number" min="0" id="dd-office" value="${d.defaultOffice}"></div></div>
+    <div class="delivery-table"><div class="delivery-head"><b>${t('wilaya')}</b><b>${t('delivery_home')}</b><b>${t('delivery_office')}</b></div>
+    ${WILAYAS.map(([code,name])=>`<div class="delivery-row"><span>${code} — ${escapeHtml(name)}</span><input type="number" min="0" data-delivery-home="${code}" value="${Number(d.home[code]||0)}"><input type="number" min="0" data-delivery-office="${code}" value="${Number(d.office[code]||0)}"></div>`).join('')}</div>
+    <button type="submit" class="btn btn-primary" style="margin-top:16px;">${t('delivery_save')}</button>
+  </form>`;
+}
 function renderDesignTab(){
   const s = state.settings || defaultSettings();
   return `
@@ -1565,109 +1571,34 @@ function renderDesignTab(){
   </form>`;
 }
 
-function renderDeliveryTab(){
-  const rates=(state.settings&&state.settings.deliveryRates)||defaultDeliveryRates();
-  return `<form id="delivery-form"><p style="font-size:13px;color:var(--plum-soft);margin:-6px 0 20px;max-width:700px;line-height:1.6;">${t('delivery_sub')}</p><div class="delivery-grid">${WILAYAS.map(([code,name])=>`<div class="delivery-card"><div class="wilaya-name">${code} — ${escapeHtml(name)}</div><div class="wilaya-code">${t('delivery_amount')}</div><input type="number" min="0" step="1" data-delivery-code="${code}" value="${Number(rates[code]||0)}"></div>`).join('')}</div><div class="delivery-actions"><button type="submit" class="submit-btn" style="margin-top:0;">${t('delivery_save')}</button></div></form>`;
-}
-
 function renderOrdersTab(sortedOrders){
   if(sortedOrders.length===0){
-    return `<div class="empty-note">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 7h16l-1.5 12a2 2 0 01-2 1.8H7.5A2 2 0 015.5 19L4 7z"/><path d="M9 7V5a3 3 0 016 0v2"/></svg>
-      <div>${t('orders_empty')}</div>
-    </div>`;
+    return `<div class="empty-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 7h16l-1.5 12a2 2 0 01-2 1.8H7.5A2 2 0 015.5 19L4 7z"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><div>${t('orders_empty')}</div></div>`;
   }
- return sortedOrders.map(o => `
-  <div class="order-row status-${o.status}">
-
-    <div class="order-main">
-
-      <div class="order-top">
-        <div class="order-id">
-          #${o.id.slice(-6).toUpperCase()} · ${fmtDate(o.createdAt)}
+  return sortedOrders.map(o=>{
+    const items=Array.isArray(o.items)&&o.items.length ? o.items : [{productName:o.productName,price:o.price,size:o.size,qty:o.qty,image:o.image}];
+    const subtotal=Number(o.subtotal!=null?o.subtotal:(Number(o.price||0)*Number(o.qty||1)));
+    const fee=Number(o.deliveryFee||0); const total=Number(o.total!=null?o.total:subtotal+fee);
+    return `<div class="order-row status-${o.status}">
+      <div class="order-main">
+        <div class="order-top"><div class="order-id">#${o.id.slice(-6).toUpperCase()} · ${fmtDate(o.createdAt)}</div><span class="order-status-pill ${o.status}">${o.status==='done'?t('status_done'):t('status_new')}</span></div>
+        <div class="order-items-list">${items.map(it=>{ const n=(it.productName&&typeof it.productName==='object') ? (it.productName[state.lang]||it.productName.en||it.productName.fr||it.productName.ar||'Product') : (it.productName||'Product'); return `<div class="admin-order-item"><span>${escapeHtml(n)}</span></div>`; }).join('')}</div>
+        <div class="order-total"><span>${t('cart_subtotal')}</span><b>${fmtPrice(subtotal)} ${t('price_da')}</b></div>
+        <div class="order-delivery-summary"><span>${t('delivery_type')}</span><b>${o.deliveryType==='office'?t('delivery_office'):t('delivery_home')} · ${fmtPrice(fee)} ${t('price_da')}</b></div>
+        <div class="order-total grand"><span>${t('grand_total')}</span><b>${fmtPrice(total)} ${t('price_da')}</b></div>
+        <div class="order-info-grid">
+          <div class="order-info-item"><span>${t('order_field_name')}</span><b>${escapeHtml(o.name)}</b></div>
+          <div class="order-info-item"><span>${t('order_field_phone')}</span><b><a href="tel:${escapeHtml(o.phone)}" class="order-phone-link">${escapeHtml(o.phone)}</a></b><div class="order-contact-buttons"><a href="tel:${escapeHtml(o.phone)}" class="contact-btn call-btn">📞 Call</a><a href="https://wa.me/${String(o.phone).replace(/\D/g,'')}" target="_blank" rel="noopener" class="contact-btn whatsapp-btn">💬 WhatsApp</a></div></div>
+          <div class="order-info-item"><span>${t('wilaya')}</span><b>${escapeHtml(o.wilayaCode?`${o.wilayaCode} — ${o.wilayaName}`:'—')}</b></div>
+          <div class="order-info-item"><span>${t('order_field_address')}</span><b>${escapeHtml(o.address||'—')}</b></div>
+          ${o.note?`<div class="order-info-item order-note"><span>${t('order_field_note')}</span><b>${escapeHtml(o.note)}</b></div>`:''}
         </div>
-
-        <span class="order-status-pill ${o.status}">
-          ${o.status==='done' ? t('status_done') : t('status_new')}
-        </span>
       </div>
-
-<div class="order-title">${o.items&&o.items.length?`${t('order_items')} (${o.items.length})`:`${escapeHtml(o.productName||'')} <span class="order-qty">&times; ${o.qty||1}</span>`}</div>
-${o.items&&o.items.length?`<div class="order-items-list">${o.items.map(item=>`<div class="order-item-line"><span>${escapeHtml(item.productName)} × ${item.qty} · ${t('f_size')}: ${escapeHtml(item.size||'—')}</span><b>${fmtPrice(Number(item.price)*Number(item.qty))} ${t('price_da')}</b></div>`).join('')}</div>`:''}
-<div class="order-total">${t('order_field_products_total')}: <b>${fmtPrice(o.productsTotal!=null?o.productsTotal:Number(o.price||0)*Number(o.qty||1))} ${t('price_da')}</b><br>${t('order_field_delivery')}: <b>${fmtPrice(o.deliveryFee||0)} ${t('price_da')}</b><br>${t('order_field_total')}: <b>${fmtPrice(o.total!=null?o.total:Number(o.price||0)*Number(o.qty||1))} ${t('price_da')}</b></div>
-
-      <div class="order-info-grid">
-
-        <div class="order-info-item">
-          <span>${t('order_field_name')}</span>
-          <b>${escapeHtml(o.name)}</b>
-        </div>
-
-<div class="order-info-item">
-  <span>${t('order_field_phone')}</span>
-
-  <b>
-    <a href="tel:${escapeHtml(o.phone)}" class="order-phone-link">
-      ${escapeHtml(o.phone)}
-    </a>
-  </b>
-
-  <div class="order-contact-buttons">
-    <a
-      href="tel:${escapeHtml(o.phone)}"
-      class="contact-btn call-btn"
-    >
-      📞 Call
-    </a>
-
-    <a
-      href="https://wa.me/${String(o.phone).replace(/\D/g,'')}"
-      target="_blank"
-      rel="noopener"
-      class="contact-btn whatsapp-btn"
-    >
-      💬 WhatsApp
-    </a>
-  </div>
-</div>
-
-        <div class="order-info-item">
-          <span>${t('order_field_address')}</span>
-          <b>${escapeHtml(o.address)}</b>
-        </div>
-
-        <div class="order-info-item">
-          <span>${t('order_field_size')}</span>
-          <b>${escapeHtml(o.size || '—')}</b>
-        </div>
-        ${o.wilayaCode ? `<div class="order-info-item"><span>${t('order_field_wilaya')}</span><b>${escapeHtml(o.wilayaCode)} — ${escapeHtml(o.wilayaName || wilayaName(o.wilayaCode))}</b></div>` : ''}
-
-        ${o.note ? `
-          <div class="order-info-item order-note">
-            <span>${t('order_field_note')}</span>
-            <b>${escapeHtml(o.note)}</b>
-          </div>
-        ` : ''}
-
-      </div>
-
-    </div>
-
-    <div class="order-actions">
-
-      <button class="small-btn" data-toggle-order="${o.id}">
-        ${o.status==='done' ? t('mark_new') : t('mark_done')}
-      </button>
-
-      <button class="small-btn danger-btn" data-delete-order="${o.id}">
-        ${t('del')}
-      </button>
-
-    </div>
-
-  </div>
-`).join('');
+      <div class="order-actions"><button class="small-btn" data-toggle-order="${o.id}">${o.status==='done'?t('mark_new'):t('mark_done')}</button><button class="small-btn danger-btn" data-delete-order="${o.id}">${t('del')}</button></div>
+    </div>`;
+  }).join('');
 }
+
 
 function renderProductsTab(){
   return `
@@ -1678,7 +1609,7 @@ function renderProductsTab(){
     </button>
   </div>
   <div class="admin-grid">
-    ${state.products.map(p => `
+    ${visibleProducts().map(p => `
       <div class="admin-card">
         ${productThumb(p)}
         <div class="admin-card-body">
@@ -1719,19 +1650,85 @@ function renderPhotoField(targetId, currentImage, opts){
 /* ---- Modals ---- */
 function renderModals(){
   let html = '';
-  if(state.orderTarget){const p=state.products.find(x=>x.id===state.orderTarget);if(p) html += renderOrderModal(p);}
-  if(state.cartOpen) html += renderCartModal();
+  if(state.orderTarget){
+    const p = state.products.find(x=>x.id===state.orderTarget);
+    if(p) html += renderOrderModal(p);
+  }
   if(state.showSuccess){
     html += renderSuccessModal();
   }
+  if(state.cartOpen && state.checkoutOpen===true){ html += renderCheckoutModal(); }
+  else if(state.cartOpen){ html += renderCartModal(); }
   if(state.editingProduct !== null){
     html += renderProductForm();
   }
   return html;
 }
 
-function renderOrderModal(p){return `<div class="overlay" data-close="order"><div class="modal" onclick="event.stopPropagation()"><button class="modal-close" data-close="order"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button><h2>${t('cart_add')}</h2><p class="sub">${escapeHtml(p.name[state.lang]||p.name.en)} · ${fmtPrice(p.price)} ${t('price_da')}</p><div class="order-summary">${productThumb(p)}<div><div class="order-summary-name">${escapeHtml(p.name[state.lang]||p.name.en)}</div><div class="order-summary-price">${fmtPrice(p.price)} ${t('price_da')}</div></div></div><form id="order-form"><div class="field-row"><div class="field"><label>${t('f_size')}</label><select id="of-size"><option value="">${t('f_size_ph')}</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>Free</option></select></div><div class="field"><label>${t('f_qty')}</label><input type="number" id="of-qty" min="1" value="1"></div></div><button type="submit" class="submit-btn">${t('cart_add')}</button></form></div></div>`;}
-function renderCartModal(){const subtotal=cartProductsTotal();const code=state.cartDeliveryWilaya||'';const fee=code?deliveryRate(code):0;const total=subtotal+fee;return `<div class="overlay" data-close="cart"><div class="modal" onclick="event.stopPropagation()" style="max-width:620px;"><button class="modal-close" data-close="cart"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button><h2>${t('cart_title')}</h2><p class="sub">${t('cart_sub')}</p>${state.cart.length===0?`<div class="cart-empty">🛒<br>${t('cart_empty')}</div>`:`<div class="cart-list">${state.cart.map((item,index)=>{const p=state.products.find(x=>x.id===item.productId);return `<div class="cart-item">${p?productThumb(p):`<div style="width:64px;height:72px;border-radius:10px;background:var(--pink-pale);"></div>`}<div><div class="cart-item-name">${escapeHtml(item.productName)}</div><div class="cart-item-meta">${t('f_size')}: ${escapeHtml(item.size||'—')}</div><div class="cart-item-price">${fmtPrice(item.price)} ${t('price_da')} · ${fmtPrice(Number(item.price)*Number(item.qty))} ${t('price_da')}</div><div class="cart-qty"><button type="button" data-cart-dec="${index}">−</button><strong>${item.qty}</strong><button type="button" data-cart-inc="${index}">+</button></div></div><div class="cart-item-right"><button type="button" class="cart-remove" data-cart-remove="${index}">${t('cart_remove')}</button></div></div>`;}).join('')}</div><div class="field"><label>${t('cart_wilaya')}</label><select id="checkout-wilaya"><option value="">${t('cart_wilaya_ph')}</option>${WILAYAS.map(([c,n])=>`<option value="${c}" ${code===c?'selected':''}>${c} — ${escapeHtml(n)}</option>`).join('')}</select><div class="delivery-note">${code&&fee===0?t('cart_delivery_unset'):(code?`${t('cart_delivery')}: ${fmtPrice(fee)} ${t('price_da')}`:'')}</div></div><div class="cart-totals"><div class="cart-total-row"><span>${t('cart_subtotal')}</span><strong>${fmtPrice(subtotal)} ${t('price_da')}</strong></div><div class="cart-total-row"><span>${t('cart_delivery')}</span><strong>${fmtPrice(fee)} ${t('price_da')}</strong></div><div class="cart-total-row grand"><span>${t('cart_grand')}</span><strong>${fmtPrice(total)} ${t('price_da')}</strong></div></div><form id="checkout-form"><div class="field"><label>${t('f_name')}</label><input type="text" id="checkout-name" placeholder="${t('f_name_ph')}" required></div><div class="field"><label>${t('f_phone')}</label><input type="tel" id="checkout-phone" placeholder="${t('f_phone_ph')}" required></div><div class="field"><label>${t('f_address')}</label><input type="text" id="checkout-address" placeholder="${t('f_address_ph')}" required></div><div class="field"><label>${t('f_note')}</label><textarea id="checkout-note" placeholder="${t('f_note_ph')}"></textarea></div><div class="cart-actions"><button type="button" class="cart-clear-btn" id="cart-clear-btn">${t('cart_clear')}</button><button type="submit" class="submit-btn">${t('cart_checkout')}</button></div></form>`}</div></div>`;}
+function renderOrderModal(p){
+  return `
+  <div class="overlay" data-close="order">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" data-close="order">×</button>
+      <h2>${t('cart_add_title')}</h2>
+      <p class="sub">${t('cart_add_sub')}</p>
+      <div class="order-summary">
+        ${productThumb(p)}
+        <div>
+          <div class="order-summary-name">${escapeHtml(p.name[state.lang]||p.name.en)}</div>
+          <div class="order-summary-price">${fmtPrice(p.price)} ${t('price_da')}</div>
+        </div>
+      </div>
+      <form id="add-cart-form">
+        <div class="field-row">
+          <div class="field"><label>${t('f_size')}</label><select id="cf-size"><option value="">${t('f_size_ph')}</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>Free</option></select></div>
+          <div class="field"><label>${t('f_qty')}</label><input type="number" id="cf-qty" min="1" value="1"></div>
+        </div>
+        <button type="submit" class="submit-btn">🛒 ${t('cart_add')}</button>
+      </form>
+    </div>
+  </div>`;
+}
+
+function renderCartModal(){
+  if(!state.cartOpen) return '';
+  const subtotal=cartSubtotal();
+  return `<div class="overlay" data-close="cart"><div class="modal cart-modal" onclick="event.stopPropagation()">
+    <button class="modal-close" data-close="cart">×</button>
+    <h2>${t('cart_title')}</h2>
+    ${state.cart.length===0 ? `<div class="empty-note"><div>${t('cart_empty')}</div></div>` : `
+      <div class="cart-items">
+      ${state.cart.map((item,i)=>`<div class="cart-item">
+        <div class="cart-item-img">${item.image?`<img src="${escapeHtml(item.image)}">`:''}</div>
+        <div class="cart-item-main"><b>${escapeHtml(item.name[state.lang]||item.name.en)}</b><small>${t('f_size')}: ${escapeHtml(item.size||'-')} · ${t('f_qty')}: ${item.qty}</small><strong>${fmtPrice(item.price*item.qty)} ${t('price_da')}</strong></div>
+        <div class="cart-item-actions"><button data-cart-dec="${i}">−</button><button data-cart-inc="${i}">+</button><button data-cart-remove="${i}">×</button></div>
+      </div>`).join('')}</div>
+      <div class="cart-summary"><div><span>${t('cart_subtotal')}</span><b>${fmtPrice(subtotal)} ${t('price_da')}</b></div></div>
+      <button class="submit-btn" id="go-checkout">${t('cart_checkout')}</button>
+    `}
+  </div></div>`;
+}
+
+function renderCheckoutModal(){
+  if(!state.cartOpen || state.checkoutOpen!==true) return '';
+  const subtotal=cartSubtotal();
+  const d=normalizeDelivery(state.settings.delivery);
+  return `<div class="overlay" data-close="checkout"><div class="modal checkout-modal" onclick="event.stopPropagation()">
+    <button class="modal-close" data-close="checkout">×</button>
+    <h2>${t('checkout_title')}</h2>
+    <p class="sub">${t('checkout_sub')}</p>
+    <form id="checkout-form">
+      <div class="field"><label>${t('f_name')}</label><input id="co-name" required placeholder="${t('f_name_ph')}"></div>
+      <div class="field"><label>${t('f_phone')}</label><input id="co-phone" inputmode="numeric" maxlength="10" placeholder="${t('f_phone_ph')}" required></div>
+      <div class="field"><label>${t('delivery_type')}</label><select id="co-delivery"><option value="home">${t('delivery_home')}</option><option value="office">${t('delivery_office')}</option></select></div>
+      <div class="field"><label>${t('wilaya')}</label><select id="co-wilaya" required><option value="">${t('wilaya')}</option>${WILAYAS.map(([c,n])=>`<option value="${c}">${c} — ${escapeHtml(n)}</option>`).join('')}</select></div>
+      <div class="field"><label id="co-address-label">${t('address_optional')}</label><input id="co-address" placeholder="${t('f_address_ph')}"></div>
+      <div class="field"><label>${t('f_note')}</label><textarea id="co-note" placeholder="${t('f_note_ph')}"></textarea></div>
+      <div class="checkout-totals"><div><span>${t('cart_subtotal')}</span><b id="co-subtotal">${fmtPrice(subtotal)} ${t('price_da')}</b></div><div><span>${t('delivery_fee')}</span><b id="co-delivery-fee">${fmtPrice(d.defaultHome)} ${t('price_da')}</b></div><div class="grand"><span>${t('grand_total')}</span><b id="co-grand-total">${fmtPrice(subtotal+d.defaultHome)} ${t('price_da')}</b></div></div>
+      <button type="submit" class="submit-btn">${t('f_submit')}</button>
+    </form>
+  </div></div>`;
+}
 
 function renderSuccessModal(){
   return `
@@ -1754,43 +1751,22 @@ function renderProductForm(){
   const isNew = editing === 'new';
   const p = isNew ? {id:null,category:'dresses',price:'',stock:true,image:'',name:{en:'',ar:'',fr:''},desc:{en:'',ar:'',fr:''}} : state.products.find(x=>x.id===editing);
   if(!p) return '';
-  return `
-  <div class="overlay" data-close="product">
-    <div class="modal" onclick="event.stopPropagation()" style="max-width:520px;">
-      <button class="modal-close" data-close="product">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-      <h2>${isNew ? t('form_title_add') : t('form_title_edit')}</h2>
-      <form id="product-form" style="margin-top:16px;">
-        <div class="field"><label>${t('form_name_en')}</label><input id="pf-name-en" value="${escapeHtml(p.name.en)}" required></div>
-        <div class="field"><label>${t('form_name_fr')}</label><input id="pf-name-fr" value="${escapeHtml(p.name.fr)}" required></div>
-        <div class="field"><label>${t('form_name_ar')}</label><input id="pf-name-ar" value="${escapeHtml(p.name.ar)}" dir="rtl" required></div>
-        <div class="field"><label>${t('form_desc_en')}</label><textarea id="pf-desc-en">${escapeHtml(p.desc.en)}</textarea></div>
-        <div class="field"><label>${t('form_desc_fr')}</label><textarea id="pf-desc-fr">${escapeHtml(p.desc.fr)}</textarea></div>
-        <div class="field"><label>${t('form_desc_ar')}</label><textarea id="pf-desc-ar" dir="rtl">${escapeHtml(p.desc.ar)}</textarea></div>
-        <div class="field-row">
-          <div class="field"><label>${t('form_price')}</label><input type="number" id="pf-price" value="${p.price}" min="0" required></div>
-          <div class="field">
-            <label>${t('form_category')}</label>
-            <select id="pf-category">
-              ${CATEGORY_LIST.map(c=>`<option value="${c}" ${p.category===c?'selected':''}>${catLabel(c)}</option>`).join('')}
-            </select>
-          </div>
-        </div>
-        <div class="field">
-          <label>${t('form_photo')}</label>
-          ${renderPhotoField('pf-image', p.image)}
-        </div>
-        <div class="field">
-          <label class="stock-toggle"><input type="checkbox" id="pf-stock" ${p.stock?'checked':''} style="width:auto;"> ${t('form_in_stock')}</label>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:6px;">
-          <button type="submit" class="submit-btn" style="margin-top:0;">${t('form_save')}</button>
-          <button type="button" class="small-btn" data-close="product" style="padding:0 20px;">${t('form_cancel')}</button>
-        </div>
-      </form>
-    </div>
-  </div>`;
+  const sourceLang = state.productSourceLang || state.lang;
+  const sourceName = p.name[sourceLang] || p.name.en || p.name.fr || p.name.ar || '';
+  const sourceDesc = p.desc[sourceLang] || p.desc.en || p.desc.fr || p.desc.ar || '';
+  return `<div class="overlay" data-close="product"><div class="modal" onclick="event.stopPropagation()" style="max-width:520px;">
+    <button class="modal-close" data-close="product">×</button>
+    <h2>${isNew ? t('form_title_add') : t('form_title_edit')}</h2>
+    <form id="product-form" style="margin-top:16px;">
+      <div class="field"><label>${t('form_source_lang')}</label><select id="pf-source-lang"><option value="en" ${sourceLang==='en'?'selected':''}>English</option><option value="fr" ${sourceLang==='fr'?'selected':''}>Français</option><option value="ar" ${sourceLang==='ar'?'selected':''}>العربية</option></select></div>
+      <div class="field"><label>${t('form_name_one')}</label><input id="pf-name-source" value="${escapeHtml(sourceName)}" required></div>
+      <div class="field"><label>${t('form_desc_one')}</label><textarea id="pf-desc-source">${escapeHtml(sourceDesc)}</textarea></div>
+      <div class="field-row"><div class="field"><label>${t('form_price')}</label><input type="number" id="pf-price" value="${p.price}" min="0" required></div><div class="field"><label>${t('form_category')}</label><select id="pf-category">${CATEGORY_LIST.map(c=>`<option value="${c}" ${p.category===c?'selected':''}>${catLabel(c)}</option>`).join('')}</select></div></div>
+      <div class="field"><label>${t('form_photo')}</label>${renderPhotoField('pf-image', p.image)}</div>
+      <div class="field"><label class="stock-toggle"><input type="checkbox" id="pf-stock" ${p.stock?'checked':''} style="width:auto;"> ${t('form_in_stock')}</label></div>
+      <p class="translation-note">${t('form_translate_note')}</p>
+      <div style="display:flex;gap:10px;margin-top:6px;"><button type="submit" class="submit-btn" style="margin-top:0;">${t('form_save')}</button><button type="button" class="small-btn" data-close="product" style="padding:0 20px;">${t('form_cancel')}</button></div>
+    </form></div></div>`;
 }
 
 /* ============ IMAGE HELPERS ============ */
@@ -1876,6 +1852,17 @@ function setupHeroParallax(){
   update();
 }
 
+async function translateText(text, from, to){
+  if(!text || from===to) return text||'';
+  const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`;
+  const res=await fetch(url);
+  if(!res.ok) throw new Error('translation request failed');
+  const json=await res.json();
+  const translated=json && json.responseData && json.responseData.translatedText;
+  if(!translated) throw new Error('no translation returned');
+  return translated;
+}
+
 /* ============ EVENTS ============ */
 function bindEvents(){
   document.querySelectorAll('[data-lang]').forEach(b=> b.onclick = ()=>{ state.lang=b.dataset.lang; render(); });
@@ -1893,31 +1880,60 @@ function bindEvents(){
     const el = document.getElementById(b.dataset.scroll);
     if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
   });
-  document.querySelectorAll('[data-order]').forEach(b=> b.onclick = ()=>{ state.orderTarget=b.dataset.order; render(); });
+  document.querySelectorAll('[data-order]').forEach(b=> b.onclick = ()=>{ if(state.adminAuthed) return; state.orderTarget=b.dataset.order; render(); });
   document.querySelectorAll('[data-close]').forEach(b=> b.onclick = ()=>{
     const k = b.dataset.close;
     if(k==='order') state.orderTarget=null;
-    if(k==='cart') state.cartOpen=false;
     if(k==='success') state.showSuccess=false;
     if(k==='product') state.editingProduct=null;
     render();
   });
 
-  const orderForm=document.getElementById('order-form');
-  if(orderForm) orderForm.onsubmit=(e)=>{e.preventDefault();const p=state.products.find(x=>x.id===state.orderTarget);if(!p)return;const size=document.getElementById('of-size').value;const qty=Math.max(1,parseInt(document.getElementById('of-qty').value)||1);if(!size){showToast(t('required'));return;}const item={key:cartItemKey(p.id,size),productId:p.id,productName:p.name[state.lang]||p.name.en,price:Number(p.price)||0,size,qty};const existing=state.cart.find(x=>x.key===item.key);if(existing)existing.qty+=qty;else state.cart.push(item);saveCart();state.orderTarget=null;showToast(t('cart_add'));render();};
-  const cartOpenBtn=document.getElementById('cart-open-btn');
-  if(cartOpenBtn)cartOpenBtn.onclick=()=>{state.cartOpen=true;render();};
-  document.querySelectorAll('[data-cart-inc]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.cartInc);if(state.cart[i])state.cart[i].qty+=1;saveCart();render();});
-  document.querySelectorAll('[data-cart-dec]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.cartDec);if(!state.cart[i])return;state.cart[i].qty=Math.max(1,Number(state.cart[i].qty)-1);saveCart();render();});
-  document.querySelectorAll('[data-cart-remove]').forEach(b=>b.onclick=()=>{state.cart.splice(Number(b.dataset.cartRemove),1);saveCart();render();});
-  const clearCartBtn=document.getElementById('cart-clear-btn');
-  if(clearCartBtn)clearCartBtn.onclick=()=>{state.cart=[];saveCart();render();};
-  const wilayaSelect=document.getElementById('checkout-wilaya');
-  if(wilayaSelect)wilayaSelect.onchange=()=>{state.cartDeliveryWilaya=wilayaSelect.value;render();};
-  const checkoutForm=document.getElementById('checkout-form');
-  if(checkoutForm)checkoutForm.onsubmit=async(e)=>{e.preventDefault();if(!state.cart.length)return;const wilayaCode=document.getElementById('checkout-wilaya').value;const name=document.getElementById('checkout-name').value.trim();const phone=document.getElementById('checkout-phone').value.trim();const address=document.getElementById('checkout-address').value.trim();const note=document.getElementById('checkout-note').value.trim();if(!wilayaCode||!name||!phone||!address){showToast(t('required'));return;}const productsTotal=cartProductsTotal();const deliveryFee=deliveryRate(wilayaCode);const total=productsTotal+deliveryFee;const items=state.cart.map(item=>({...item}));const order={id:'o'+Date.now()+Math.random().toString(36).slice(2,7),items,productName:items.length===1?items[0].productName:`${items.length} ${t('order_items')}`,productId:items.length===1?items[0].productId:null,price:items.length===1?items[0].price:productsTotal,size:items.length===1?items[0].size:'',qty:items.length===1?items[0].qty:cartCount(),productsTotal,wilayaCode,wilayaName:wilayaName(wilayaCode),deliveryFee,total,name,phone,address,note,status:'new',createdAt:new Date().toISOString()};try{const{error}=await supabaseClient.from('orders').insert({id:order.id,data:order,created_at:order.createdAt,updated_at:order.createdAt});if(error)throw error;state.orders.unshift(order);state.cart=[];state.cartDeliveryWilaya='';saveCart();state.cartOpen=false;state.showSuccess=true;render();}catch(e){console.error('createOrder error:',e);showToast('Could not send order — please retry.');}};
-  const deliveryForm=document.getElementById('delivery-form');
-  if(deliveryForm)deliveryForm.onsubmit=async(e)=>{e.preventDefault();const deliveryRates={...defaultDeliveryRates()};document.querySelectorAll('[data-delivery-code]').forEach(input=>deliveryRates[input.dataset.deliveryCode]=Math.max(0,Number(input.value)||0));state.settings={...state.settings,deliveryRates};await saveSettings();showToast(t('delivery_saved'));render();};
+  const orderForm = document.getElementById('order-form');
+  if(orderForm) orderForm.onsubmit = async (e)=>{
+    e.preventDefault();
+    const p = state.products.find(x=>x.id===state.orderTarget);
+    if(!p) return;
+    const order = {
+      id: 'o' + Date.now() + Math.random().toString(36).slice(2,7),
+      productId: p.id,
+      productName: p.name[state.lang] || p.name.en,
+      price: p.price,
+      size: document.getElementById('of-size').value,
+      qty: parseInt(document.getElementById('of-qty').value) || 1,
+      name: document.getElementById('of-name').value.trim(),
+      phone: document.getElementById('of-phone').value.trim(),
+      address: document.getElementById('of-address').value.trim(),
+      note: document.getElementById('of-note').value.trim(),
+      status: 'new',
+      createdAt: new Date().toISOString()
+    };
+   if(!order.name || !order.phone || !order.address || !order.size){
+  showToast(t('required'));
+  return;
+}
+try{
+  const { error } = await supabaseClient
+    .from('orders')
+    .insert({
+      id: order.id,
+      data: order,
+      created_at: order.createdAt,
+      updated_at: order.createdAt
+    });
+
+  if(error) throw error;
+
+  state.orders.unshift(order);
+  state.orderTarget = null;
+  state.showSuccess = true;
+  render();
+
+}catch(e){
+  console.error('createOrder error:', e);
+  showToast('Could not send order — please retry.');
+}
+  };
 
  const adminLoginBtn = document.getElementById('admin-login-btn');
 
@@ -1967,7 +1983,7 @@ render();
 }
   
   const logoutBtn = document.getElementById('admin-logout');
-  if(logoutBtn) logoutBtn.onclick = async ()=>{ await supabaseClient.auth.signOut(); state.adminAuthed=false; state.view='shop'; render(); };
+  if(logoutBtn) logoutBtn.onclick = ()=>{ state.adminAuthed=false; state.view='shop'; render(); };
 
   document.querySelectorAll('[data-tab]').forEach(b=> b.onclick = ()=>{ state.adminTab=b.dataset.tab; render(); });
 
@@ -2027,8 +2043,8 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
   }
 });
   const addBtn = document.getElementById('add-product-btn');
-  if(addBtn) addBtn.onclick = ()=>{ state.editingProduct='new'; render(); };
-  document.querySelectorAll('[data-edit]').forEach(b=> b.onclick = ()=>{ state.editingProduct=b.dataset.edit; render(); });
+  if(addBtn) addBtn.onclick = ()=>{ state.editingProduct='new'; state.productSourceLang=state.lang; render(); };
+  document.querySelectorAll('[data-edit]').forEach(b=> b.onclick = ()=>{ state.editingProduct=b.dataset.edit; const p=state.products.find(x=>x.id===b.dataset.edit); state.productSourceLang=(p&&p.sourceLang)||state.lang; render(); });
   document.querySelectorAll('[data-delete]').forEach(b=> b.onclick = async ()=>{
     if(confirm(t('confirm_delete'))){
       state.products = state.products.filter(p=>p.id!==b.dataset.delete);
@@ -2069,39 +2085,113 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
     showToast(state.lang==='ar' ? 'تم الحفظ' : (state.lang==='fr' ? 'Enregistré' : 'Saved'));
   };
 
-  const pf = document.getElementById('product-form');
-  if(pf) pf.onsubmit = async (e)=>{
+  const openCart=document.getElementById('open-cart-btn');
+  if(openCart) openCart.onclick=()=>{ if(state.adminAuthed) return; state.cartOpen=true; state.checkoutOpen=false; render(); };
+  document.querySelectorAll('[data-cart-inc]').forEach(b=>b.onclick=()=>{ const i=+b.dataset.cartInc; state.cart[i].qty++; render(); });
+  document.querySelectorAll('[data-cart-dec]').forEach(b=>b.onclick=()=>{ const i=+b.dataset.cartDec; state.cart[i].qty=Math.max(1,state.cart[i].qty-1); render(); });
+  document.querySelectorAll('[data-cart-remove]').forEach(b=>b.onclick=()=>{ state.cart.splice(+b.dataset.cartRemove,1); render(); });
+  const goCheckout=document.getElementById('go-checkout');
+  if(goCheckout) goCheckout.onclick=()=>{ if(state.adminAuthed) return; state.checkoutOpen=true; render(); };
+  const addCart=document.getElementById('add-cart-form');
+  if(addCart) addCart.onsubmit=(e)=>{
     e.preventDefault();
-    const nameEn = document.getElementById('pf-name-en').value.trim();
-    const nameFr = document.getElementById('pf-name-fr').value.trim();
-    const nameAr = document.getElementById('pf-name-ar').value.trim();
-    const price = parseFloat(document.getElementById('pf-price').value);
-    if(!nameEn || !nameFr || !nameAr || isNaN(price)){ showToast(t('required')); return; }
-    const data = {
-      category: document.getElementById('pf-category').value,
-      price: price,
-      image: document.getElementById('pf-image').value.trim(),
-      stock: document.getElementById('pf-stock').checked,
-      name: { en:nameEn, fr:nameFr, ar:nameAr },
-      desc: {
-        en: document.getElementById('pf-desc-en').value.trim(),
-        fr: document.getElementById('pf-desc-fr').value.trim(),
-        ar: document.getElementById('pf-desc-ar').value.trim()
-      }
+    if(state.adminAuthed) return;
+    const p=state.products.find(x=>x.id===state.orderTarget); if(!p||!p.stock) return;
+    const size=document.getElementById('cf-size').value; const qty=Math.max(1,parseInt(document.getElementById('cf-qty').value)||1);
+    if(!size){ showToast(t('required_size')); return; }
+    const existing=state.cart.find(x=>x.productId===p.id && x.size===size);
+    if(existing) existing.qty+=qty; else state.cart.push({productId:p.id,productName:p.name, name:p.name, desc:p.desc, price:Number(p.price)||0, image:p.image, size, qty});
+    state.orderTarget=null; state.cartOpen=true; state.checkoutOpen=false; render(); showToast(t('cart_added'));
+  };
+
+  document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{ state.adminTab=b.dataset.tab; render(); });
+  const deliveryForm=document.getElementById('delivery-form');
+  if(deliveryForm) deliveryForm.onsubmit=async(e)=>{
+    e.preventDefault(); const d=normalizeDelivery(state.settings.delivery);
+    d.defaultHome=Math.max(0,Number(document.getElementById('dd-home').value)||0); d.defaultOffice=Math.max(0,Number(document.getElementById('dd-office').value)||0);
+    WILAYAS.forEach(([code])=>{ d.home[code]=Math.max(0,Number(document.querySelector(`[data-delivery-home="${code}"]`).value)||0); d.office[code]=Math.max(0,Number(document.querySelector(`[data-delivery-office="${code}"]`).value)||0); });
+    state.settings=Object.assign({},state.settings,{delivery:d}); await saveSettings(); showToast(t('delivery_saved'));
+  };
+
+  const deliverySelect=document.getElementById('co-delivery');
+  const wilayaSelect=document.getElementById('co-wilaya');
+  const updateCheckoutTotals=()=>{
+    const type=deliverySelect?deliverySelect.value:'home'; const code=wilayaSelect?wilayaSelect.value:''; const fee=deliveryPrice(type,code); const sub=cartSubtotal();
+    const f=document.getElementById('co-delivery-fee'), g=document.getElementById('co-grand-total');
+    if(f) f.textContent=`${fmtPrice(fee)} ${t('price_da')}`; if(g) g.textContent=`${fmtPrice(sub+fee)} ${t('price_da')}`;
+  };
+  const addressInput=document.getElementById('co-address');
+  const addressLabel=document.getElementById('co-address-label');
+  const updateAddressRequirement=()=>{
+    const home=deliverySelect ? deliverySelect.value==='home' : true;
+    if(addressInput) addressInput.required=home;
+    if(addressLabel) addressLabel.textContent = home ? `${t('address_optional').replace('optional','').replace('facultative','').replace('اختياري','').trim()} *` : t('address_optional');
+  };
+  if(deliverySelect) deliverySelect.onchange=()=>{ updateCheckoutTotals(); updateAddressRequirement(); };
+  if(wilayaSelect) wilayaSelect.onchange=updateCheckoutTotals;
+  updateAddressRequirement();
+
+  const checkoutForm=document.getElementById('checkout-form');
+  if(checkoutForm) checkoutForm.onsubmit=async(e)=>{
+    e.preventDefault();
+    if(state.adminAuthed) return;
+    const name=document.getElementById('co-name').value.trim();
+    const phone=document.getElementById('co-phone').value.replace(/\s+/g,'').trim();
+    const deliveryType=document.getElementById('co-delivery').value;
+    const wilaya=document.getElementById('co-wilaya').value;
+    const address=document.getElementById('co-address').value.trim();
+    const note=document.getElementById('co-note').value.trim();
+    if(!name || !phone || !phoneIsValid(phone)){ showToast(t('phone_invalid')); return; }
+    if(!wilaya){ showToast(t('required')); return; }
+    if(deliveryType==='home' && !address){ showToast(t('required')); return; }
+    if(!state.cart.length){ showToast(t('cart_empty')); return; }
+    const subtotal=cartSubtotal(); const delivery=deliveryPrice(deliveryType,wilaya); const total=subtotal+delivery;
+    const order={
+      id:'o'+Date.now()+Math.random().toString(36).slice(2,7),
+      items:state.cart.map(x=>({productId:x.productId,productName:x.name,price:x.price,size:x.size,qty:x.qty,image:x.image})),
+      productName:state.cart.length===1?(state.cart[0].name[state.lang]||state.cart[0].name.en):`${state.cart.length} ${t('cart_items')}`,
+      price:subtotal, qty:1, subtotal, deliveryType, deliveryFee:delivery, total,
+      wilayaCode:wilaya, wilayaName:(WILAYAS.find(x=>x[0]===wilaya)||[])[1]||'',
+      name, phone, address, note, status:'new', createdAt:new Date().toISOString()
     };
-    if(state.editingProduct === 'new'){
-      data.id = 'p' + Date.now();
-      state.products.push(data);
-    } else {
-      const idx = state.products.findIndex(p=>p.id===state.editingProduct);
-      if(idx>-1) state.products[idx] = {...state.products[idx], ...data};
-    }
-    await saveProducts();
-    state.editingProduct = null;
+    try{
+      const {error}=await supabaseClient.from('orders').insert({id:order.id,data:order,created_at:order.createdAt,updated_at:order.createdAt});
+      if(error) throw error;
+      state.orders.unshift(order); state.cart=[]; state.cartOpen=false; state.checkoutOpen=false; state.showSuccess=true; render();
+    }catch(err){ console.error('checkout error',err); showToast('Could not place order — please retry.'); }
+  };
+
+  document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.close;
+    if(k==='order') state.orderTarget=null;
+    if(k==='cart') {state.cartOpen=false; state.checkoutOpen=false;}
+    if(k==='checkout') state.checkoutOpen=false;
+    if(k==='success') state.showSuccess=false;
+    if(k==='product') state.editingProduct=null;
     render();
-    showToast(state.lang==='ar' ? 'تم الحفظ' : (state.lang==='fr' ? 'Enregistré' : 'Saved'));
+  });
+
+  const pf=document.getElementById('product-form');
+  const sourceSel=document.getElementById('pf-source-lang');
+  if(sourceSel) sourceSel.onchange=()=>{ state.productSourceLang=sourceSel.value; render(); };
+  if(pf) pf.onsubmit=async(e)=>{
+    e.preventDefault();
+    const source=document.getElementById('pf-source-lang').value;
+    const sourceName=document.getElementById('pf-name-source').value.trim();
+    const sourceDesc=document.getElementById('pf-desc-source').value.trim();
+    const price=parseFloat(document.getElementById('pf-price').value);
+    if(!sourceName || isNaN(price)){ showToast(t('required')); return; }
+    const name={en:'',fr:'',ar:''}, desc={en:'',fr:'',ar:''}; name[source]=sourceName; desc[source]=sourceDesc;
+    const other=['en','fr','ar'].filter(x=>x!==source);
+    try{
+      for(const to of other){ name[to]=await translateText(sourceName,source,to); if(sourceDesc) desc[to]=await translateText(sourceDesc,source,to); }
+    }catch(err){ console.error('translation error',err); showToast(t('translation_failed')); return; }
+    const data={category:document.getElementById('pf-category').value,price,image:document.getElementById('pf-image').value.trim(),stock:document.getElementById('pf-stock').checked,name,desc,sourceLang:source};
+    if(state.editingProduct==='new'){ data.id='p'+Date.now(); state.products.push(data); } else { const idx=state.products.findIndex(p=>p.id===state.editingProduct); if(idx>-1) state.products[idx]={...state.products[idx],...data}; }
+    await saveProducts(); state.editingProduct=null; state.productSourceLang=null; render(); showToast(state.lang==='ar'?'تم الحفظ':(state.lang==='fr'?'Enregistré':'Saved'));
   };
 }
+
 
 loadData();
 </script>
