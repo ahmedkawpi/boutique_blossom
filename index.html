@@ -1465,36 +1465,73 @@ function renderOrdersTab(sortedOrders){
       <div>${t('orders_empty')}</div>
     </div>`;
   }
-  return sortedOrders.map(o => `
-    <div class="order-row status-${o.status}">
-      <div>
-        <div class="order-id">#${o.id.slice(-6).toUpperCase()} · ${fmtDate(o.createdAt)}</div>
-        <div class="order-title">${escapeHtml(o.productName)} <span style="font-weight:400;color:var(--plum-soft);">&times; ${o.qty}</span></div>
-        <div class="order-detail">
-          <b>${t('order_field_name')}:</b> ${escapeHtml(o.name)} &nbsp;·&nbsp;
-          <b>${t('order_field_phone')}:</b> ${escapeHtml(o.phone)}<br>
-          <b>${t('order_field_address')}:</b> ${escapeHtml(o.address)} &nbsp;·&nbsp;
-          <b>${t('order_field_size')}:</b> ${escapeHtml(o.size || '—')}
-          ${o.note ? `<br><b>${t('order_field_note')}:</b> ${escapeHtml(o.note)}` : ''}
+ return sortedOrders.map(o => `
+  <div class="order-row status-${o.status}">
+
+    <div class="order-main">
+
+      <div class="order-top">
+        <div class="order-id">
+          #${o.id.slice(-6).toUpperCase()} · ${fmtDate(o.createdAt)}
         </div>
-      </div>
-      <div class="order-actions">
+
         <span class="order-status-pill ${o.status}">
-  ${o.status==='done'?t('status_done'):t('status_new')}
-</span>
-
-<div class="order-action-buttons">
-  <button class="small-btn" data-toggle-order="${o.id}">
-    ${o.status==='done'?t('mark_new'):t('mark_done')}
-  </button>
-
-  <button class="small-btn danger-btn" data-delete-order="${o.id}">
-    ${t('del')}
-  </button>
-</div>
+          ${o.status==='done' ? t('status_done') : t('status_new')}
+        </span>
       </div>
+
+      <div class="order-title">
+        ${escapeHtml(o.productName)}
+        <span class="order-qty">&times; ${o.qty}</span>
+      </div>
+
+      <div class="order-info-grid">
+
+        <div class="order-info-item">
+          <span>${t('order_field_name')}</span>
+          <b>${escapeHtml(o.name)}</b>
+        </div>
+
+        <div class="order-info-item">
+          <span>${t('order_field_phone')}</span>
+          <b>${escapeHtml(o.phone)}</b>
+        </div>
+
+        <div class="order-info-item">
+          <span>${t('order_field_address')}</span>
+          <b>${escapeHtml(o.address)}</b>
+        </div>
+
+        <div class="order-info-item">
+          <span>${t('order_field_size')}</span>
+          <b>${escapeHtml(o.size || '—')}</b>
+        </div>
+
+        ${o.note ? `
+          <div class="order-info-item order-note">
+            <span>${t('order_field_note')}</span>
+            <b>${escapeHtml(o.note)}</b>
+          </div>
+        ` : ''}
+
+      </div>
+
     </div>
-  `).join('');
+
+    <div class="order-actions">
+
+      <button class="small-btn" data-toggle-order="${o.id}">
+        ${o.status==='done' ? t('mark_new') : t('mark_done')}
+      </button>
+
+      <button class="small-btn danger-btn" data-delete-order="${o.id}">
+        ${t('del')}
+      </button>
+
+    </div>
+
+  </div>
+`).join('');
 }
 
 function renderProductsTab(){
