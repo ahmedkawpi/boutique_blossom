@@ -1922,10 +1922,37 @@ render();
   document.querySelectorAll('[data-tab]').forEach(b=> b.onclick = ()=>{ state.adminTab=b.dataset.tab; render(); });
 
   document.querySelectorAll('[data-toggle-order]').forEach(b=> b.onclick = async ()=>{
-    const id = b.dataset.toggleOrder;
-    const o = state.orders.find(x=>x.id===id);
-    if(o){ o.status = o.status==='done' ? 'new' : 'done'; await saveOrders(); render(); }
-  });
+  const id = b.dataset.toggleOrder;
+  const o = state.orders.find(x=>x.id===id);
+
+  if(!o) return;
+
+  const newStatus = o.status === 'done' ? 'new' : 'done';
+
+  try{
+    const updatedData = {
+      ...o,
+      status: newStatus
+    };
+
+    const { error } = await supabaseClient
+      .from('orders')
+      .update({
+        data: updatedData,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id);
+
+    if(error) throw error;
+
+    o.status = newStatus;
+    render();
+
+  }catch(e){
+    console.error('updateOrderStatus error:', e);
+    showToast('Could not update order — please retry.');
+  }
+});
 document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async ()=>{
   const id = b.dataset.deleteOrder;
 
