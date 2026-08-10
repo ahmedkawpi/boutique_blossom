@@ -1601,16 +1601,37 @@ function bindEvents(){
     render();
   };
 
-  const adminLoginBtn = document.getElementById('admin-login-btn');
-  if(adminLoginBtn){
-    const doLogin = ()=>{
-      const val = document.getElementById('admin-pass').value;
-      if(val === ADMIN_PASSWORD){ state.adminAuthed = true; refreshOrders(); render(); }
-      else { document.getElementById('admin-err').style.display='block'; }
+ const adminLoginBtn = document.getElementById('admin-login-btn');
+
+if(adminLoginBtn){
+  const doLogin = async ()=>{
+    const email = document.getElementById('admin-email').value.trim();
+    const password = document.getElementById('admin-pass').value;
+
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if(error){
+      document.getElementById('admin-err').style.display = 'block';
+      return;
+    }
+
+    state.adminAuthed = true;
+    refreshOrders();
+    render();
+  };
+
+  adminLoginBtn.onclick = doLogin;
+
+  const passInput = document.getElementById('admin-pass');
+  if(passInput){
+    passInput.onkeydown = (e)=>{
+      if(e.key === 'Enter') doLogin();
     };
-    adminLoginBtn.onclick = doLogin;
-    const passInput = document.getElementById('admin-pass');
-    if(passInput) passInput.onkeydown = (e)=>{ if(e.key==='Enter') doLogin(); };
+  }
+}
   }
   const logoutBtn = document.getElementById('admin-logout');
   if(logoutBtn) logoutBtn.onclick = ()=>{ state.adminAuthed=false; state.view='shop'; render(); };
