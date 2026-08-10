@@ -1679,7 +1679,10 @@ function bindEvents(){
       status: 'new',
       createdAt: new Date().toISOString()
     };
-    if(!order.name || !order.phone || !order.address){ showToast(t('required')); return; }
+   if(!order.name || !order.phone || !order.address || !order.size){
+  showToast(t('required'));
+  return;
+}
 try{
   const { error } = await supabaseClient
     .from('orders')
