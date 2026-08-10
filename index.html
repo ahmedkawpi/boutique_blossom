@@ -1680,15 +1680,27 @@ function bindEvents(){
       createdAt: new Date().toISOString()
     };
     if(!order.name || !order.phone || !order.address){ showToast(t('required')); return; }
-    try{
-      const r = await window.storage.get(STORAGE_ORDERS_KEY, true);
-      state.orders = r && r.value ? JSON.parse(r.value) : [];
-    }catch(e){}
-    state.orders.unshift(order);
-    await saveOrders();
-    state.orderTarget = null;
-    state.showSuccess = true;
-    render();
+try{
+  const { error } = await supabaseClient
+    .from('orders')
+    .insert({
+      id: order.id,
+      data: order,
+      created_at: order.createdAt,
+      updated_at: order.createdAt
+    });
+
+  if(error) throw error;
+
+  state.orders.unshift(order);
+  state.orderTarget = null;
+  state.showSuccess = true;
+  render();
+
+}catch(e){
+  console.error('createOrder error:', e);
+  showToast('Could not send order — please retry.');
+}
   };
 
  const adminLoginBtn = document.getElementById('admin-login-btn');
