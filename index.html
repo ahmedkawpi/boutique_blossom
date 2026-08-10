@@ -860,12 +860,22 @@ async function loadData(){
     state.orders = [];
   }
   try{
-    const r3 = await window.storage.get(STORAGE_SETTINGS_KEY, true);
-    state.settings = r3 && r3.value ? Object.assign(defaultSettings(), JSON.parse(r3.value)) : defaultSettings();
-    if(!r3 || !r3.value){ await window.storage.set(STORAGE_SETTINGS_KEY, JSON.stringify(state.settings), true); }
-  }catch(e){
-    state.settings = defaultSettings();
-  }
+  const { data, error } = await supabaseClient
+    .from('store_settings')
+    .select('data')
+    .eq('id', 1)
+    .maybeSingle();
+
+  if(error) throw error;
+
+  state.settings = data && data.data
+    ? Object.assign(defaultSettings(), data.data)
+    : defaultSettings();
+
+}catch(e){
+  console.error('loadSettings error:', e);
+  state.settings = defaultSettings();
+}
   state.loaded = true;
   render();
   requestAnimationFrame(setupHeroParallax);
