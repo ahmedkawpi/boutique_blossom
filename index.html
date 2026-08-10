@@ -1197,11 +1197,16 @@ function renderAdminLogin(){
     <div class="brand-mark">Blossom</div>
     <h2>${t('admin_login_title')}</h2>
     <p>${t('admin_login_sub')}</p>
-    <div class="field" style="text-align:${t('dir')==='rtl'?'right':'left'}">
-      <input type="password" id="admin-pass" placeholder="${t('admin_login_ph')}">
-    </div>
-    <button class="submit-btn" id="admin-login-btn">${t('admin_login_btn')}</button>
-    <div class="err-msg" id="admin-err">${t('admin_login_err')}</div>
+<div class="field" style="text-align:${t('dir')==='rtl'?'right':'left'}">
+  <input type="email" id="admin-email" placeholder="Admin email" autocomplete="username">
+</div>
+
+<div class="field" style="text-align:${t('dir')==='rtl'?'right':'left'}">
+  <input type="password" id="admin-pass" placeholder="${t('admin_login_ph')}" autocomplete="current-password">
+</div>
+
+<button class="submit-btn" id="admin-login-btn">${t('admin_login_btn')}</button>
+<div class="err-msg" id="admin-err">Incorrect email or password.</div>
   </div>`;
 }
 
