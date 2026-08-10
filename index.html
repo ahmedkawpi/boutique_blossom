@@ -853,7 +853,28 @@ async function loadData(){
   requestAnimationFrame(setupHeroParallax);
 }
 async function saveProducts(){
-  try{ await window.storage.set(STORAGE_PRODUCTS_KEY, JSON.stringify(state.products), true); }catch(e){ showToast('Could not save — please retry.'); }
+  try{
+    const { error } = await supabaseClient
+      .from('products')
+      .upsert(
+        state.products.map(p => ({
+          id: p.id,
+          name: p.name,
+          category: p.category,
+          price: p.price,
+          old_price: p.oldPrice ?? null,
+          image: p.image,
+          description: p.desc,
+          updated_at: new Date().toISOString()
+        })),
+        { onConflict: 'id' }
+      );
+
+    if(error) throw error;
+  }catch(e){
+    console.error('saveProducts error:', e);
+    showToast('Could not save — please retry.');
+  }
 }
 async function saveOrders(){
   try{ await window.storage.set(STORAGE_ORDERS_KEY, JSON.stringify(state.orders), true); }catch(e){ showToast('Could not save — please retry.'); }
