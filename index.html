@@ -905,7 +905,23 @@ async function saveProducts(){
   }
 }
 async function saveOrders(){
-  try{ await window.storage.set(STORAGE_ORDERS_KEY, JSON.stringify(state.orders), true); }catch(e){ showToast('Could not save — please retry.'); }
+  try{
+    const rows = state.orders.map(o => ({
+      id: o.id,
+      data: o,
+      created_at: o.createdAt || new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }));
+
+    const { error } = await supabaseClient
+      .from('orders')
+      .upsert(rows, { onConflict: 'id' });
+
+    if(error) throw error;
+  }catch(e){
+    console.error('saveOrders error:', e);
+    showToast('Could not save — please retry.');
+  }
 }
 async function saveSettings(){
   try{
