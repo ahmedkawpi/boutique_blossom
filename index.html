@@ -1440,7 +1440,13 @@ const doneOrders = sortedOrders.filter(o => o.status === 'done');
       <button class="tab-btn ${state.adminTab==='products'?'active':''}" data-tab="products">${t('tab_products')}</button>
       <button class="tab-btn ${state.adminTab==='design'?'active':''}" data-tab="design">${t('tab_design')}</button>
     </div>
-    ${state.adminTab==='orders' ? renderOrdersTab(sortedOrders) : (state.adminTab==='products' ? renderProductsTab() : renderDesignTab())}
+    ${state.adminTab==='orders' ? `
+  <div class="orders-section-title">🆕 New Orders</div>
+  ${renderOrdersTab(newOrders)}
+
+  <div class="orders-section-title done-orders-title">✅ Done Orders</div>
+  ${renderOrdersTab(doneOrders)}
+` : (state.adminTab==='products' ? renderProductsTab() : renderDesignTab())}
   </div>`;
 }
 
