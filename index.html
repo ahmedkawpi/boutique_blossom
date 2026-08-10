@@ -828,12 +828,30 @@ function fmtDate(iso){
 /* ============ STORAGE ============ */
 async function loadData(){
   try{
-    const r = await window.storage.get(STORAGE_PRODUCTS_KEY, true);
-    state.products = r && r.value ? JSON.parse(r.value) : defaultProducts();
-    if(!r || !r.value){ await window.storage.set(STORAGE_PRODUCTS_KEY, JSON.stringify(state.products), true); }
+    const { data, error } = await supabaseClient
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if(error) throw error;
+
+    if(data && data.length){
+      state.products = data.map(p => ({
+        id: p.id,
+        category: p.category,
+        price: p.price,
+        oldPrice: p.old_price ?? undefined,
+        stock: true,
+        image: p.image,
+        name: p.name,
+        desc: p.description
+      }));
+    }else{
+      state.products = defaultProducts();
+    }
   }catch(e){
+    console.error('loadProducts error:', e);
     state.products = defaultProducts();
-    try{ await window.storage.set(STORAGE_PRODUCTS_KEY, JSON.stringify(state.products), true); }catch(e2){}
   }
   try{
     const r2 = await window.storage.get(STORAGE_ORDERS_KEY, true);
