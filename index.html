@@ -1608,19 +1608,34 @@ if(adminLoginBtn){
     const email = document.getElementById('admin-email').value.trim();
     const password = document.getElementById('admin-pass').value;
 
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
+const { data: authData, error } = await supabaseClient.auth.signInWithPassword({
+  email,
+  password
+});
 
-    if(error){
-      document.getElementById('admin-err').style.display = 'block';
-      return;
-    }
+if(error){
+  document.getElementById('admin-err').textContent = 'Incorrect email or password.';
+  document.getElementById('admin-err').style.display = 'block';
+  return;
+}
 
-    state.adminAuthed = true;
-    refreshOrders();
-    render();
+const { data: adminData, error: adminError } = await supabaseClient
+  .from('admin_users')
+  .select('user_id')
+  .eq('user_id', authData.user.id)
+  .maybeSingle();
+
+if(adminError || !adminData){
+  await supabaseClient.auth.signOut();
+  state.adminAuthed = false;
+  document.getElementById('admin-err').textContent = 'This account is not authorized as admin.';
+  document.getElementById('admin-err').style.display = 'block';
+  return;
+}
+
+state.adminAuthed = true;
+refreshOrders();
+render();
   };
 
   adminLoginBtn.onclick = doLogin;
