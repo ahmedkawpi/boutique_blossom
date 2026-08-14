@@ -24,17 +24,17 @@
 
     console.log('Supabase connected');
 
-    async function testProducts() {
-      const { data, error } = await supabaseClient
-        .from('products')
-        .select('*')
-        .limit(5);
+    async function testProductImages() {
+  const { data, error } = await supabaseClient
+    .from('product_images')
+    .select('*')
+    .eq('product_id', 'p1');
 
-      console.log('PRODUCT IMAGE:', data[0].image);
-      console.log('Error:', error);
-    }
+  console.log('PRODUCT IMAGES:', data);
+  console.log('IMAGES ERROR:', error);
+}
 
-    testProducts();
+testProductImages();
   </script>
 
 </body>
