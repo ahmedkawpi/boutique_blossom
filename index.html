@@ -471,6 +471,7 @@ a{color:inherit;text-decoration:none;}
 .stat-card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:16px 18px;}
 .stat-card .num{font-size:26px;font-weight:700;color:var(--pink-deep);font-family:var(--font-display);}
 .stat-card .lbl{font-size:12px;color:var(--plum-soft);font-weight:600;margin-top:2px;}
+.tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;margin-inline-start:5px;border-radius:999px;background:#f6e8ef;color:#9b5575;font-size:11px;font-weight:800;}
 .tabs{display:flex;gap:8px;margin-bottom:20px;border-bottom:1.5px solid var(--line);}
 .tab-btn{background:none;border:none;padding:10px 18px;font-weight:600;font-size:14px;color:var(--plum-soft);
   border-bottom:2.5px solid transparent;margin-bottom:-1.5px;}
@@ -876,7 +877,7 @@ const i18n = {
     admin_login_ph:'Password', admin_login_btn:'Log in', admin_login_err:'Incorrect password, try again.',
     admin_title:'Store admin', admin_logout:'Log out',
     stat_orders:'Total orders', stat_new:'New orders', stat_products:'Products live',
-    tab_orders:'Orders', tab_products:'Products', tab_design:'Design',
+    tab_orders:'Orders', tab_done_orders:'Done Orders', tab_products:'Products', tab_design:'Design',
     design_title:'Site photos', design_sub:'Adjust the large photos shown across your website — no code needed.',
     design_hero:'Homepage hero photo', design_hero_hint:'The big full-width photo behind your homepage headline.',
     design_look1:'Lookbook photo 1 (large)', design_look2:'Lookbook photo 2', design_look3:'Lookbook photo 3',
@@ -920,7 +921,7 @@ const i18n = {
     admin_login_ph:'Mot de passe', admin_login_btn:'Connexion', admin_login_err:'Mot de passe incorrect, réessayez.',
     admin_title:'Espace admin', admin_logout:'Déconnexion',
     stat_orders:'Commandes totales', stat_new:'Nouvelles commandes', stat_products:'Produits en ligne',
-    tab_orders:'Commandes', tab_products:'Produits', tab_design:'Design',
+    tab_orders:'Commandes', tab_done_orders:'Commandes terminées', tab_products:'Produits', tab_design:'Design',
     design_title:'Photos du site', design_sub:'Ajustez les grandes photos affichées sur votre site — aucun code requis.',
     design_hero:'Photo principale (accueil)', design_hero_hint:"La grande photo pleine largeur derrière le titre de l'accueil.",
     design_look1:'Photo lookbook 1 (grande)', design_look2:'Photo lookbook 2', design_look3:'Photo lookbook 3',
@@ -964,7 +965,7 @@ const i18n = {
     admin_login_ph:'كلمة المرور', admin_login_btn:'دخول', admin_login_err:'كلمة مرور غير صحيحة، حاولي مجددًا.',
     admin_title:'إدارة المتجر', admin_logout:'تسجيل الخروج',
     stat_orders:'إجمالي الطلبات', stat_new:'طلبات جديدة', stat_products:'منتجات معروضة',
-    tab_orders:'الطلبات', tab_products:'المنتجات', tab_design:'التصميم',
+    tab_orders:'الطلبات', tab_done_orders:'الطلبات المكتملة', tab_products:'المنتجات', tab_design:'التصميم',
     design_title:'صور الموقع', design_sub:'اضبطي الصور الكبيرة الظاهرة في موقعك — بدون أي برمجة.',
     design_hero:'صورة الصفحة الرئيسية', design_hero_hint:'الصورة الكبيرة خلف عنوان الصفحة الرئيسية.',
     design_look1:'صورة اللوك بوك 1 (كبيرة)', design_look2:'صورة اللوك بوك 2', design_look3:'صورة اللوك بوك 3',
@@ -1477,7 +1478,7 @@ function productThumb(p, opts){
   opts = opts || {};
   const colors = THUMB_COLORS[p.category] || THUMB_COLORS.dresses;
   const src = p.image || CATEGORY_IMAGES[p.category] || '';
-  const hint = `<div class="quick-order">${state.lang==='ar'?'عرض المنتج':(state.lang==='fr'?'Voir le produit':'View product')}</div>`;
+  const hint = '';
   if(src){
     return `<div class="thumb product-clickable" style="--tc1:${colors[0]};--tc2:${colors[1]}"><img src="${escapeHtml(src)}" alt="${escapeHtml(p.name[state.lang]||p.name.en)}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('img-broken');">${hint}</div>`;
   }
@@ -1594,17 +1595,19 @@ const doneOrders = sortedOrders.filter(o => o.status === 'done');
       <div class="stat-card"><div class="num">${state.products.filter(p=>!p.stock).length}</div><div class="lbl">Out of stock</div></div>
     </div>
     <div class="tabs">
-      <button class="tab-btn ${state.adminTab==='orders'?'active':''}" data-tab="orders">${t('tab_orders')}</button>
+      <button class="tab-btn ${state.adminTab==='orders'?'active':''}" data-tab="orders">${t('tab_orders')} <span class="tab-count">${newOrders.length}</span></button>
+      <button class="tab-btn ${state.adminTab==='done'?'active':''}" data-tab="done">${t('tab_done_orders')} <span class="tab-count">${doneOrders.length}</span></button>
       <button class="tab-btn ${state.adminTab==='products'?'active':''}" data-tab="products">${t('tab_products')}</button>
       <button class="tab-btn ${state.adminTab==='delivery'?'active':''}" data-tab="delivery">${t('tab_delivery')}</button>
       <button class="tab-btn ${state.adminTab==='design'?'active':''}" data-tab="design">${t('tab_design')}</button>
     </div>
     ${state.adminTab==='orders' ? `
-  <div class="orders-section-title">🆕 New Orders</div>
-  ${renderOrdersTab(newOrders)}
-  <div class="orders-section-title done-orders-title">✅ Done Orders</div>
-  ${renderOrdersTab(doneOrders)}
-` : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : renderDesignTab()))}
+      <div class="orders-section-title">🆕 ${t('tab_orders')}</div>
+      ${renderOrdersTab(newOrders, false)}
+    ` : state.adminTab==='done' ? `
+      <div class="orders-section-title done-orders-title">✅ ${t('tab_done_orders')}</div>
+      ${renderOrdersTab(doneOrders, true)}
+    ` : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : renderDesignTab()))}
   </div>`;
 }
 
@@ -1637,7 +1640,7 @@ function renderDesignTab(){
   </form>`;
 }
 
-function renderOrdersTab(sortedOrders){
+function renderOrdersTab(sortedOrders, isDone=false){
   if(sortedOrders.length===0){
     return `<div class="empty-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 7h16l-1.5 12a2 2 0 01-2 1.8H7.5A2 2 0 015.5 19L4 7z"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><div>${t('orders_empty')}</div></div>`;
   }
