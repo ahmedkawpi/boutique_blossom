@@ -7,15 +7,423 @@
   <title>Boutique Blossom</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: #fffafc;
+      color: #2b2226;
+      font-family: Arial, sans-serif;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .page {
+      max-width: 1150px;
+      margin: auto;
+      padding: 24px 18px 60px;
+    }
+
+    /* ================= HEADER ================= */
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 800;
+      color: #9b5575;
+    }
+
+    .brand-small {
+      font-size: 12px;
+      color: #a98b98;
+      margin-top: 3px;
+    }
+
+    /* ================= PRODUCT ================= */
+
+    .product-section {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 42px;
+      align-items: start;
+    }
+
+    /* Images */
+
+    .gallery {
+      position: sticky;
+      top: 18px;
+    }
+
+    .main-image-wrap {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      background: #f3e9ee;
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 12px 35px rgba(100, 50, 75, 0.08);
+    }
+
+    .main-image {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .thumbnails {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .thumbnail {
+      flex: 0 0 72px;
+      width: 72px;
+      height: 88px;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 0;
+      overflow: hidden;
+      background: #f3e9ee;
+    }
+
+    .thumbnail.active {
+      border-color: #a45f7d;
+    }
+
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Product info */
+
+    .product-info {
+      padding-top: 8px;
+    }
+
+    .category {
+      display: inline-block;
+      font-size: 13px;
+      color: #a15e7c;
+      background: #f6e8ef;
+      padding: 7px 12px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+
+    .product-name {
+      font-size: clamp(28px, 5vw, 46px);
+      line-height: 1.15;
+      margin: 0 0 14px;
+      color: #30252a;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .price {
+      font-size: 27px;
+      font-weight: 800;
+      color: #9b5575;
+    }
+
+    .old-price {
+      font-size: 17px;
+      color: #a99ca2;
+      text-decoration: line-through;
+    }
+
+    .description {
+      font-size: 16px;
+      line-height: 1.9;
+      color: #65575d;
+      margin-bottom: 24px;
+      white-space: pre-line;
+    }
+
+    .divider {
+      height: 1px;
+      background: #eadde3;
+      margin: 22px 0;
+    }
+
+    /* ================= ORDER ================= */
+
+    .order-box {
+      background: white;
+      border: 1px solid #eadde3;
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(100, 50, 75, 0.05);
+    }
+
+    .order-title {
+      margin: 0 0 5px;
+      font-size: 22px;
+    }
+
+    .order-subtitle {
+      margin: 0 0 20px;
+      color: #8b7c83;
+      font-size: 14px;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid #ddd0d7;
+      border-radius: 11px;
+      padding: 13px 14px;
+      background: #fff;
+      color: #30252a;
+      outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: #b36b8a;
+      box-shadow: 0 0 0 3px rgba(179, 107, 138, 0.10);
+    }
+
+    .field textarea {
+      min-height: 85px;
+      resize: vertical;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .delivery-summary {
+      background: #fff7fa;
+      border-radius: 13px;
+      padding: 14px;
+      margin: 16px 0;
+      border: 1px solid #f0dce5;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #66575e;
+    }
+
+    .summary-line:last-child {
+      margin-bottom: 0;
+    }
+
+    .summary-total {
+      font-size: 18px;
+      font-weight: 800;
+      color: #9b5575;
+      border-top: 1px solid #eadde3;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      border: 0;
+      border-radius: 13px;
+      padding: 16px;
+      background: #9b5575;
+      color: white;
+      font-size: 17px;
+      font-weight: 800;
+      transition: 0.2s;
+    }
+
+    .submit-btn:hover {
+      background: #874765;
+      transform: translateY(-1px);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ================= STATES ================= */
+
+    .loading,
+    .error-box,
+    .success-box {
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .message-card {
+      max-width: 500px;
+      width: 100%;
+      background: white;
+      border-radius: 22px;
+      padding: 35px 25px;
+      box-shadow: 0 15px 40px rgba(80, 40, 60, 0.08);
+    }
+
+    .message-card h2 {
+      margin-top: 0;
+    }
+
+    .success-icon {
+      font-size: 50px;
+      margin-bottom: 10px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 12px 20px;
+      background: #9b5575;
+      color: white;
+      text-decoration: none;
+      border-radius: 11px;
+    }
+
+    /* ================= RESPONSIVE ================= */
+
+    @media (max-width: 800px) {
+      .page {
+        padding: 15px 13px 45px;
+      }
+
+      .product-section {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+
+      .gallery {
+        position: static;
+      }
+
+      .product-info {
+        padding-top: 0;
+      }
+
+      .main-image-wrap {
+        border-radius: 17px;
+      }
+
+      .product-name {
+        font-size: 32px;
+      }
+
+      .order-box {
+        padding: 17px;
+        border-radius: 17px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .top-bar {
+        margin-bottom: 17px;
+      }
+
+      .brand {
+        font-size: 21px;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .thumbnail {
+        flex-basis: 64px;
+        width: 64px;
+        height: 78px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
- <h1 id="product-name">جاري تحميل المنتج...</h1>
+  <div class="page">
+
+    <header class="top-bar">
+      <div>
+        <div class="brand">Blossom</div>
+        <div class="brand-small">Boutique Blossom</div>
+      </div>
+    </header>
+
+    <main id="app">
+      <div class="loading">
+        <div class="message-card">
+          جاري تحميل المنتج...
+        </div>
+      </div>
+    </main>
+
+  </div>
 
   <script>
+    /* =========================================================
+       SUPABASE
+    ========================================================= */
+
     const SUPABASE_URL = 'https://wvhflttbfjmpbietdesz.supabase.co';
-    const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_1WtyyuxzYgJIDqZKGKmMsg_K9nT0oeI';
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      'sb_publishable_1WtyyuxzYgJIDqZKGKmMsg_K9nT0oeI';
 
     const supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
@@ -24,27 +432,1405 @@
 
     console.log('Supabase connected');
 
-async function loadProduct() {
-  const { data, error } = await supabaseClient
-    .from('products')
-    .select('*')
-    .eq('id', new URLSearchParams(window.location.search).get('product'))
-    .single();
 
-  if (error) {
-    console.error('PRODUCT ERROR:', error);
-    document.getElementById('product-name').textContent = 'حدث خطأ';
-    return;
-  }
+    /* =========================================================
+       WILAYAS
+    ========================================================= */
 
-  const name = JSON.parse(data.name);
+    const WILAYAS = [
+      ['01','أدرار'],
+      ['02','الشلف'],
+      ['03','الأغواط'],
+      ['04','أم البواقي'],
+      ['05','باتنة'],
+      ['06','بجاية'],
+      ['07','بسكرة'],
+      ['08','بشار'],
+      ['09','البليدة'],
+      ['10','البويرة'],
+      ['11','تمنراست'],
+      ['12','تبسة'],
+      ['13','تلمسان'],
+      ['14','تيارت'],
+      ['15','تيزي وزو'],
+      ['16','الجزائر'],
+      ['17','الجلفة'],
+      ['18','جيجل'],
+      ['19','سطيف'],
+      ['20','سعيدة'],
+      ['21','سكيكدة'],
+      ['22','سيدي بلعباس'],
+      ['23','عنابة'],
+      ['24','قالمة'],
+      ['25','قسنطينة'],
+      ['26','المدية'],
+      ['27','مستغانم'],
+      ['28','المسيلة'],
+      ['29','معسكر'],
+      ['30','ورقلة'],
+      ['31','وهران'],
+      ['32','البيض'],
+      ['33','إليزي'],
+      ['34','برج بوعريريج'],
+      ['35','بومرداس'],
+      ['36','الطارف'],
+      ['37','تندوف'],
+      ['38','تيسمسيلت'],
+      ['39','الوادي'],
+      ['40','خنشلة'],
+      ['41','سوق أهراس'],
+      ['42','تيبازة'],
+      ['43','ميلة'],
+      ['44','عين الدفلى'],
+      ['45','النعامة'],
+      ['46','عين تموشنت'],
+      ['47','غرداية'],
+      ['48','غليزان'],
+      ['49','تيميمون'],
+      ['50','برج باجي مختار'],
+      ['51','أولاد جلال'],
+      ['52','بني عباس'],
+      ['53','عين صالح'],
+      ['54','عين قزام'],
+      ['55','تقرت'],
+      ['56','جانت'],
+      ['57','المغير'],
+      ['58','المنيعة'],
+      ['59','أفلو'],
+      ['60','الأبيض سيدي الشيخ'],
+      ['61','العريشة'],
+      ['62','القنطرة'],
+      ['63','بريكة'],
+      ['64','بوسعادة'],
+      ['65','بئر العاتر'],
+      ['66','قصر البخاري'],
+      ['67','قصر الشلالة'],
+      ['68','عين وسارة'],
+      ['69','مسعد']
+    ];
 
-  document.getElementById('product-name').textContent = name.ar;
 
-  console.log('PRODUCT:', data);
-}
+    /* =========================================================
+       HELPERS
+    ========================================================= */
 
-loadProduct();
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('product');
+
+    let currentProduct = null;
+    let currentImages = [];
+    let currentImageIndex = 0;
+    let deliverySettings = null;
+
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+
+    function parseTranslation(value, fallback = '') {
+      if (!value) return fallback;
+
+      if (typeof value === 'object') {
+        return value.ar || value.fr || value.en || fallback;
+      }
+
+      try {
+        const parsed = JSON.parse(value);
+
+        if (typeof parsed === 'object') {
+          return parsed.ar || parsed.fr || parsed.en || fallback;
+        }
+
+        return parsed;
+      } catch {
+        return value;
+      }
+    }
+
+
+    function formatPrice(value) {
+      return Number(value || 0).toLocaleString('fr-FR');
+    }
+
+
+    function phoneIsValid(value) {
+      return /^0[567]\d{8}$/.test(
+        String(value || '').replace(/\s+/g, '')
+      );
+    }
+
+
+    /* =========================================================
+       DELIVERY
+    ========================================================= */
+
+    function defaultDelivery() {
+      const home = {};
+      const office = {};
+
+      WILAYAS.forEach(([code]) => {
+        home[code] = 0;
+        office[code] = 0;
+      });
+
+      return {
+        home,
+        office,
+        defaultHome: 0,
+        defaultOffice: 0
+      };
+    }
+
+
+    function normalizeDelivery(data) {
+      const base = defaultDelivery();
+
+      if (data) {
+        Object.assign(base.home, data.home || {});
+        Object.assign(base.office, data.office || {});
+
+        if (Number.isFinite(Number(data.defaultHome))) {
+          base.defaultHome = Number(data.defaultHome);
+        }
+
+        if (Number.isFinite(Number(data.defaultOffice))) {
+          base.defaultOffice = Number(data.defaultOffice);
+        }
+      }
+
+      return base;
+    }
+
+
+    function deliveryPrice(type, code) {
+      const d = normalizeDelivery(deliverySettings);
+
+      const table = type === 'home'
+        ? d.home
+        : d.office;
+
+      const specific = code ? Number(table[code]) : 0;
+
+      if (
+        code &&
+        Number.isFinite(specific) &&
+        specific > 0
+      ) {
+        return specific;
+      }
+
+      return type === 'home'
+        ? Number(d.defaultHome || 0)
+        : Number(d.defaultOffice || 0);
+    }
+
+
+    async function loadDeliverySettings() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('store_settings')
+          .select('data')
+          .eq('id', 1)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        deliverySettings =
+          data && data.data
+            ? data.data.delivery
+            : defaultDelivery();
+
+      } catch (error) {
+        console.error('DELIVERY SETTINGS ERROR:', error);
+        deliverySettings = defaultDelivery();
+      }
+    }
+
+
+    /* =========================================================
+       LOAD PRODUCT
+    ========================================================= */
+
+    async function loadProduct() {
+
+      if (!productId) {
+        showError('لم يتم تحديد المنتج.');
+        return;
+      }
+
+      try {
+
+        const { data: product, error: productError } =
+          await supabaseClient
+            .from('products')
+            .select('*')
+            .eq('id', productId)
+            .single();
+
+        if (productError) {
+          throw productError;
+        }
+
+        currentProduct = product;
+
+
+        /* ---------- Main product image ---------- */
+
+        currentImages = [];
+
+        if (product.image) {
+          currentImages.push(product.image);
+        }
+
+
+        /* ---------- Additional images ---------- */
+
+        const { data: extraImages, error: imagesError } =
+          await supabaseClient
+            .from('product_images')
+            .select('image_url')
+            .eq('product_id', productId)
+            .order('id', { ascending: true });
+
+        if (imagesError) {
+          console.error(
+            'PRODUCT IMAGES ERROR:',
+            imagesError
+          );
+        }
+
+        if (extraImages && extraImages.length) {
+
+          extraImages.forEach(item => {
+
+            if (
+              item.image_url &&
+              !currentImages.includes(item.image_url)
+            ) {
+              currentImages.push(item.image_url);
+            }
+
+          });
+
+        }
+
+
+        if (!currentImages.length) {
+          currentImages.push(
+            'https://via.placeholder.com/800x1000?text=Boutique+Blossom'
+          );
+        }
+
+
+        currentImageIndex = 0;
+
+        renderProduct();
+
+      } catch (error) {
+
+        console.error('PRODUCT ERROR:', error);
+
+        showError('تعذر تحميل المنتج.');
+
+      }
+    }
+
+
+    /* =========================================================
+       RENDER PRODUCT
+    ========================================================= */
+
+    function renderProduct() {
+
+      const name = parseTranslation(
+        currentProduct.name,
+        'منتج'
+      );
+
+      const description = parseTranslation(
+        currentProduct.description,
+        ''
+      );
+
+      const price = Number(
+        currentProduct.price || 0
+      );
+
+      const oldPrice =
+        currentProduct.old_price
+          ? Number(currentProduct.old_price)
+          : null;
+
+
+      document.title =
+        `${name} | Boutique Blossom`;
+
+
+      document.getElementById('app').innerHTML = `
+
+        <section class="product-section">
+
+          <!-- ================= GALLERY ================= -->
+
+          <div class="gallery">
+
+            <div class="main-image-wrap">
+
+              <img
+                id="main-product-image"
+                class="main-image"
+                src="${escapeHtml(currentImages[0])}"
+                alt="${escapeHtml(name)}"
+              >
+
+            </div>
+
+
+            <div
+              class="thumbnails"
+              id="thumbnails"
+            ></div>
+
+          </div>
+
+
+          <!-- ================= PRODUCT INFO ================= -->
+
+          <div class="product-info">
+
+            <div class="category">
+              ${escapeHtml(currentProduct.category || 'Boutique')}
+            </div>
+
+            <h1 class="product-name">
+              ${escapeHtml(name)}
+            </h1>
+
+
+            <div class="price-row">
+
+              <div class="price">
+                ${formatPrice(price)} DA
+              </div>
+
+              ${
+                oldPrice
+                  ? `
+                    <div class="old-price">
+                      ${formatPrice(oldPrice)} DA
+                    </div>
+                  `
+                  : ''
+              }
+
+            </div>
+
+
+            ${
+              description
+                ? `
+                  <div class="description">
+                    ${escapeHtml(description)}
+                  </div>
+                `
+                : ''
+            }
+
+
+            <div class="divider"></div>
+
+
+            <!-- ================= ORDER BOX ================= -->
+
+            <div class="order-box">
+
+              <h2 class="order-title">
+                اطلب الآن
+              </h2>
+
+              <p class="order-subtitle">
+                املأ المعلومات وسنتواصل معك لتأكيد الطلب.
+              </p>
+
+
+              <form id="order-form">
+
+                <div class="field">
+
+                  <label for="order-name">
+                    الاسم الكامل *
+                  </label>
+
+                  <input
+                    id="order-name"
+                    type="text"
+                    placeholder="أدخل اسمك"
+                    required
+                  >
+
+                </div>
+
+
+                <div class="field">
+
+                  <label for="order-phone">
+                    رقم الهاتف *
+                  </label>
+
+                  <input
+                    id="order-phone"
+                    type="tel"
+                    inputmode="tel"
+                    placeholder="05 / 06 / 07 ..."
+                    required
+                  >
+
+                </div>
+
+
+                <div class="field-row">
+
+                  <div class="field">
+
+                    <label for="order-size">
+                      المقاس *
+                    </label>
+
+                    <select
+                      id="order-size"
+                      required
+                    >
+                      <option value="">
+                        اختر المقاس
+                      </option>
+
+                      <option value="S">S</option>
+                      <option value="M">M</option>
+                      <option value="L">L</option>
+                      <option value="XL">XL</option>
+                      <option value="Free">Free</option>
+
+                    </select>
+
+                  </div>
+
+
+                  <div class="field">
+
+                    <label for="order-qty">
+                      الكمية *
+                    </label>
+
+                    <input
+                      id="order-qty"
+                      type="number"
+                      min="1"
+                      value="1"
+                      required
+                    >
+
+                  </div>
+
+                </div>
+
+
+                <div class="field">
+
+                  <label for="order-delivery">
+                    طريقة التوصيل *
+                  </label>
+
+                  <select
+                    id="order-delivery"
+                    required
+                  >
+
+                    <option value="home">
+                      التوصيل للمنزل
+                    </option>
+
+                    <option value="office">
+                      التوصيل للمكتب
+                    </option>
+
+                  </select>
+
+                </div>
+
+
+                <div class="field">
+
+                  <label for="order-wilaya">
+                    الولاية *
+                  </label>
+
+                  <select
+                    id="order-wilaya"
+                    required
+                  >
+
+                    <option value="">
+                      اختر الولاية
+                    </option>
+
+                    ${
+                      WILAYAS.map(
+                        ([code, name]) => `
+                          <option value="${code}">
+                            ${code} - ${name}
+                          </option>
+                        `
+                      ).join('')
+                    }
+
+                  </select>
+
+                </div>
+
+
+                <div class="field">
+
+                  <label id="address-label" for="order-address">
+                    العنوان *
+                  </label>
+
+                  <textarea
+                    id="order-address"
+                    placeholder="البلدية، الحي، رقم المنزل..."
+                    required
+                  ></textarea>
+
+                </div>
+
+
+                <div class="field">
+
+                  <label for="order-note">
+                    ملاحظة
+                  </label>
+
+                  <textarea
+                    id="order-note"
+                    placeholder="أي ملاحظة إضافية (اختياري)"
+                  ></textarea>
+
+                </div>
+
+
+                <div class="delivery-summary">
+
+                  <div class="summary-line">
+
+                    <span>
+                      سعر المنتج
+                    </span>
+
+                    <strong id="summary-product">
+                      ${formatPrice(price)} DA
+                    </strong>
+
+                  </div>
+
+
+                  <div class="summary-line">
+
+                    <span>
+                      التوصيل
+                    </span>
+
+                    <strong id="summary-delivery">
+                      — 
+                    </strong>
+
+                  </div>
+
+
+                  <div class="summary-line summary-total">
+
+                    <span>
+                      المجموع
+                    </span>
+
+                    <strong id="summary-total">
+                      ${formatPrice(price)} DA
+                    </strong>
+
+                  </div>
+
+                </div>
+
+
+                <button
+                  type="submit"
+                  class="submit-btn"
+                  id="submit-order-btn"
+                >
+                  تأكيد الطلب
+                </button>
+
+              </form>
+
+            </div>
+
+          </div>
+
+        </section>
+      `;
+
+
+      renderThumbnails();
+      bindProductEvents();
+      updateOrderSummary();
+
+    }
+
+
+    /* =========================================================
+       THUMBNAILS
+    ========================================================= */
+
+    function renderThumbnails() {
+
+      const container =
+        document.getElementById('thumbnails');
+
+      if (!container) return;
+
+
+      container.innerHTML =
+        currentImages.map(
+          (image, index) => `
+
+            <button
+              type="button"
+              class="thumbnail ${index === 0 ? 'active' : ''}"
+              data-image-index="${index}"
+            >
+
+              <img
+                src="${escapeHtml(image)}"
+                alt="صورة ${index + 1}"
+                loading="lazy"
+              >
+
+            </button>
+
+          `
+        ).join('');
+
+
+      container
+        .querySelectorAll('.thumbnail')
+        .forEach(button => {
+
+          button.addEventListener(
+            'click',
+            () => {
+
+              const index =
+                Number(
+                  button.dataset.imageIndex
+                );
+
+              changeMainImage(index);
+
+            }
+          );
+
+        });
+
+    }
+
+
+    function changeMainImage(index) {
+
+      if (!currentImages[index]) return;
+
+      currentImageIndex = index;
+
+
+      const mainImage =
+        document.getElementById(
+          'main-product-image'
+        );
+
+      if (mainImage) {
+        mainImage.src =
+          currentImages[index];
+      }
+
+
+      document
+        .querySelectorAll('.thumbnail')
+        .forEach((button, i) => {
+
+          button.classList.toggle(
+            'active',
+            i === index
+          );
+
+        });
+
+    }
+
+
+    /* =========================================================
+       ORDER EVENTS
+    ========================================================= */
+
+    function bindProductEvents() {
+
+      const deliverySelect =
+        document.getElementById(
+          'order-delivery'
+        );
+
+      const wilayaSelect =
+        document.getElementById(
+          'order-wilaya'
+        );
+
+      const quantityInput =
+        document.getElementById(
+          'order-qty'
+        );
+
+      const form =
+        document.getElementById(
+          'order-form'
+        );
+
+
+      if (deliverySelect) {
+        deliverySelect.addEventListener(
+          'change',
+          () => {
+
+            updateAddressRequirement();
+            updateOrderSummary();
+
+          }
+        );
+      }
+
+
+      if (wilayaSelect) {
+        wilayaSelect.addEventListener(
+          'change',
+          updateOrderSummary
+        );
+      }
+
+
+      if (quantityInput) {
+        quantityInput.addEventListener(
+          'input',
+          updateOrderSummary
+        );
+      }
+
+
+      if (form) {
+        form.addEventListener(
+          'submit',
+          submitOrder
+        );
+      }
+
+
+      updateAddressRequirement();
+
+    }
+
+
+    function updateAddressRequirement() {
+
+      const delivery =
+        document.getElementById(
+          'order-delivery'
+        );
+
+      const address =
+        document.getElementById(
+          'order-address'
+        );
+
+      const label =
+        document.getElementById(
+          'address-label'
+        );
+
+
+      if (!delivery || !address || !label) {
+        return;
+      }
+
+
+      if (delivery.value === 'home') {
+
+        address.required = true;
+        label.textContent =
+          'العنوان *';
+
+      } else {
+
+        address.required = false;
+        label.textContent =
+          'العنوان (اختياري)';
+
+      }
+
+    }
+
+
+    function updateOrderSummary() {
+
+      if (!currentProduct) return;
+
+
+      const quantityInput =
+        document.getElementById(
+          'order-qty'
+        );
+
+      const deliverySelect =
+        document.getElementById(
+          'order-delivery'
+        );
+
+      const wilayaSelect =
+        document.getElementById(
+          'order-wilaya'
+        );
+
+
+      const quantity =
+        Math.max(
+          1,
+          Number(quantityInput?.value || 1)
+        );
+
+
+      const subtotal =
+        Number(currentProduct.price || 0) *
+        quantity;
+
+
+      const delivery =
+        deliveryPrice(
+          deliverySelect?.value || 'home',
+          wilayaSelect?.value || ''
+        );
+
+
+      const total =
+        subtotal + delivery;
+
+
+      const productEl =
+        document.getElementById(
+          'summary-product'
+        );
+
+      const deliveryEl =
+        document.getElementById(
+          'summary-delivery'
+        );
+
+      const totalEl =
+        document.getElementById(
+          'summary-total'
+        );
+
+
+      if (productEl) {
+        productEl.textContent =
+          `${formatPrice(subtotal)} DA`;
+      }
+
+
+      if (deliveryEl) {
+
+        deliveryEl.textContent =
+          delivery > 0
+            ? `${formatPrice(delivery)} DA`
+            : 'يحدد لاحقًا';
+
+      }
+
+
+      if (totalEl) {
+
+        totalEl.textContent =
+          `${formatPrice(total)} DA`;
+
+      }
+
+    }
+
+
+    /* =========================================================
+       SUBMIT ORDER
+    ========================================================= */
+
+    async function submitOrder(event) {
+
+      event.preventDefault();
+
+
+      if (!currentProduct) {
+        return;
+      }
+
+
+      const button =
+        document.getElementById(
+          'submit-order-btn'
+        );
+
+
+      const name =
+        document.getElementById(
+          'order-name'
+        ).value.trim();
+
+
+      const phone =
+        document.getElementById(
+          'order-phone'
+        ).value
+          .replace(/\s+/g, '')
+          .trim();
+
+
+      const size =
+        document.getElementById(
+          'order-size'
+        ).value;
+
+
+      const quantity =
+        Math.max(
+          1,
+          Number(
+            document.getElementById(
+              'order-qty'
+            ).value
+          ) || 1
+        );
+
+
+      const deliveryType =
+        document.getElementById(
+          'order-delivery'
+        ).value;
+
+
+      const wilayaCode =
+        document.getElementById(
+          'order-wilaya'
+        ).value;
+
+
+      const address =
+        document.getElementById(
+          'order-address'
+        ).value.trim();
+
+
+      const note =
+        document.getElementById(
+          'order-note'
+        ).value.trim();
+
+
+      /* ---------- Validation ---------- */
+
+      if (!name) {
+        alert('يرجى إدخال الاسم.');
+        return;
+      }
+
+
+      if (!phoneIsValid(phone)) {
+        alert(
+          'يرجى إدخال رقم هاتف جزائري صحيح.'
+        );
+        return;
+      }
+
+
+      if (!size) {
+        alert(
+          'يرجى اختيار المقاس.'
+        );
+        return;
+      }
+
+
+      if (!wilayaCode) {
+        alert(
+          'يرجى اختيار الولاية.'
+        );
+        return;
+      }
+
+
+      if (
+        deliveryType === 'home' &&
+        !address
+      ) {
+        alert(
+          'يرجى إدخال العنوان.'
+        );
+        return;
+      }
+
+
+      /* ---------- Disable button ---------- */
+
+      if (button) {
+
+        button.disabled = true;
+
+        button.textContent =
+          'جاري إرسال الطلب...';
+
+      }
+
+
+      try {
+
+        const wilaya =
+          WILAYAS.find(
+            item => item[0] === wilayaCode
+          );
+
+
+        const wilayaName =
+          wilaya
+            ? wilaya[1]
+            : '';
+
+
+        const unitPrice =
+          Number(
+            currentProduct.price || 0
+          );
+
+
+        const subtotal =
+          unitPrice * quantity;
+
+
+        const deliveryFee =
+          deliveryPrice(
+            deliveryType,
+            wilayaCode
+          );
+
+
+        const total =
+          subtotal + deliveryFee;
+
+
+        const productName =
+          parseTranslation(
+            currentProduct.name,
+            'منتج'
+          );
+
+
+        /* ---------- Same order structure
+           used by existing Admin ---------- */
+
+        const order = {
+
+          id:
+            'o' +
+            Date.now() +
+            Math.random()
+              .toString(36)
+              .slice(2, 7),
+
+
+          items: [
+
+            {
+
+              productId:
+                currentProduct.id,
+
+              productName:
+                productName,
+
+              price:
+                unitPrice,
+
+              size:
+                size,
+
+              qty:
+                quantity,
+
+              image:
+                currentImages[0] || ''
+
+            }
+
+          ],
+
+
+          productId:
+            currentProduct.id,
+
+
+          productName:
+            productName,
+
+
+          price:
+            subtotal,
+
+
+          qty:
+            quantity,
+
+
+          size:
+            size,
+
+
+          subtotal:
+            subtotal,
+
+
+          deliveryType:
+            deliveryType,
+
+
+          deliveryFee:
+            deliveryFee,
+
+
+          total:
+            total,
+
+
+          wilayaCode:
+            wilayaCode,
+
+
+          wilayaName:
+            wilayaName,
+
+
+          name:
+            name,
+
+
+          phone:
+            phone,
+
+
+          address:
+            address,
+
+
+          note:
+            note,
+
+
+          status:
+            'new',
+
+
+          createdAt:
+            new Date().toISOString()
+
+        };
+
+
+        console.log(
+          'ORDER TO SEND:',
+          order
+        );
+
+
+        /* ---------- Save to existing
+           Supabase orders table ---------- */
+
+        const { error } =
+          await supabaseClient
+            .from('orders')
+            .insert({
+
+              id:
+                order.id,
+
+              data:
+                order,
+
+              created_at:
+                order.createdAt,
+
+              updated_at:
+                order.createdAt
+
+            });
+
+
+        if (error) {
+          throw error;
+        }
+
+
+        console.log(
+          'ORDER SAVED SUCCESSFULLY'
+        );
+
+
+        showSuccess(
+          order
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          'CREATE ORDER ERROR:',
+          error
+        );
+
+
+        alert(
+          'حدث خطأ أثناء إرسال الطلب. حاول مرة أخرى.'
+        );
+
+
+        if (button) {
+
+          button.disabled = false;
+
+          button.textContent =
+            'تأكيد الطلب';
+
+        }
+
+      }
+
+    }
+
+
+    /* =========================================================
+       SUCCESS
+    ========================================================= */
+
+    function showSuccess(order) {
+
+      document.getElementById(
+        'app'
+      ).innerHTML = `
+
+        <div class="success-box">
+
+          <div class="message-card">
+
+            <div class="success-icon">
+              ✓
+            </div>
+
+            <h2>
+              تم إرسال طلبك بنجاح ❤️
+            </h2>
+
+            <p>
+              شكراً لك ${escapeHtml(order.name)}.
+            </p>
+
+            <p>
+              سنتواصل معك على الرقم
+              <strong>
+                ${escapeHtml(order.phone)}
+              </strong>
+              لتأكيد الطلب.
+            </p>
+
+            <a
+              href="landing-page.html?product=${encodeURIComponent(currentProduct.id)}"
+              class="back-btn"
+            >
+              العودة للمنتج
+            </a>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    /* =========================================================
+       ERROR
+    ========================================================= */
+
+    function showError(message) {
+
+      document.getElementById(
+        'app'
+      ).innerHTML = `
+
+        <div class="error-box">
+
+          <div class="message-card">
+
+            <h2>
+              عذراً
+            </h2>
+
+            <p>
+              ${escapeHtml(message)}
+            </p>
+
+            <a
+              href="/"
+              class="back-btn"
+            >
+              العودة للمتجر
+            </a>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+    /* =========================================================
+       START
+    ========================================================= */
+
+    async function init() {
+
+      await loadDeliverySettings();
+
+      await loadProduct();
+
+    }
+
+
+    init();
+
   </script>
 
 </body>
