@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blossom07 — Boutique</title>
-<meta name="theme-color" content="#ff2e88">
-<link rel="manifest" href="/manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Poppins:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -473,12 +471,9 @@ a{color:inherit;text-decoration:none;}
 .stat-card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:16px 18px;}
 .stat-card .num{font-size:26px;font-weight:700;color:var(--pink-deep);font-family:var(--font-display);}
 .stat-card .lbl{font-size:12px;color:var(--plum-soft);font-weight:600;margin-top:2px;}
-.tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;margin-inline-start:5px;border-radius:999px;background:#f6e8ef;color:#9b5575;font-size:11px;font-weight:800;}
 .tabs{display:flex;gap:8px;margin-bottom:20px;border-bottom:1.5px solid var(--line);}
 .tab-btn{background:none;border:none;padding:10px 18px;font-weight:600;font-size:14px;color:var(--plum-soft);
   border-bottom:2.5px solid transparent;margin-bottom:-1.5px;}
-.orders-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;align-items:start;}
-.orders-list .order-row{margin-bottom:0;height:100%;}
 .tab-btn.active{color:var(--pink-deep);border-color:var(--pink);}
 .order-row{
   background:var(--white);
@@ -879,9 +874,9 @@ const i18n = {
     admin_link:'Store admin',
     admin_login_title:'Store admin', admin_login_sub:'Enter the admin password to manage products and orders.',
     admin_login_ph:'Password', admin_login_btn:'Log in', admin_login_err:'Incorrect password, try again.',
-    admin_title:'Store admin', admin_logout:'Log out', push_enable:'Enable order notifications', push_enabled:'Order notifications enabled', push_denied:'Notifications are blocked in this browser.', push_unsupported:'Push notifications are not supported here.', push_failed:'Could not enable notifications. Try again.',
+    admin_title:'Store admin', admin_logout:'Log out',
     stat_orders:'Total orders', stat_new:'New orders', stat_products:'Products live',
-    tab_orders:'Orders', tab_done_orders:'Done Orders', tab_products:'Products', tab_design:'Design',
+    tab_orders:'Orders', tab_products:'Products', tab_design:'Design',
     design_title:'Site photos', design_sub:'Adjust the large photos shown across your website — no code needed.',
     design_hero:'Homepage hero photo', design_hero_hint:'The big full-width photo behind your homepage headline.',
     design_look1:'Lookbook photo 1 (large)', design_look2:'Lookbook photo 2', design_look3:'Lookbook photo 3',
@@ -923,9 +918,9 @@ const i18n = {
     admin_link:'Espace admin',
     admin_login_title:'Espace admin', admin_login_sub:'Entrez le mot de passe pour gérer produits et commandes.',
     admin_login_ph:'Mot de passe', admin_login_btn:'Connexion', admin_login_err:'Mot de passe incorrect, réessayez.',
-    admin_title:'Espace admin', admin_logout:'Déconnexion', push_enable:'Activer les notifications de commandes', push_enabled:'Notifications de commandes activées', push_denied:'Les notifications sont bloquées dans ce navigateur.', push_unsupported:'Les notifications push ne sont pas prises en charge ici.', push_failed:"Impossible d'activer les notifications. Réessayez.",
+    admin_title:'Espace admin', admin_logout:'Déconnexion',
     stat_orders:'Commandes totales', stat_new:'Nouvelles commandes', stat_products:'Produits en ligne',
-    tab_orders:'Commandes', tab_done_orders:'Commandes terminées', tab_products:'Produits', tab_design:'Design',
+    tab_orders:'Commandes', tab_products:'Produits', tab_design:'Design',
     design_title:'Photos du site', design_sub:'Ajustez les grandes photos affichées sur votre site — aucun code requis.',
     design_hero:'Photo principale (accueil)', design_hero_hint:"La grande photo pleine largeur derrière le titre de l'accueil.",
     design_look1:'Photo lookbook 1 (grande)', design_look2:'Photo lookbook 2', design_look3:'Photo lookbook 3',
@@ -967,9 +962,9 @@ const i18n = {
     admin_link:'إدارة المتجر',
     admin_login_title:'إدارة المتجر', admin_login_sub:'أدخلي كلمة مرور الإدارة لإدارة المنتجات والطلبات.',
     admin_login_ph:'كلمة المرور', admin_login_btn:'دخول', admin_login_err:'كلمة مرور غير صحيحة، حاولي مجددًا.',
-    admin_title:'إدارة المتجر', admin_logout:'تسجيل الخروج', push_enable:'تفعيل إشعارات الطلبات', push_enabled:'تم تفعيل إشعارات الطلبات', push_denied:'الإشعارات محظورة في هذا المتصفح.', push_unsupported:'الإشعارات الفورية غير مدعومة هنا.', push_failed:'تعذر تفعيل الإشعارات. حاولي مرة أخرى.',
+    admin_title:'إدارة المتجر', admin_logout:'تسجيل الخروج',
     stat_orders:'إجمالي الطلبات', stat_new:'طلبات جديدة', stat_products:'منتجات معروضة',
-    tab_orders:'الطلبات', tab_done_orders:'الطلبات المكتملة', tab_products:'المنتجات', tab_design:'التصميم',
+    tab_orders:'الطلبات', tab_products:'المنتجات', tab_design:'التصميم',
     design_title:'صور الموقع', design_sub:'اضبطي الصور الكبيرة الظاهرة في موقعك — بدون أي برمجة.',
     design_hero:'صورة الصفحة الرئيسية', design_hero_hint:'الصورة الكبيرة خلف عنوان الصفحة الرئيسية.',
     design_look1:'صورة اللوك بوك 1 (كبيرة)', design_look2:'صورة اللوك بوك 2', design_look3:'صورة اللوك بوك 3',
@@ -1372,7 +1367,7 @@ function renderBestsellers(){
     </div>
     <div class="grid">
       ${items.map((p,i)=>`
-        <div class="card reveal product-link-card" data-product-link="${p.id}" style="transition-delay:${i*0.06}s">
+        <div class="card reveal" style="transition-delay:${i*0.06}s">
           <div style="position:relative;">
             ${productThumb(p, {hint:true})}
             <div class="card-tag bestseller">${state.lang==='ar'?'الأكثر مبيعًا':(state.lang==='fr'?'Bestseller':'Bestseller')}</div>
@@ -1435,7 +1430,7 @@ function renderNewArrivals(){
     </div>
     <div class="new-grid">
       ${items.map((p,i)=>`
-        <div class="card reveal product-link-card" data-product-link="${p.id}" style="transition-delay:${i*0.06}s">
+        <div class="card reveal" style="transition-delay:${i*0.06}s">
           <div style="position:relative;">
             ${productThumb(p, {hint:true})}
             <div class="card-tag new">${state.lang==='ar'?'جديد':(state.lang==='fr'?'Nouveau':'New')}</div>
@@ -1482,11 +1477,11 @@ function productThumb(p, opts){
   opts = opts || {};
   const colors = THUMB_COLORS[p.category] || THUMB_COLORS.dresses;
   const src = p.image || CATEGORY_IMAGES[p.category] || '';
-  const hint = '';
+  const hint = `<div class="quick-order">${state.lang==='ar'?'عرض المنتج':(state.lang==='fr'?'Voir le produit':'View product')}</div>`;
   if(src){
-    return `<div class="thumb product-clickable" style="--tc1:${colors[0]};--tc2:${colors[1]}"><img src="${escapeHtml(src)}" alt="${escapeHtml(p.name[state.lang]||p.name.en)}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('img-broken');">${hint}</div>`;
+    return `<div class="thumb product-clickable" data-order="${p.id}" style="--tc1:${colors[0]};--tc2:${colors[1]}"><img src="${escapeHtml(src)}" alt="${escapeHtml(p.name[state.lang]||p.name.en)}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('img-broken');">${hint}</div>`;
   }
-  return `<div class="thumb product-clickable" style="--tc1:${colors[0]};--tc2:${colors[1]}">${ICONS[p.category]||ICONS.dresses}${hint}</div>`;
+  return `<div class="thumb product-clickable" data-order="${p.id}" style="--tc1:${colors[0]};--tc2:${colors[1]}">${ICONS[p.category]||ICONS.dresses}${hint}</div>`;
 }
 
 function renderShop(){
@@ -1505,7 +1500,7 @@ function renderShop(){
       </div>` : `
     <div class="grid">
       ${items.map((p, i) => `
-        <div class="card reveal product-link-card" data-product-link="${p.id}" style="transition-delay:${Math.min(i%6,5) * 0.06}s">
+        <div class="card reveal" style="transition-delay:${Math.min(i%6,5) * 0.06}s">
           ${productThumb(p, {hint:true})}
           ${!p.stock ? `<div class="stock-badge">${t('out_of_stock')}</div>` : ''}
           <div class="card-body">
@@ -1589,10 +1584,7 @@ const doneOrders = sortedOrders.filter(o => o.status === 'done');
   <div class="admin-shell">
     <div class="admin-header">
       <h1>${t('admin_title')}</h1>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <button class="small-btn" id="admin-push-btn">🔔 <span id="admin-push-label">${t('push_enable')}</span></button>
-        <button class="small-btn" id="admin-logout">${t('admin_logout')}</button>
-      </div>
+      <button class="small-btn" id="admin-logout">${t('admin_logout')}</button>
     </div>
     <div class="stat-grid">
       <div class="stat-card"><div class="num">${total}</div><div class="lbl">${t('stat_orders')}</div></div>
@@ -1602,19 +1594,17 @@ const doneOrders = sortedOrders.filter(o => o.status === 'done');
       <div class="stat-card"><div class="num">${state.products.filter(p=>!p.stock).length}</div><div class="lbl">Out of stock</div></div>
     </div>
     <div class="tabs">
-      <button class="tab-btn ${state.adminTab==='orders'?'active':''}" data-tab="orders">${t('tab_orders')} <span class="tab-count">${newOrders.length}</span></button>
-      <button class="tab-btn ${state.adminTab==='done'?'active':''}" data-tab="done">${t('tab_done_orders')} <span class="tab-count">${doneOrders.length}</span></button>
+      <button class="tab-btn ${state.adminTab==='orders'?'active':''}" data-tab="orders">${t('tab_orders')}</button>
       <button class="tab-btn ${state.adminTab==='products'?'active':''}" data-tab="products">${t('tab_products')}</button>
       <button class="tab-btn ${state.adminTab==='delivery'?'active':''}" data-tab="delivery">${t('tab_delivery')}</button>
       <button class="tab-btn ${state.adminTab==='design'?'active':''}" data-tab="design">${t('tab_design')}</button>
     </div>
     ${state.adminTab==='orders' ? `
-      <div class="orders-section-title">🆕 ${t('tab_orders')}</div>
-      ${renderOrdersTab(newOrders, false)}
-    ` : state.adminTab==='done' ? `
-      <div class="orders-section-title done-orders-title">✅ ${t('tab_done_orders')}</div>
-      ${renderOrdersTab(doneOrders, true)}
-    ` : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : renderDesignTab()))}
+  <div class="orders-section-title">🆕 New Orders</div>
+  ${renderOrdersTab(newOrders)}
+  <div class="orders-section-title done-orders-title">✅ Done Orders</div>
+  ${renderOrdersTab(doneOrders)}
+` : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : renderDesignTab()))}
   </div>`;
 }
 
@@ -1647,11 +1637,11 @@ function renderDesignTab(){
   </form>`;
 }
 
-function renderOrdersTab(sortedOrders, isDone=false){
+function renderOrdersTab(sortedOrders){
   if(sortedOrders.length===0){
     return `<div class="empty-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 7h16l-1.5 12a2 2 0 01-2 1.8H7.5A2 2 0 015.5 19L4 7z"/><path d="M9 7V5a3 3 0 016 0v2"/></svg><div>${t('orders_empty')}</div></div>`;
   }
-  return `<div class="orders-list">${sortedOrders.map(o=>{
+  return sortedOrders.map(o=>{
     const items=Array.isArray(o.items)&&o.items.length ? o.items : [{productName:o.productName,price:o.price,size:o.size,qty:o.qty,image:o.image}];
     const subtotal=Number(o.subtotal!=null?o.subtotal:(Number(o.price||0)*Number(o.qty||1)));
     const fee=Number(o.deliveryFee||0); const total=Number(o.total!=null?o.total:subtotal+fee);
@@ -1672,7 +1662,7 @@ function renderOrdersTab(sortedOrders, isDone=false){
       </div>
       <div class="order-actions"><button class="small-btn" data-toggle-order="${o.id}">${o.status==='done'?t('mark_new'):t('mark_done')}</button><button class="small-btn danger-btn" data-delete-order="${o.id}">${t('del')}</button></div>
     </div>`;
-  }).join('')}</div>`;
+  }).join('');
 }
 
 
@@ -1966,125 +1956,6 @@ async function translateText(text, from, to){
   return translated;
 }
 
-/* ============ PWA / PUSH NOTIFICATIONS ============ */
-const ADMIN_PUSH_VAPID_PUBLIC_KEY = 'BAURSlSVHUu8yVsQwXxj_g0hRfqwYccCrINa5XD3wLcvInpfJOtrGaraKB3y2nVF-r1Aop7nxrmk4f-jGbwpuo4';
-
-function urlBase64ToUint8Array(base64String){
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = atob(base64);
-  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
-}
-
-async function registerBlossomServiceWorker(){
-  if(!('serviceWorker' in navigator)) return null;
-  try{
-    return await navigator.serviceWorker.register('/sw.js', {scope:'/'});
-  }catch(e){
-    console.error('service worker registration error:', e);
-    return null;
-  }
-}
-
-async function getAdminPushSubscription(){
-  if(!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return null;
-  const registration = await registerBlossomServiceWorker();
-  if(!registration) return null;
-  return await registration.pushManager.getSubscription();
-}
-
-async function syncAdminPushButton(){
-  const btn = document.getElementById('admin-push-btn');
-  const label = document.getElementById('admin-push-label');
-  if(!btn || !label || !state.adminAuthed) return;
-
-  if(!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)){
-    btn.disabled = true;
-    label.textContent = t('push_unsupported');
-    return;
-  }
-
-  try{
-    const sub = await getAdminPushSubscription();
-    if(sub){
-      label.textContent = t('push_enabled');
-      btn.disabled = true;
-      btn.style.opacity = '.75';
-    }else{
-      label.textContent = t('push_enable');
-      btn.disabled = false;
-      btn.style.opacity = '';
-    }
-  }catch(e){
-    console.error('push button state error:', e);
-  }
-}
-
-async function enableAdminPushNotifications(){
-  const btn = document.getElementById('admin-push-btn');
-  const label = document.getElementById('admin-push-label');
-  if(!state.adminAuthed) return;
-
-  if(!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)){
-    showToast(t('push_unsupported'));
-    return;
-  }
-
-  try{
-    if(btn) btn.disabled = true;
-    if(label) label.textContent = '...';
-
-    const registration = await registerBlossomServiceWorker();
-    if(!registration) throw new Error('service worker unavailable');
-
-    let permission = Notification.permission;
-    if(permission === 'default') permission = await Notification.requestPermission();
-    if(permission !== 'granted'){
-      if(label) label.textContent = t('push_enable');
-      if(btn) btn.disabled = false;
-      showToast(t('push_denied'));
-      return;
-    }
-
-    let subscription = await registration.pushManager.getSubscription();
-    if(!subscription){
-      subscription = await registration.pushManager.subscribe({
-        userVisibleOnly:true,
-        applicationServerKey:urlBase64ToUint8Array(ADMIN_PUSH_VAPID_PUBLIC_KEY)
-      });
-    }
-
-    const json = subscription.toJSON();
-    const user = (await supabaseClient.auth.getUser()).data.user;
-    if(!user) throw new Error('admin session missing');
-
-    const { error } = await supabaseClient
-      .from('admin_push_subscriptions')
-      .upsert({
-        user_id:user.id,
-        endpoint:json.endpoint,
-        p256dh:json.keys?.p256dh || '',
-        auth:json.keys?.auth || '',
-        device_name:(navigator.userAgent || 'Admin device').slice(0,180),
-        updated_at:new Date().toISOString()
-      }, {onConflict:'endpoint'});
-
-    if(error) throw error;
-
-    if(label) label.textContent = t('push_enabled');
-    showToast(t('push_enabled'));
-  }catch(e){
-    console.error('enableAdminPushNotifications error:', e);
-    if(label) label.textContent = t('push_enable');
-    showToast(t('push_failed'));
-  }finally{
-    if(btn) btn.disabled = false;
-    setTimeout(syncAdminPushButton, 300);
-  }
-}
-
-registerBlossomServiceWorker();
-
 /* ============ EVENTS ============ */
 function bindEvents(){
   document.querySelectorAll('[data-lang]').forEach(b=> b.onclick = ()=>{ state.lang=b.dataset.lang; render(); });
@@ -2102,9 +1973,9 @@ function bindEvents(){
     const el = document.getElementById(b.dataset.scroll);
     if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
   });
-  document.querySelectorAll('[data-product-link]').forEach(card=> card.onclick = ()=>{
+  document.querySelectorAll('[data-order]').forEach(b=> b.onclick = ()=>{
     if(state.view!=='shop') return;
-    const productId = card.dataset.productLink;
+    const productId = b.dataset.order;
     if(!productId) return;
     window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
   });
@@ -2221,10 +2092,6 @@ render();
   }
 }
   
-  const pushBtn = document.getElementById('admin-push-btn');
-  if(pushBtn) pushBtn.onclick = enableAdminPushNotifications;
-  syncAdminPushButton();
-
   const logoutBtn = document.getElementById('admin-logout');
   if(logoutBtn) logoutBtn.onclick = async ()=>{
     try{ await supabaseClient.auth.signOut(); }catch(e){ console.error('logout error:', e); }
@@ -2662,24 +2529,6 @@ async function restoreRememberedAdmin(){
 }
 
 loadData().then(restoreRememberedAdmin);
-  }catch(e){
-    console.error('restore remembered admin error:', e);
-  }
-}
-
-loadData().then(restoreRememberedAdmin);
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => {
-        console.log('Service Worker registered:', reg.scope);
-      })
-      .catch(err => {
-        console.error('Service Worker registration failed:', err);
-      });
-  });
-}
 </script>
 </body>
 </html>
