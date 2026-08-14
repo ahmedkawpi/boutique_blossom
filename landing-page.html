@@ -815,6 +815,12 @@
 
             <div class="price-row">
 
+              ${
+                oldPrice
+                  ? `<div style="background:#9b5575;color:#fff;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;">SOLDE</div>`
+                  : ''
+              }
+
               <div class="price">
                 ${formatPrice(price)} DA
               </div>
