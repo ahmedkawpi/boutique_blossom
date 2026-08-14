@@ -1555,6 +1555,11 @@ function renderAdminLogin(){
   <input type="password" id="admin-pass" placeholder="${t('admin_login_ph')}" autocomplete="current-password">
 </div>
 
+<label style="display:flex;align-items:center;gap:8px;font-size:13px;margin:4px 0 14px;color:var(--plum-soft);cursor:pointer;">
+  <input type="checkbox" id="admin-remember" style="width:auto;" ${(()=>{try{return localStorage.getItem('blossom_admin_remember')==='1'?'checked':'';}catch(e){return '';}})()}>
+  <span>Remember me</span>
+</label>
+
 <button class="submit-btn" id="admin-login-btn">${t('admin_login_btn')}</button>
 <div class="err-msg" id="admin-err">Incorrect email or password.</div>
   </div>`;
@@ -2025,6 +2030,7 @@ if(adminLoginBtn){
   const doLogin = async ()=>{
     const email = document.getElementById('admin-email').value.trim();
     const password = document.getElementById('admin-pass').value;
+    const remember = !!document.getElementById('admin-remember')?.checked;
 
 const { data: authData, error } = await supabaseClient.auth.signInWithPassword({
   email,
@@ -2052,6 +2058,10 @@ if(adminError || !adminData){
 }
 
 state.adminAuthed = true;
+    try{
+      if(remember) localStorage.setItem('blossom_admin_remember','1');
+      else localStorage.removeItem('blossom_admin_remember');
+    }catch(e){}
 refreshOrders();
 render();
   };
@@ -2069,6 +2079,7 @@ render();
   const logoutBtn = document.getElementById('admin-logout');
   if(logoutBtn) logoutBtn.onclick = async ()=>{
     try{ await supabaseClient.auth.signOut(); }catch(e){ console.error('logout error:', e); }
+    try{ localStorage.removeItem('blossom_admin_remember'); }catch(e){}
     state.adminAuthed=false;
     state.view='shop';
     state.adminTab='orders';
@@ -2435,7 +2446,37 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
 }
 
 
-loadData();
+async function restoreRememberedAdmin(){
+  let remember=false;
+  try{ remember=localStorage.getItem('blossom_admin_remember')==='1'; }catch(e){}
+  if(!remember) return;
+
+  try{
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const user = sessionData && sessionData.session && sessionData.session.user;
+    if(!user) return;
+
+    const { data: adminData, error } = await supabaseClient
+      .from('admin_users')
+      .select('user_id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if(error || !adminData){
+      try{ localStorage.removeItem('blossom_admin_remember'); }catch(e){}
+      return;
+    }
+
+    state.adminAuthed=true;
+    state.view='admin';
+    refreshOrders();
+    render();
+  }catch(e){
+    console.error('restore remembered admin error:', e);
+  }
+}
+
+loadData().then(restoreRememberedAdmin);
 </script>
 </body>
 </html>
