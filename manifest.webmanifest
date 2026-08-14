@@ -1,16 +1,1 @@
-{
-  "name": "Boutique Blossom",
-  "short_name": "Blossom",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#fffafc",
-  "theme_color": "#ff2e88",
-  "description": "Boutique Blossom - Women's Fashion Store",
-"icons": [
-  {
-    "src": "/icon.svg",
-    "sizes": "any",
-    "type": "image/svg+xml"
-  }
-]
-}
+
