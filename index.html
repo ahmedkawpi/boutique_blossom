@@ -618,6 +618,14 @@ a{color:inherit;text-decoration:none;}
 .admin-card-actions button{flex:1;padding:7px;border-radius:10px;font-size:12px;font-weight:600;border:1.5px solid var(--line);background:var(--white);}
 .admin-card-actions .del{color:#c0392b;border-color:#f0c7c0;}
 .admin-card-actions .landing-btn{color:var(--pink-deep);border-color:var(--pink-deep);}
+.product-modal-gallery{width:170px;flex:none;}
+.product-modal-main{width:100%;aspect-ratio:1/1;border-radius:12px;overflow:hidden;background:var(--pink-pale);}
+.product-modal-main img{width:100%;height:100%;object-fit:cover;}
+.product-modal-thumbs{display:flex;gap:6px;overflow-x:auto;margin-top:7px;padding-bottom:2px;}
+.product-modal-thumb{width:42px;height:42px;flex:none;border:1.5px solid var(--line);border-radius:8px;overflow:hidden;background:var(--white);padding:0;}
+.product-modal-thumb.active{border-color:var(--pink);}
+.product-modal-thumb img{width:100%;height:100%;object-fit:cover;}
+@media(max-width:520px){.product-modal-gallery{width:125px;}.product-modal-thumb{width:36px;height:36px;}}
 .login-box{max-width:380px;margin:80px auto;background:var(--white);border-radius:22px;padding:34px 30px;border:1px solid var(--line);box-shadow:var(--shadow);text-align:center;}
 .login-box .brand-mark{font-size:34px;margin-bottom:6px;}
 .login-box h2{font-family:var(--font-display);font-size:20px;margin:14px 0 4px;}
@@ -1005,6 +1013,7 @@ initTheme();
 let state = {
   lang: 'en',
   products: [],
+  productImages: {},
   orders: [],
   settings: defaultSettings(),
   view: 'shop',
@@ -1060,6 +1069,24 @@ async function loadData(){
     state.products = defaultProducts();
   }
   try{
+    const { data, error } = await supabaseClient
+      .from('product_images')
+      .select('product_id, image_url')
+      .order('id', { ascending: true });
+
+    if(error) throw error;
+
+    state.productImages = {};
+    (data || []).forEach(row => {
+      if(!row.product_id || !row.image_url) return;
+      if(!state.productImages[row.product_id]) state.productImages[row.product_id] = [];
+      state.productImages[row.product_id].push(row.image_url);
+    });
+  }catch(e){
+    console.error('loadProductImages error:', e);
+    state.productImages = {};
+  }
+  try{
     const r2 = await window.storage.get(STORAGE_ORDERS_KEY, true);
     state.orders = r2 && r2.value ? JSON.parse(r2.value) : [];
   }catch(e){
@@ -1111,6 +1138,31 @@ async function saveProducts(){
     showToast('Could not save — please retry.');
   }
 }
+async function saveProductImages(productId, urls){
+  const cleanUrls = [...new Set((urls || []).map(x => String(x || '').trim()).filter(Boolean))];
+  try{
+    const { error: deleteError } = await supabaseClient
+      .from('product_images')
+      .delete()
+      .eq('product_id', productId);
+
+    if(deleteError) throw deleteError;
+
+    if(cleanUrls.length){
+      const { error: insertError } = await supabaseClient
+        .from('product_images')
+        .insert(cleanUrls.map(image_url => ({ product_id: productId, image_url })));
+
+      if(insertError) throw insertError;
+    }
+
+    state.productImages[productId] = cleanUrls;
+  }catch(e){
+    console.error('saveProductImages error:', e);
+    throw e;
+  }
+}
+
 async function saveOrders(){
   try{
     const rows = state.orders.map(o => ({
@@ -1675,7 +1727,15 @@ function renderOrderModal(p){
       <h2>${t('cart_add_title')}</h2>
       <p class="sub">${t('cart_add_sub')}</p>
       <div class="order-summary">
-        ${productThumb(p)}
+        ${(() => {
+          const galleryImages = [p.image, ...(state.productImages[p.id] || [])].filter(Boolean);
+          const mainImage = galleryImages[0] || '';
+          return galleryImages.length ? `
+            <div class="product-modal-gallery">
+              <div class="product-modal-main"><img id="modal-main-image-${escapeHtml(p.id)}" src="${escapeHtml(mainImage)}" alt="${escapeHtml(p.name[state.lang]||p.name.en)}"></div>
+              ${galleryImages.length > 1 ? `<div class="product-modal-thumbs">${galleryImages.map((img,i)=>`<button type="button" class="product-modal-thumb ${i===0?'active':''}" data-modal-image="${escapeHtml(p.id)}" data-image-url="${escapeHtml(img)}"><img src="${escapeHtml(img)}" alt=""></button>`).join('')}</div>` : ''}
+            </div>` : productThumb(p);
+        })()}
         <div>
           <div class="order-summary-name">${escapeHtml(p.name[state.lang]||p.name.en)}</div>
           <div class="order-summary-price">${fmtPrice(p.price)} ${t('price_da')}</div>
@@ -1756,6 +1816,8 @@ function renderProductForm(){
   const sourceLang = state.productSourceLang || state.lang;
   const sourceName = p.name[sourceLang] || p.name.en || p.name.fr || p.name.ar || '';
   const sourceDesc = p.desc[sourceLang] || p.desc.en || p.desc.fr || p.desc.ar || '';
+  const extraImages = p.id ? (state.productImages[p.id] || []) : [];
+  const galleryImages = [...new Set([p.image, ...extraImages].filter(Boolean))];
   return `<div class="overlay" data-close="product"><div class="modal" onclick="event.stopPropagation()" style="max-width:520px;">
     <button class="modal-close" data-close="product">×</button>
     <h2>${isNew ? t('form_title_add') : t('form_title_edit')}</h2>
@@ -1764,7 +1826,16 @@ function renderProductForm(){
       <div class="field"><label>${t('form_name_one')}</label><input id="pf-name-source" value="${escapeHtml(sourceName)}" required></div>
       <div class="field"><label>${t('form_desc_one')}</label><textarea id="pf-desc-source">${escapeHtml(sourceDesc)}</textarea></div>
       <div class="field-row"><div class="field"><label>${t('form_price')}</label><input type="number" id="pf-price" value="${p.price}" min="0" required></div><div class="field"><label>${t('form_category')}</label><select id="pf-category">${CATEGORY_LIST.map(c=>`<option value="${c}" ${p.category===c?'selected':''}>${catLabel(c)}</option>`).join('')}</select></div></div>
-      <div class="field"><label>${t('form_photo')}</label>${renderPhotoField('pf-image', p.image)}</div>
+      <div class="field">
+        <label style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          <span>Product Images</span>
+          <button type="button" class="small-btn" id="add-product-image" style="padding:6px 10px;">+ Add image</button>
+        </label>
+        <div id="product-extra-images" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+          ${galleryImages.map((url,i)=>`<div data-image-row style="display:flex;gap:8px;align-items:center;"><label class="photo-upload" data-extra-dropzone style="flex:1;min-height:72px;cursor:pointer;"><div class="photo-preview" data-extra-preview>${url ? `<img src="${escapeHtml(url)}">` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 16l4.5-6 3.5 4.5L15 11l5 7H4z"/><circle cx="8" cy="8" r="1.6"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>`}</div><div class="photo-upload-text"><b>${i===0 ? 'Main image — Upload image' : 'Upload image'}</b><br>JPG or PNG</div><input type="file" data-extra-file accept="image/*"></label><input type="hidden" data-extra-image value="${escapeHtml(url)}"><button type="button" data-remove-image class="small-btn danger-btn" style="padding:7px 10px;">×</button></div>`).join('')}
+        </div>
+        <div style="font-size:11px;color:var(--plum-soft);margin-top:6px;">The first image is the main product image. Add as many images as you want for the product page and Landing Page.</div>
+      </div>
       <div class="field"><label class="stock-toggle"><input type="checkbox" id="pf-stock" ${p.stock?'checked':''} style="width:auto;"> ${t('form_in_stock')}</label></div>
       <p class="translation-note">${t('form_translate_note')}</p>
       <div style="display:flex;gap:10px;margin-top:6px;"><button type="submit" class="submit-btn" style="margin-top:0;">${t('form_save')}</button><button type="button" class="small-btn" data-close="product" style="padding:0 20px;">${t('form_cancel')}</button></div>
@@ -1883,6 +1954,13 @@ function bindEvents(){
     if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
   });
   document.querySelectorAll('[data-order]').forEach(b=> b.onclick = ()=>{ if(state.adminAuthed) return; state.orderTarget=b.dataset.order; render(); });
+  document.querySelectorAll('[data-modal-image]').forEach(b=> b.onclick = ()=>{
+    const id = b.dataset.modalImage;
+    const main = document.getElementById(`modal-main-image-${id}`);
+    if(main) main.src = b.dataset.imageUrl;
+    document.querySelectorAll('[data-modal-image]').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+  });
   document.querySelectorAll('[data-close]').forEach(b=> b.onclick = ()=>{
     const k = b.dataset.close;
     if(k==='order') state.orderTarget=null;
@@ -2055,6 +2133,53 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
     }
   });
 
+  const addProductImageBtn = document.getElementById('add-product-image');
+  const extraImagesWrap = document.getElementById('product-extra-images');
+  if(addProductImageBtn && extraImagesWrap){
+    addProductImageBtn.onclick = ()=>{
+      const row = document.createElement('div');
+      row.setAttribute('data-image-row','');
+      row.style.cssText = 'display:flex;gap:8px;align-items:center;';
+      row.innerHTML = '<label class="photo-upload" data-extra-dropzone style="flex:1;min-height:72px;cursor:pointer;"><div class="photo-preview" data-extra-preview><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 16l4.5-6 3.5 4.5L15 11l5 7H4z"/><circle cx="8" cy="8" r="1.6"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg></div><div class="photo-upload-text"><b>Upload image</b><br>JPG or PNG</div><input type="file" data-extra-file accept="image/*"></label><input type="hidden" data-extra-image value=""><button type="button" data-remove-image class="small-btn danger-btn" style="padding:7px 10px;">×</button>';
+      extraImagesWrap.appendChild(row);
+      row.querySelector('[data-remove-image]').onclick = ()=> row.remove();
+    };
+    extraImagesWrap.querySelectorAll('[data-remove-image]').forEach(btn=>{
+      btn.onclick = ()=> btn.closest('[data-image-row]')?.remove();
+    });
+    const bindExtraImageUpload = (row)=>{
+      const fileInput = row.querySelector('[data-extra-file]');
+      const preview = row.querySelector('[data-extra-preview]');
+      const hidden = row.querySelector('[data-extra-image]');
+      const dropzone = row.querySelector('[data-extra-dropzone]');
+      if(fileInput) fileInput.onchange = async (e)=>{
+        const file = e.target.files && e.target.files[0];
+        if(!file) return;
+        try{
+          const dataUrl = await processImageFile(file);
+          if(hidden) hidden.value = dataUrl;
+          if(preview) preview.innerHTML = `<img src="${dataUrl}">`;
+        }catch(err){
+          console.error('extra image upload error:', err);
+          showToast(state.lang==='ar' ? 'تعذر تحميل الصورة' : (state.lang==='fr' ? "Impossible de charger l'image" : 'Could not load that image'));
+        }
+      };
+      if(dropzone){
+        dropzone.ondragover = (e)=>{ e.preventDefault(); dropzone.classList.add('dragover'); };
+        dropzone.ondragleave = ()=> dropzone.classList.remove('dragover');
+        dropzone.ondrop = (e)=>{
+          e.preventDefault();
+          dropzone.classList.remove('dragover');
+          if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]){
+            fileInput.files = e.dataTransfer.files;
+            fileInput.dispatchEvent(new Event('change'));
+          }
+        };
+      }
+    };
+    extraImagesWrap.querySelectorAll('[data-image-row]').forEach(bindExtraImageUpload);
+  }
+
   document.querySelectorAll('[data-landing]').forEach(b=> b.onclick = async ()=>{
     const id = b.dataset.landing;
     const url = `${window.location.origin}/landing-page.html?product=${encodeURIComponent(id)}`;
@@ -2200,9 +2325,18 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
     try{
       for(const to of other){ name[to]=await translateText(sourceName,source,to); if(sourceDesc) desc[to]=await translateText(sourceDesc,source,to); }
     }catch(err){ console.error('translation error',err); showToast(t('translation_failed')); return; }
-    const data={category:document.getElementById('pf-category').value,price,image:document.getElementById('pf-image').value.trim(),stock:document.getElementById('pf-stock').checked,name,desc,sourceLang:source};
+    const extraImageUrls = [...document.querySelectorAll('[data-extra-image]')].map(input=>input.value.trim()).filter(Boolean);
+    const data={category:document.getElementById('pf-category').value,price,image:extraImageUrls[0]||'',stock:document.getElementById('pf-stock').checked,name,desc,sourceLang:source};
     if(state.editingProduct==='new'){ data.id='p'+Date.now(); state.products.push(data); } else { const idx=state.products.findIndex(p=>p.id===state.editingProduct); if(idx>-1) state.products[idx]={...state.products[idx],...data}; }
-    await saveProducts(); state.editingProduct=null; state.productSourceLang=null; render(); showToast(state.lang==='ar'?'تم الحفظ':(state.lang==='fr'?'Enregistré':'Saved'));
+    try{
+      await saveProducts();
+      await saveProductImages(data.id, extraImageUrls);
+    }catch(err){
+      console.error('save product/images error:', err);
+      showToast('Could not save product images — please retry.');
+      return;
+    }
+    state.editingProduct=null; state.productSourceLang=null; render(); showToast(state.lang==='ar'?'تم الحفظ':(state.lang==='fr'?'Enregistré':'Saved'));
   };
 }
 
