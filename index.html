@@ -2138,10 +2138,23 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
   if(addBtn) addBtn.onclick = ()=>{ state.editingProduct='new'; state.productSourceLang=state.lang; render(); };
   document.querySelectorAll('[data-edit]').forEach(b=> b.onclick = ()=>{ state.editingProduct=b.dataset.edit; const p=state.products.find(x=>x.id===b.dataset.edit); state.productSourceLang=(p&&p.sourceLang)||state.lang; render(); });
   document.querySelectorAll('[data-delete]').forEach(b=> b.onclick = async ()=>{
-    if(confirm(t('confirm_delete'))){
-      state.products = state.products.filter(p=>p.id!==b.dataset.delete);
-      await saveProducts();
+    if(!confirm(t('confirm_delete'))) return;
+
+    const id = b.dataset.delete;
+    try{
+      const { error } = await supabaseClient
+        .from('products')
+        .delete()
+        .eq('id', id);
+
+      if(error) throw error;
+
+      state.products = state.products.filter(p=>p.id!==id);
+      if(state.productImages) delete state.productImages[id];
       render();
+    }catch(e){
+      console.error('deleteProduct error:', e);
+      showToast('Could not delete product — please retry.');
     }
   });
 
