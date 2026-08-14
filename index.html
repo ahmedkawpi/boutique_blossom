@@ -1954,7 +1954,7 @@ function bindEvents(){
     if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
   });
   document.querySelectorAll('[data-order]').forEach(b=> b.onclick = ()=>{
-    if(state.view==='admin' && state.adminAuthed) return;
+    if(state.view!=='shop') return;
     state.orderTarget=b.dataset.order;
     render();
   });
@@ -2074,6 +2074,9 @@ render();
     state.adminTab='orders';
     state.orderTarget=null;
     state.editingProduct=null;
+    state.cartOpen=false;
+    state.checkoutOpen=false;
+    state.showSuccess=false;
     render();
   };
 
@@ -2251,16 +2254,16 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
   };
 
   const openCart=document.getElementById('open-cart-btn');
-  if(openCart) openCart.onclick=()=>{ if(state.adminAuthed) return; state.cartOpen=true; state.checkoutOpen=false; render(); };
+  if(openCart) openCart.onclick=()=>{ if(state.view!=='shop') return; state.cartOpen=true; state.checkoutOpen=false; render(); };
   document.querySelectorAll('[data-cart-inc]').forEach(b=>b.onclick=()=>{ const i=+b.dataset.cartInc; state.cart[i].qty++; render(); });
   document.querySelectorAll('[data-cart-dec]').forEach(b=>b.onclick=()=>{ const i=+b.dataset.cartDec; state.cart[i].qty=Math.max(1,state.cart[i].qty-1); render(); });
   document.querySelectorAll('[data-cart-remove]').forEach(b=>b.onclick=()=>{ state.cart.splice(+b.dataset.cartRemove,1); render(); });
   const goCheckout=document.getElementById('go-checkout');
-  if(goCheckout) goCheckout.onclick=()=>{ if(state.adminAuthed) return; state.checkoutOpen=true; render(); };
+  if(goCheckout) goCheckout.onclick=()=>{ if(state.view!=='shop') return; state.checkoutOpen=true; render(); };
   const addCart=document.getElementById('add-cart-form');
   if(addCart) addCart.onsubmit=(e)=>{
     e.preventDefault();
-    if(state.adminAuthed) return;
+    if(state.view!=='shop') return;
     const p=state.products.find(x=>x.id===state.orderTarget); if(!p||!p.stock) return;
     const size=document.getElementById('cf-size').value; const qty=Math.max(1,parseInt(document.getElementById('cf-qty').value)||1);
     if(!size){ showToast(t('required_size')); return; }
@@ -2299,7 +2302,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
   const checkoutForm=document.getElementById('checkout-form');
   if(checkoutForm) checkoutForm.onsubmit=async(e)=>{
     e.preventDefault();
-    if(state.adminAuthed) return;
+    if(state.view!=='shop') return;
     const name=document.getElementById('co-name').value.trim();
     const phone=document.getElementById('co-phone').value.replace(/\s+/g,'').trim();
     const deliveryType=document.getElementById('co-delivery').value;
