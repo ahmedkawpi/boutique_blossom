@@ -379,7 +379,8 @@ a{color:inherit;text-decoration:none;}
 .card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .price{font-weight:700;font-size:16px;color:var(--pink-deep);display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;}
 .price small{font-size:11px;font-weight:600;color:var(--plum-soft);}
-.price .old{font-size:12.5px;font-weight:600;color:var(--plum-soft);text-decoration:line-through;opacity:.7;}
+.price .old{display:inline-block !important;font-size:12.5px;font-weight:600;color:var(--plum-soft);text-decoration-line:line-through !important;text-decoration-style:solid !important;text-decoration-thickness:2px !important;opacity:.8;margin-inline-end:7px;}
+.sale-old-price{display:inline-block !important;color:#777 !important;text-decoration-line:line-through !important;text-decoration-color:#777 !important;text-decoration-style:solid !important;text-decoration-thickness:2px !important;white-space:nowrap;}
 .order-btn{
   background:var(--pink);color:#fff;border-radius:999px;padding:9px 18px;font-size:12.5px;font-weight:600;
   border:none;transition:.25s var(--ease);
@@ -726,6 +727,7 @@ a{color:inherit;text-decoration:none;}
 @media(max-width:720px){.cart-header-btn span{display:none}.cart-item{grid-template-columns:48px 1fr}.cart-item-img{width:48px;height:58px}.cart-item-actions{grid-column:2}.delivery-head,.delivery-row{grid-template-columns:1.2fr .8fr .8fr;font-size:12px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="blossom-sale-fix" content="v2">
 </head>
 <body>
 
@@ -1255,7 +1257,6 @@ function renderHeader(){
       </div>
     </div>
     <div class="header-right">
-      ${state.view==='shop' && !state.adminAuthed ? `<button class="cart-header-btn" id="open-cart-btn" aria-label="${t('cart_title')}">🛒 <span>${t('cart_title')}</span><b>${cartCount()}</b></button>` : ''}
       
       <div class="lang-switch">
         ${langs.map(([code,label])=>`<button data-lang="${code}" class="${state.lang===code?'active':''}">${label}</button>`).join('')}
@@ -1342,6 +1343,15 @@ function renderCategoriesSection(){
   </section>`;
 }
 
+function renderProductPrice(p){
+  const currentPrice = Number(p.price || 0);
+  const previousPrice = Number(p.oldPrice || 0);
+  const sale = previousPrice > currentPrice;
+  return sale
+    ? `<span class="sale-old-price">${fmtPrice(previousPrice)} ${t('price_da')}</span><span style="color:var(--pink-deep);font-weight:800;">${fmtPrice(currentPrice)} ${t('price_da')}</span> <span style="font-size:10px;background:var(--pink);color:#fff;border-radius:999px;padding:3px 7px;margin-inline-start:5px;vertical-align:middle;">SOLDE</span>`
+    : `${fmtPrice(currentPrice)} <small>${t('price_da')}</small>`;
+}
+
 function renderBestsellers(){
   const items = visibleProducts().slice(0, 4);
   const kicker = state.lang==='ar' ? 'مختارات' : (state.lang==='fr' ? 'Sélection' : 'Selection');
@@ -1366,7 +1376,7 @@ function renderBestsellers(){
             <div class="card-cat">${catLabel(p.category)}</div>
             <h3 class="card-name">${escapeHtml(p.name[state.lang] || p.name.en)}</h3>
             <div class="card-foot">
-              <div class="price">${fmtPrice(p.price)} <small>${t('price_da')}</small></div>
+              <div class="price">${renderProductPrice(p)}</div>
               <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${t('order_now')}</button>
             </div>
           </div>
@@ -1430,7 +1440,7 @@ function renderNewArrivals(){
             <h3 class="card-name">${escapeHtml(p.name[state.lang] || p.name.en)}</h3>
             <p class="card-desc">${escapeHtml(p.desc[state.lang] || p.desc.en)}</p>
             <div class="card-foot">
-              <div class="price">${fmtPrice(p.price)} <small>${t('price_da')}</small></div>
+              <div class="price">${renderProductPrice(p)}</div>
               <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${t('order_now')}</button>
             </div>
           </div>
@@ -1498,7 +1508,7 @@ function renderShop(){
             <h3 class="card-name">${escapeHtml(p.name[state.lang] || p.name.en)}</h3>
             <p class="card-desc">${escapeHtml(p.desc[state.lang] || p.desc.en)}</p>
             <div class="card-foot">
-              <div class="price">${fmtPrice(p.price)} <small>${t('price_da')}</small></div>
+              <div class="price">${renderProductPrice(p)}</div>
               <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${t('order_now')}</button>
             </div>
           </div>
@@ -1671,7 +1681,7 @@ function renderProductsTab(){
         <div class="admin-card-body">
           <div class="card-cat">${catLabel(p.category)}</div>
           <div style="font-weight:600;font-size:14px;margin:2px 0 4px;">${escapeHtml(p.name[state.lang]||p.name.en)}</div>
-          <div style="font-size:13px;font-weight:700;">${(p.oldPrice != null && Number(p.oldPrice) > Number(p.price)) ? `<span style="text-decoration:line-through;color:var(--plum-soft);margin-right:6px;">${fmtPrice(p.oldPrice)} ${t('price_da')}</span><span style="color:var(--pink-deep);">${fmtPrice(p.price)} ${t('price_da')}</span> <span style="font-size:10px;background:#f7d7e7;padding:3px 6px;border-radius:999px;">SOLDE</span>` : `<span style="color:var(--pink-deep);">${fmtPrice(p.price)} ${t('price_da')}</span>`}</div>
+          <div style="font-size:13px;font-weight:700;">${(p.oldPrice != null && Number(p.oldPrice) > Number(p.price)) ? `<span class="sale-old-price" style="margin-right:6px;">${fmtPrice(p.oldPrice)} ${t('price_da')}</span><span style="color:var(--pink-deep);">${fmtPrice(p.price)} ${t('price_da')}</span> <span style="font-size:10px;background:#f7d7e7;padding:3px 6px;border-radius:999px;">SOLDE</span>` : `<span style="color:var(--pink-deep);">${fmtPrice(p.price)} ${t('price_da')}</span>`}</div>
           <div class="admin-card-actions">
             <button data-edit="${p.id}">${t('edit')}</button>
             <button class="landing-btn" data-landing="${p.id}">🔗 Landing Page</button>
