@@ -1467,7 +1467,7 @@ function productThumb(p, opts){
   opts = opts || {};
   const colors = THUMB_COLORS[p.category] || THUMB_COLORS.dresses;
   const src = p.image || CATEGORY_IMAGES[p.category] || '';
-  const hint = opts.hint ? `<div class="quick-order">${t('cart_add')}</div>` : `<div class="quick-order">${t('cart_add')}</div>`;
+  const hint = `<div class="quick-order">${state.lang==='ar'?'عرض المنتج':(state.lang==='fr'?'Voir le produit':'View product')}</div>`;
   if(src){
     return `<div class="thumb product-clickable" data-order="${p.id}" style="--tc1:${colors[0]};--tc2:${colors[1]}"><img src="${escapeHtml(src)}" alt="${escapeHtml(p.name[state.lang]||p.name.en)}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('img-broken');">${hint}</div>`;
   }
@@ -1580,6 +1580,8 @@ const doneOrders = sortedOrders.filter(o => o.status === 'done');
       <div class="stat-card"><div class="num">${total}</div><div class="lbl">${t('stat_orders')}</div></div>
       <div class="stat-card"><div class="num">${news}</div><div class="lbl">${t('stat_new')}</div></div>
       <div class="stat-card"><div class="num">${visibleProducts().length}</div><div class="lbl">${t('stat_products')}</div></div>
+      <div class="stat-card"><div class="num">${fmtPrice(state.orders.reduce((sum,o)=>sum+Number(o.total||o.price||0),0))} DA</div><div class="lbl">Sales</div></div>
+      <div class="stat-card"><div class="num">${state.products.filter(p=>!p.stock).length}</div><div class="lbl">Out of stock</div></div>
     </div>
     <div class="tabs">
       <button class="tab-btn ${state.adminTab==='orders'?'active':''}" data-tab="orders">${t('tab_orders')}</button>
@@ -1669,7 +1671,7 @@ function renderProductsTab(){
         <div class="admin-card-body">
           <div class="card-cat">${catLabel(p.category)}</div>
           <div style="font-weight:600;font-size:14px;margin:2px 0 4px;">${escapeHtml(p.name[state.lang]||p.name.en)}</div>
-          <div style="font-size:13px;color:var(--pink-deep);font-weight:700;">${fmtPrice(p.price)} ${t('price_da')}</div>
+          <div style="font-size:13px;font-weight:700;">${(p.oldPrice != null && Number(p.oldPrice) > Number(p.price)) ? `<span style="text-decoration:line-through;color:var(--plum-soft);margin-right:6px;">${fmtPrice(p.oldPrice)} ${t('price_da')}</span><span style="color:var(--pink-deep);">${fmtPrice(p.price)} ${t('price_da')}</span> <span style="font-size:10px;background:#f7d7e7;padding:3px 6px;border-radius:999px;">SOLDE</span>` : `<span style="color:var(--pink-deep);">${fmtPrice(p.price)} ${t('price_da')}</span>`}</div>
           <div class="admin-card-actions">
             <button data-edit="${p.id}">${t('edit')}</button>
             <button class="landing-btn" data-landing="${p.id}">🔗 Landing Page</button>
@@ -1812,7 +1814,7 @@ function renderSuccessModal(){
 function renderProductForm(){
   const editing = state.editingProduct;
   const isNew = editing === 'new';
-  const p = isNew ? {id:null,category:'dresses',price:'',stock:true,image:'',name:{en:'',ar:'',fr:''},desc:{en:'',ar:'',fr:''}} : state.products.find(x=>x.id===editing);
+  const p = isNew ? {id:null,category:'dresses',price:'',oldPrice:null,stock:true,image:'',name:{en:'',ar:'',fr:''},desc:{en:'',ar:'',fr:''}} : state.products.find(x=>x.id===editing);
   if(!p) return '';
   const sourceLang = state.productSourceLang || state.lang;
   const sourceName = p.name[sourceLang] || p.name.en || p.name.fr || p.name.ar || '';
@@ -1827,6 +1829,13 @@ function renderProductForm(){
       <div class="field"><label>${t('form_name_one')}</label><input id="pf-name-source" value="${escapeHtml(sourceName)}" required></div>
       <div class="field"><label>${t('form_desc_one')}</label><textarea id="pf-desc-source">${escapeHtml(sourceDesc)}</textarea></div>
       <div class="field-row"><div class="field"><label>${t('form_price')}</label><input type="number" id="pf-price" value="${p.price}" min="0" required></div><div class="field"><label>${t('form_category')}</label><select id="pf-category">${CATEGORY_LIST.map(c=>`<option value="${c}" ${p.category===c?'selected':''}>${catLabel(c)}</option>`).join('')}</select></div></div>
+      <div class="field">
+        <label class="stock-toggle"><input type="checkbox" id="pf-sale" ${(p.oldPrice != null && Number(p.oldPrice) > Number(p.price)) ? 'checked' : ''} style="width:auto;"> 🏷️ Solde</label>
+      </div>
+      <div class="field" id="pf-sale-price-wrap" style="${(p.oldPrice != null && Number(p.oldPrice) > Number(p.price)) ? '' : 'display:none;'}">
+        <label>Prix avant solde (DA)</label>
+        <input type="number" id="pf-old-price" value="${p.oldPrice != null ? p.oldPrice : ''}" min="0">
+      </div>
       <div class="field">
         <label style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
           <span>Product Images</span>
@@ -1956,8 +1965,9 @@ function bindEvents(){
   });
   document.querySelectorAll('[data-order]').forEach(b=> b.onclick = ()=>{
     if(state.view!=='shop') return;
-    state.orderTarget=b.dataset.order;
-    render();
+    const productId = b.dataset.order;
+    if(!productId) return;
+    window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
   });
   document.querySelectorAll('[data-modal-image]').forEach(b=> b.onclick = ()=>{
     const id = b.dataset.modalImage;
@@ -2346,6 +2356,18 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
     render();
   });
 
+  const saleToggle=document.getElementById('pf-sale');
+  const salePriceWrap=document.getElementById('pf-sale-price-wrap');
+  const oldPriceField=document.getElementById('pf-old-price');
+  if(saleToggle){
+    saleToggle.onchange=()=>{
+      const on=saleToggle.checked;
+      if(salePriceWrap) salePriceWrap.style.display=on ? '' : 'none';
+      if(oldPriceField){ oldPriceField.required=on; if(!on) oldPriceField.value=''; }
+    };
+    if(oldPriceField) oldPriceField.required=saleToggle.checked;
+  }
+
   const pf=document.getElementById('product-form');
   const sourceSel=document.getElementById('pf-source-lang');
   if(sourceSel) sourceSel.onchange=()=>{ state.productSourceLang=sourceSel.value; render(); };
@@ -2366,7 +2388,15 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
     const sourceName=document.getElementById('pf-name-source').value.trim();
     const sourceDesc=document.getElementById('pf-desc-source').value.trim();
     const price=parseFloat(document.getElementById('pf-price').value);
+    const saleEnabled=!!document.getElementById('pf-sale')?.checked;
+    const oldPriceValue=parseFloat(document.getElementById('pf-old-price')?.value);
+    const oldPrice=saleEnabled ? oldPriceValue : null;
     if(isNaN(price)){ showToast(t('required')); unlockSave(); return; }
+    if(saleEnabled && (isNaN(oldPrice) || oldPrice <= price)){
+      showToast('Prix avant solde doit être supérieur au prix soldé.');
+      unlockSave();
+      return;
+    }
 
     let name, desc;
 
@@ -2409,7 +2439,8 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
         ...existing,
         category: document.getElementById('pf-category').value,
         price,
-        image: extraImageUrls[0] || existing.image || '',
+        oldPrice,
+        image: extraImageUrls[0] || existing.image || '', 
         stock: document.getElementById('pf-stock').checked,
         name: updatedName,
         desc: updatedDesc,
