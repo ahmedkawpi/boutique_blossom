@@ -24,17 +24,27 @@
 
     console.log('Supabase connected');
 
-    async function testProductImages() {
+async function loadProduct() {
   const { data, error } = await supabaseClient
-    .from('product_images')
+    .from('products')
     .select('*')
-    .eq('product_id', 'p1');
+    .eq('id', 'p1')
+    .single();
 
-  console.log('PRODUCT IMAGES:', data);
-  console.log('IMAGES ERROR:', error);
+  if (error) {
+    console.error('PRODUCT ERROR:', error);
+    document.getElementById('product-name').textContent = 'حدث خطأ';
+    return;
+  }
+
+  const name = JSON.parse(data.name);
+
+  document.getElementById('product-name').textContent = name.ar;
+
+  console.log('PRODUCT:', data);
 }
 
-testProductImages();
+loadProduct();
   </script>
 
 </body>
