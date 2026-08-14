@@ -28,7 +28,7 @@ async function loadProduct() {
   const { data, error } = await supabaseClient
     .from('products')
     .select('*')
-    .eq('id', 'p1')
+    .eq('id', new URLSearchParams(window.location.search).get('product'))
     .single();
 
   if (error) {
