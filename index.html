@@ -1953,7 +1953,11 @@ function bindEvents(){
     const el = document.getElementById(b.dataset.scroll);
     if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
   });
-  document.querySelectorAll('[data-order]').forEach(b=> b.onclick = ()=>{ if(state.adminAuthed) return; state.orderTarget=b.dataset.order; render(); });
+  document.querySelectorAll('[data-order]').forEach(b=> b.onclick = ()=>{
+    if(state.view==='admin' && state.adminAuthed) return;
+    state.orderTarget=b.dataset.order;
+    render();
+  });
   document.querySelectorAll('[data-modal-image]').forEach(b=> b.onclick = ()=>{
     const id = b.dataset.modalImage;
     const main = document.getElementById(`modal-main-image-${id}`);
@@ -2063,7 +2067,15 @@ render();
 }
   
   const logoutBtn = document.getElementById('admin-logout');
-  if(logoutBtn) logoutBtn.onclick = ()=>{ state.adminAuthed=false; state.view='shop'; render(); };
+  if(logoutBtn) logoutBtn.onclick = async ()=>{
+    try{ await supabaseClient.auth.signOut(); }catch(e){ console.error('logout error:', e); }
+    state.adminAuthed=false;
+    state.view='shop';
+    state.adminTab='orders';
+    state.orderTarget=null;
+    state.editingProduct=null;
+    render();
+  };
 
   document.querySelectorAll('[data-tab]').forEach(b=> b.onclick = ()=>{ state.adminTab=b.dataset.tab; render(); });
 
@@ -2143,6 +2155,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       row.innerHTML = '<label class="photo-upload" data-extra-dropzone style="flex:1;min-height:72px;cursor:pointer;"><div class="photo-preview" data-extra-preview><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 16l4.5-6 3.5 4.5L15 11l5 7H4z"/><circle cx="8" cy="8" r="1.6"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg></div><div class="photo-upload-text"><b>Upload image</b><br>JPG or PNG</div><input type="file" data-extra-file accept="image/*"></label><input type="hidden" data-extra-image value=""><button type="button" data-remove-image class="small-btn danger-btn" style="padding:7px 10px;">×</button>';
       extraImagesWrap.appendChild(row);
       row.querySelector('[data-remove-image]').onclick = ()=> row.remove();
+      bindExtraImageUpload(row);
     };
     extraImagesWrap.querySelectorAll('[data-remove-image]').forEach(btn=>{
       btn.onclick = ()=> btn.closest('[data-image-row]')?.remove();
@@ -2319,22 +2332,87 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
     const sourceName=document.getElementById('pf-name-source').value.trim();
     const sourceDesc=document.getElementById('pf-desc-source').value.trim();
     const price=parseFloat(document.getElementById('pf-price').value);
-    if(!sourceName || isNaN(price)){ showToast(t('required')); return; }
-    const name={en:'',fr:'',ar:''}, desc={en:'',fr:'',ar:''}; name[source]=sourceName; desc[source]=sourceDesc;
-    const other=['en','fr','ar'].filter(x=>x!==source);
-    try{
-      for(const to of other){ name[to]=await translateText(sourceName,source,to); if(sourceDesc) desc[to]=await translateText(sourceDesc,source,to); }
-    }catch(err){ console.error('translation error',err); showToast(t('translation_failed')); return; }
+    if(isNaN(price)){ showToast(t('required')); return; }
+
+    let name, desc;
+
+    if(state.editingProduct === 'new'){
+      if(!sourceName){ showToast(t('required')); return; }
+
+      name={en:'',fr:'',ar:''};
+      desc={en:'',fr:'',ar:''};
+      name[source]=sourceName;
+      desc[source]=sourceDesc;
+
+      const other=['en','fr','ar'].filter(x=>x!==source);
+      try{
+        for(const to of other){
+          name[to]=await translateText(sourceName,source,to);
+          if(sourceDesc) desc[to]=await translateText(sourceDesc,source,to);
+        }
+      }catch(err){
+        console.error('translation error',err);
+        showToast(t('translation_failed'));
+        return;
+      }
+    }
     const extraImageUrls = [...document.querySelectorAll('[data-extra-image]')].map(input=>input.value.trim()).filter(Boolean);
-    const data={category:document.getElementById('pf-category').value,price,image:extraImageUrls[0]||'',stock:document.getElementById('pf-stock').checked,name,desc,sourceLang:source};
-    if(state.editingProduct==='new'){ data.id='p'+Date.now(); state.products.push(data); } else { const idx=state.products.findIndex(p=>p.id===state.editingProduct); if(idx>-1) state.products[idx]={...state.products[idx],...data}; }
-    try{
-      await saveProducts();
-      await saveProductImages(data.id, extraImageUrls);
-    }catch(err){
-      console.error('save product/images error:', err);
-      showToast('Could not save product images — please retry.');
-      return;
+    const isEditingExisting = state.editingProduct !== 'new';
+
+    if(isEditingExisting){
+      const idx = state.products.findIndex(p=>p.id===state.editingProduct);
+      if(idx === -1) return;
+
+      const existing = state.products[idx];
+      const updatedName = {...existing.name};
+      const updatedDesc = {...existing.desc};
+
+      if(sourceName) updatedName[source] = sourceName;
+      if(sourceDesc) updatedDesc[source] = sourceDesc;
+
+      const data = {
+        ...existing,
+        category: document.getElementById('pf-category').value,
+        price,
+        image: extraImageUrls[0] || existing.image || '',
+        stock: document.getElementById('pf-stock').checked,
+        name: updatedName,
+        desc: updatedDesc,
+        sourceLang: source
+      };
+
+      state.products[idx] = data;
+
+      try{
+        await saveProducts();
+        await saveProductImages(data.id, extraImageUrls);
+      }catch(err){
+        console.error('save product/images error:', err);
+        showToast('Could not save product images — please retry.');
+        return;
+      }
+    }else{
+      const data = {
+        id:'p'+Date.now(),
+        category:document.getElementById('pf-category').value,
+        price,
+        image:extraImageUrls[0]||'',
+        stock:document.getElementById('pf-stock').checked,
+        name,
+        desc,
+        sourceLang:source
+      };
+
+      state.products.push(data);
+
+      try{
+        await saveProducts();
+        await saveProductImages(data.id, extraImageUrls);
+      }catch(err){
+        console.error('save product/images error:', err);
+        showToast('Could not save product images — please retry.');
+        return;
+      }
     }
     state.editingProduct=null; state.productSourceLang=null; render(); showToast(state.lang==='ar'?'تم الحفظ':(state.lang==='fr'?'Enregistré':'Saved'));
   };
