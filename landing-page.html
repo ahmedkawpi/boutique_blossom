@@ -523,6 +523,42 @@
     let deliverySettings = null;
 
 
+    /* One successful Landing Page order per product on this device. */
+    function landingOrderKey(id) {
+      return `blossom_landing_order_${id}`;
+    }
+
+    function hasLandingOrder(id) {
+      if (!id) return false;
+      try {
+        return localStorage.getItem(landingOrderKey(id)) === '1';
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function markLandingOrder(id) {
+      if (!id) return;
+      try {
+        localStorage.setItem(landingOrderKey(id), '1');
+      } catch (e) {}
+    }
+
+    function showAlreadyOrdered() {
+      document.getElementById('app').innerHTML = `
+        <div class="success-box">
+          <div class="message-card">
+            <div class="success-icon">✓</div>
+            <h2>تم تسجيل طلبك مسبقاً ❤️</h2>
+            <p>شكراً لك. لقد تم إرسال طلب لهذا المنتج من هذا الجهاز بالفعل.</p>
+            <p>راح نتواصل معاك في أقرب وقت لتأكيد الطلب.</p>
+            <a href="/" class="back-btn">العودة إلى الصفحة الرئيسية</a>
+          </div>
+        </div>
+      `;
+    }
+
+
     function escapeHtml(value) {
       return String(value ?? '')
         .replace(/&/g, '&amp;')
@@ -1395,6 +1431,12 @@
       }
 
 
+      if (hasLandingOrder(currentProduct.id)) {
+        showAlreadyOrdered();
+        return;
+      }
+
+
       const button =
         document.getElementById(
           'submit-order-btn'
@@ -1702,6 +1744,9 @@
         );
 
 
+        markLandingOrder(currentProduct.id);
+
+
         showSuccess(
           order
         );
@@ -1769,10 +1814,10 @@
             </p>
 
             <a
-              href="landing-page.html?product=${encodeURIComponent(currentProduct.id)}"
+              href="/"
               class="back-btn"
             >
-              العودة للمنتج
+              العودة إلى الصفحة الرئيسية
             </a>
 
           </div>
@@ -1831,6 +1876,10 @@
       await loadDeliverySettings();
 
       await loadProduct();
+
+      if (currentProduct && hasLandingOrder(currentProduct.id)) {
+        showAlreadyOrdered();
+      }
 
     }
 
