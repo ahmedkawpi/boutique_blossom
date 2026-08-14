@@ -2351,16 +2351,27 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
   if(sourceSel) sourceSel.onchange=()=>{ state.productSourceLang=sourceSel.value; render(); };
   if(pf) pf.onsubmit=async(e)=>{
     e.preventDefault();
+
+    // Prevent double/triple clicks from creating duplicate products.
+    if(pf.dataset.saving === '1') return;
+    pf.dataset.saving = '1';
+    const saveBtn = pf.querySelector('button[type="submit"]');
+    if(saveBtn){ saveBtn.disabled = true; saveBtn.style.opacity = '0.6'; saveBtn.style.cursor = 'not-allowed'; }
+    const unlockSave = ()=>{
+      pf.dataset.saving = '0';
+      if(saveBtn){ saveBtn.disabled = false; saveBtn.style.opacity = ''; saveBtn.style.cursor = ''; }
+    };
+
     const source=document.getElementById('pf-source-lang').value;
     const sourceName=document.getElementById('pf-name-source').value.trim();
     const sourceDesc=document.getElementById('pf-desc-source').value.trim();
     const price=parseFloat(document.getElementById('pf-price').value);
-    if(isNaN(price)){ showToast(t('required')); return; }
+    if(isNaN(price)){ showToast(t('required')); unlockSave(); return; }
 
     let name, desc;
 
     if(state.editingProduct === 'new'){
-      if(!sourceName){ showToast(t('required')); return; }
+      if(!sourceName){ showToast(t('required')); unlockSave(); return; }
 
       name={en:'',fr:'',ar:''};
       desc={en:'',fr:'',ar:''};
@@ -2376,6 +2387,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       }catch(err){
         console.error('translation error',err);
         showToast(t('translation_failed'));
+        unlockSave();
         return;
       }
     }
@@ -2384,7 +2396,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
 
     if(isEditingExisting){
       const idx = state.products.findIndex(p=>p.id===state.editingProduct);
-      if(idx === -1) return;
+      if(idx === -1){ unlockSave(); return; }
 
       const existing = state.products[idx];
       const updatedName = {...existing.name};
@@ -2412,6 +2424,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       }catch(err){
         console.error('save product/images error:', err);
         showToast('Could not save product images — please retry.');
+        unlockSave();
         return;
       }
     }else{
@@ -2434,9 +2447,11 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       }catch(err){
         console.error('save product/images error:', err);
         showToast('Could not save product images — please retry.');
+        unlockSave();
         return;
       }
     }
+    unlockSave();
     state.editingProduct=null; state.productSourceLang=null; render(); showToast(state.lang==='ar'?'تم الحفظ':(state.lang==='fr'?'Enregistré':'Saved'));
   };
 }
