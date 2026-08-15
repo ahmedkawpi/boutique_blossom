@@ -773,7 +773,6 @@
 
         currentProduct = product;
 
-
         /* ---------- Main product image ---------- */
 
         currentImages = [];
@@ -1182,20 +1181,8 @@
 
 
       renderThumbnails();
-
-      // Products marked out of stock cannot be ordered from this page.
-      const orderBox = document.querySelector('.order-box');
-      if (currentProduct && currentProduct.stock === false && orderBox) {
-        orderBox.innerHTML = `
-          <div style="text-align:center;padding:24px 10px;">
-            <div style="font-size:38px;margin-bottom:10px;">⛔</div>
-            <h2 class="order-title">المنتج غير متوفر حاليًا</h2>
-            <p class="order-subtitle" style="margin-bottom:0;">يمكنك العودة لاحقًا، سنوفره من جديد عند توفره.</p>
-          </div>`;
-      } else {
-        bindProductEvents();
-        updateOrderSummary();
-      }
+      bindProductEvents();
+      updateOrderSummary();
 
     }
 
