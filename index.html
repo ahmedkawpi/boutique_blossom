@@ -876,7 +876,7 @@ const i18n = {
     admin_login_ph:'Password', admin_login_btn:'Log in', admin_login_err:'Incorrect password, try again.',
     admin_title:'Store admin', admin_logout:'Log out',
     stat_orders:'Total orders', stat_new:'New orders', stat_products:'Products live',
-    tab_orders:'Orders', tab_products:'Products', tab_design:'Design',
+    tab_orders:'Orders', tab_done_orders:'Done Orders', tab_products:'Products', tab_design:'Design',
     design_title:'Site photos', design_sub:'Adjust the large photos shown across your website — no code needed.',
     design_hero:'Homepage hero photo', design_hero_hint:'The big full-width photo behind your homepage headline.',
     design_look1:'Lookbook photo 1 (large)', design_look2:'Lookbook photo 2', design_look3:'Lookbook photo 3',
@@ -920,7 +920,7 @@ const i18n = {
     admin_login_ph:'Mot de passe', admin_login_btn:'Connexion', admin_login_err:'Mot de passe incorrect, réessayez.',
     admin_title:'Espace admin', admin_logout:'Déconnexion',
     stat_orders:'Commandes totales', stat_new:'Nouvelles commandes', stat_products:'Produits en ligne',
-    tab_orders:'Commandes', tab_products:'Produits', tab_design:'Design',
+    tab_orders:'Commandes', tab_done_orders:'Commandes terminées', tab_products:'Produits', tab_design:'Design',
     design_title:'Photos du site', design_sub:'Ajustez les grandes photos affichées sur votre site — aucun code requis.',
     design_hero:'Photo principale (accueil)', design_hero_hint:"La grande photo pleine largeur derrière le titre de l'accueil.",
     design_look1:'Photo lookbook 1 (grande)', design_look2:'Photo lookbook 2', design_look3:'Photo lookbook 3',
@@ -964,7 +964,7 @@ const i18n = {
     admin_login_ph:'كلمة المرور', admin_login_btn:'دخول', admin_login_err:'كلمة مرور غير صحيحة، حاولي مجددًا.',
     admin_title:'إدارة المتجر', admin_logout:'تسجيل الخروج',
     stat_orders:'إجمالي الطلبات', stat_new:'طلبات جديدة', stat_products:'منتجات معروضة',
-    tab_orders:'الطلبات', tab_products:'المنتجات', tab_design:'التصميم',
+    tab_orders:'الطلبات', tab_done_orders:'الطلبات المنتهية', tab_products:'المنتجات', tab_design:'التصميم',
     design_title:'صور الموقع', design_sub:'اضبطي الصور الكبيرة الظاهرة في موقعك — بدون أي برمجة.',
     design_hero:'صورة الصفحة الرئيسية', design_hero_hint:'الصورة الكبيرة خلف عنوان الصفحة الرئيسية.',
     design_look1:'صورة اللوك بوك 1 (كبيرة)', design_look2:'صورة اللوك بوك 2', design_look3:'صورة اللوك بوك 3',
@@ -1205,10 +1205,12 @@ async function refreshOrders(){
 
     if(error) throw error;
 
-    const fresh = (data || []).map(row => ({
-      ...row.data,
-      id: row.id
-    }));
+    const fresh = (data || [])
+      .map(row => ({
+        ...row.data,
+        id: row.id
+      }))
+      .filter(order => order.status !== 'deleted');
 
     if(JSON.stringify(fresh) !== JSON.stringify(state.orders)){
       state.orders = fresh;
@@ -1571,14 +1573,13 @@ function renderAdminLogin(){
 }
 
 function renderAdmin(){
-  const total = state.orders.length;
-const news = state.orders.filter(o=>o.status!=='done').length;
+  const visibleOrders = state.orders.filter(o=>o.status!=='deleted');
+  const total = visibleOrders.length;
+  const news = visibleOrders.filter(o=>o.status!=='done').length;
+  const sortedOrders = [...visibleOrders].sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+  const newOrders = sortedOrders.filter(o => o.status !== 'done');
+  const doneOrders = sortedOrders.filter(o => o.status === 'done');
 
-const sortedOrders = [...state.orders]
-  .sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
-
-const newOrders = sortedOrders.filter(o => o.status !== 'done');
-const doneOrders = sortedOrders.filter(o => o.status === 'done');
   return `
   <div class="admin-shell">
     <div class="admin-header">
@@ -1589,21 +1590,21 @@ const doneOrders = sortedOrders.filter(o => o.status === 'done');
       <div class="stat-card"><div class="num">${total}</div><div class="lbl">${t('stat_orders')}</div></div>
       <div class="stat-card"><div class="num">${news}</div><div class="lbl">${t('stat_new')}</div></div>
       <div class="stat-card"><div class="num">${visibleProducts().length}</div><div class="lbl">${t('stat_products')}</div></div>
-      <div class="stat-card"><div class="num">${fmtPrice(state.orders.reduce((sum,o)=>sum+Number(o.total||o.price||0),0))} DA</div><div class="lbl">Sales</div></div>
+      <div class="stat-card"><div class="num">${fmtPrice(visibleOrders.reduce((sum,o)=>sum+Number(o.total||o.price||0),0))} DA</div><div class="lbl">Sales</div></div>
       <div class="stat-card"><div class="num">${state.products.filter(p=>!p.stock).length}</div><div class="lbl">Out of stock</div></div>
     </div>
     <div class="tabs">
-      <button class="tab-btn ${state.adminTab==='orders'?'active':''}" data-tab="orders">${t('tab_orders')}</button>
+      <button class="tab-btn ${state.adminTab==='orders'?'active':''}" data-tab="orders">${t('tab_orders')} <span class="tab-count">${newOrders.length}</span></button>
+      <button class="tab-btn ${state.adminTab==='done'?'active':''}" data-tab="done">${t('tab_done_orders')} <span class="tab-count">${doneOrders.length}</span></button>
       <button class="tab-btn ${state.adminTab==='products'?'active':''}" data-tab="products">${t('tab_products')}</button>
       <button class="tab-btn ${state.adminTab==='delivery'?'active':''}" data-tab="delivery">${t('tab_delivery')}</button>
       <button class="tab-btn ${state.adminTab==='design'?'active':''}" data-tab="design">${t('tab_design')}</button>
     </div>
-    ${state.adminTab==='orders' ? `
-  <div class="orders-section-title">🆕 New Orders</div>
-  ${renderOrdersTab(newOrders)}
-  <div class="orders-section-title done-orders-title">✅ Done Orders</div>
-  ${renderOrdersTab(doneOrders)}
-` : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : renderDesignTab()))}
+    ${state.adminTab==='orders'
+      ? renderOrdersTab(newOrders)
+      : (state.adminTab==='done'
+        ? renderOrdersTab(doneOrders)
+        : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : renderDesignTab())))}
   </div>`;
 }
 
@@ -2151,20 +2152,30 @@ render();
 });
 document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async ()=>{
   const id = b.dataset.deleteOrder;
+  const o = state.orders.find(x=>x.id===id);
 
-  if(!confirm(t('confirm_delete'))){
+  if(!o || !confirm(t('confirm_delete'))){
     return;
   }
 
   try{
+    const updatedData = {
+      ...o,
+      status: 'deleted',
+      deletedAt: new Date().toISOString()
+    };
+
     const { error } = await supabaseClient
       .from('orders')
-      .delete()
+      .update({
+        data: updatedData,
+        updated_at: new Date().toISOString()
+      })
       .eq('id', id);
 
     if(error) throw error;
 
-    state.orders = state.orders.filter(o => o.id !== id);
+    state.orders = state.orders.filter(x => x.id !== id);
     render();
 
   }catch(e){
@@ -2508,10 +2519,6 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
 
 
 async function restoreRememberedAdmin(){
-  let remember=false;
-  try{ remember=localStorage.getItem('blossom_admin_remember')==='1'; }catch(e){}
-  if(!remember) return;
-
   try{
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const user = sessionData && sessionData.session && sessionData.session.user;
