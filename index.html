@@ -1057,10 +1057,11 @@ async function loadData(){
       category: p.category,
       price: p.price,
       oldPrice: p.old_price ?? undefined,
-      stock: true,
+      stock: p.stock !== false,
       image: p.image,
       name: p.name,
-      desc: p.description
+      desc: p.description,
+      sourceLang: p.source_lang || null
     }));
   }catch(e){
     console.error('loadProducts error:', e);
@@ -1374,6 +1375,7 @@ function renderBestsellers(){
         <div class="card reveal" data-product-link="${p.id}" style="transition-delay:${i*0.06}s;cursor:pointer;">
           <div style="position:relative;">
             ${productThumb(p, {hint:true})}
+            ${!p.stock ? `<div class="stock-badge">${t('out_of_stock')}</div>` : ''}
             <div class="card-tag bestseller">${state.lang==='ar'?'الأكثر مبيعًا':(state.lang==='fr'?'Bestseller':'Bestseller')}</div>
           </div>
           <div class="card-body">
@@ -1437,6 +1439,7 @@ function renderNewArrivals(){
         <div class="card reveal" data-product-link="${p.id}" style="transition-delay:${i*0.06}s;cursor:pointer;">
           <div style="position:relative;">
             ${productThumb(p, {hint:true})}
+            ${!p.stock ? `<div class="stock-badge">${t('out_of_stock')}</div>` : ''}
             <div class="card-tag new">${state.lang==='ar'?'جديد':(state.lang==='fr'?'Nouveau':'New')}</div>
           </div>
           <div class="card-body">
@@ -1990,6 +1993,8 @@ function bindEvents(){
     if(state.view!=='shop') return;
     const productId = b.dataset.order;
     if(!productId) return;
+    const product = state.products.find(p=>p.id===productId);
+    if(!product || product.stock === false) return;
     window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
   });
   document.querySelectorAll('[data-modal-image]').forEach(b=> b.onclick = ()=>{
