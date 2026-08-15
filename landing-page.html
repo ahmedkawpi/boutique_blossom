@@ -1843,6 +1843,22 @@
           'ORDER SAVED SUCCESSFULLY'
         );
 
+        /* ---------- Send order notification to Telegram ---------- */
+        try {
+          const { data: telegramData, error: telegramError } =
+            await supabaseClient.functions.invoke('telegram-order', {
+              body: { data: order }
+            });
+
+          if (telegramError) {
+            console.error('TELEGRAM NOTIFICATION ERROR:', telegramError);
+          } else {
+            console.log('TELEGRAM NOTIFICATION SENT:', telegramData);
+          }
+        } catch (telegramError) {
+          console.error('TELEGRAM NOTIFICATION ERROR:', telegramError);
+        }
+
         activeOrderCount += 1;
 
         showSuccess(
