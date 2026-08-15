@@ -2522,7 +2522,11 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       }
     }
     unlockSave();
-    state.editingProduct=null; state.productSourceLang=null; render(); showToast(state.lang==='ar'?'تم الحفظ':(state.lang==='fr'?'Enregistré':'Saved'));
+    state.editingProduct = null;
+    state.productSourceLang = null;
+    state.adminTab = 'products';
+    render();
+    showToast(state.lang==='ar'?'تم الحفظ':(state.lang==='fr'?'Enregistré':'Saved'));
   };
 }
 
