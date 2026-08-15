@@ -1051,11 +1051,6 @@ async function loadData(){
     .select('*')
     .order('created_at', { ascending: true });
 
-  const imagesPromise = supabaseClient
-    .from('product_images')
-    .select('product_id, image_url')
-    .order('id', { ascending: true });
-
   const settingsPromise = supabaseClient
     .from('store_settings')
     .select('data')
@@ -1122,23 +1117,8 @@ async function loadData(){
     state.orders = [];
   });
 
-  imagesPromise.then(({data, error})=>{
-    if(error) throw error;
-    const images = {};
-    (data || []).forEach(row => {
-      if(!row.product_id || !row.image_url) return;
-      if(!images[row.product_id]) images[row.product_id] = new Set();
-      images[row.product_id].add(String(row.image_url).trim());
-    });
-    // Remove duplicate image URLs from the in-memory gallery as well.
-    Object.keys(images).forEach(productId => {
-      images[productId] = [...images[productId]].filter(Boolean);
-    });
-    state.productImages = images;
-  }).catch(e=>{
-    console.error('loadProductImages error:', e);
-    state.productImages = {};
-  });
+  // Extra product images are NOT loaded on the home/shop page.
+  // They are fetched only when the admin opens a product editor.
 
   requestAnimationFrame(setupHeroParallax);
 }
@@ -1853,6 +1833,35 @@ function renderSuccessModal(){
   </div>`;
 }
 
+async function ensureProductImagesLoaded(productId){
+  if(!productId) return;
+  if(Object.prototype.hasOwnProperty.call(state.productImages, productId)) return;
+
+  // Mark as loaded immediately so duplicate requests cannot happen.
+  state.productImages[productId] = [];
+
+  try{
+    const { data, error } = await supabaseClient
+      .from('product_images')
+      .select('image_url')
+      .eq('product_id', productId)
+      .order('id', { ascending: true });
+
+    if(error) throw error;
+
+    state.productImages[productId] = [...new Set(
+      (data || [])
+        .map(row => String(row.image_url || '').trim())
+        .filter(Boolean)
+    )];
+
+    if(state.editingProduct === productId) render();
+  }catch(e){
+    console.error('loadProductImages error:', e);
+    state.productImages[productId] = [];
+  }
+}
+
 function renderProductForm(){
   const editing = state.editingProduct;
   const isNew = editing === 'new';
@@ -1861,6 +1870,9 @@ function renderProductForm(){
   const sourceLang = state.productSourceLang || state.lang;
   const sourceName = p.name[sourceLang] || p.name.en || p.name.fr || p.name.ar || '';
   const sourceDesc = p.desc[sourceLang] || p.desc.en || p.desc.fr || p.desc.ar || '';
+  if(p.id && !Object.prototype.hasOwnProperty.call(state.productImages, p.id)){
+    ensureProductImagesLoaded(p.id);
+  }
   const extraImages = p.id ? (state.productImages[p.id] || []) : [];
   const galleryImages = [...new Set([p.image, ...extraImages].filter(Boolean))];
   return `<div class="overlay" data-close="product"><div class="modal" onclick="event.stopPropagation()" style="max-width:520px;">
