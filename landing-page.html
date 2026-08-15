@@ -794,6 +794,13 @@
         currentProduct = product;
 
 
+        // Stock is controlled by Admin/Supabase. Never allow a sold-out
+        // product to open an order form or accept an order.
+        if (currentProduct.stock === false) {
+          currentProduct.stock = false;
+        }
+
+
         /* ---------- Main product image ---------- */
 
         currentImages = [];
@@ -965,7 +972,7 @@
 
             <!-- ================= ORDER BOX ================= -->
 
-            ${!currentProduct.stock ? `
+            ${currentProduct.stock === false ? `
               <div class="out-of-stock-box">
                 <h2>غير متوفر حاليًا</h2>
                 <p>هذا المنتج نفد من المخزون حاليًا. يمكنك العودة للمتجر والاطلاع على باقي المنتجات.</p>
@@ -1513,6 +1520,7 @@
       }
 
       if (currentProduct.stock === false) {
+        alert('هذا المنتج غير متوفر حاليًا.');
         return;
       }
 
