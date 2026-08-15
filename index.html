@@ -1367,7 +1367,7 @@ function renderBestsellers(){
     </div>
     <div class="grid">
       ${items.map((p,i)=>`
-        <div class="card reveal" style="transition-delay:${i*0.06}s">
+        <div class="card reveal" data-product-link="${p.id}" style="transition-delay:${i*0.06}s;cursor:pointer;">
           <div style="position:relative;">
             ${productThumb(p, {hint:true})}
             <div class="card-tag bestseller">${state.lang==='ar'?'الأكثر مبيعًا':(state.lang==='fr'?'Bestseller':'Bestseller')}</div>
@@ -1430,7 +1430,7 @@ function renderNewArrivals(){
     </div>
     <div class="new-grid">
       ${items.map((p,i)=>`
-        <div class="card reveal" style="transition-delay:${i*0.06}s">
+        <div class="card reveal" data-product-link="${p.id}" style="transition-delay:${i*0.06}s;cursor:pointer;">
           <div style="position:relative;">
             ${productThumb(p, {hint:true})}
             <div class="card-tag new">${state.lang==='ar'?'جديد':(state.lang==='fr'?'Nouveau':'New')}</div>
@@ -1477,11 +1477,10 @@ function productThumb(p, opts){
   opts = opts || {};
   const colors = THUMB_COLORS[p.category] || THUMB_COLORS.dresses;
   const src = p.image || CATEGORY_IMAGES[p.category] || '';
-  const hint = `<div class="quick-order">${state.lang==='ar'?'عرض المنتج':(state.lang==='fr'?'Voir le produit':'View product')}</div>`;
   if(src){
-    return `<div class="thumb product-clickable" data-order="${p.id}" style="--tc1:${colors[0]};--tc2:${colors[1]}"><img src="${escapeHtml(src)}" alt="${escapeHtml(p.name[state.lang]||p.name.en)}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('img-broken');">${hint}</div>`;
+    return `<div class="thumb product-clickable" data-order="${p.id}" style="--tc1:${colors[0]};--tc2:${colors[1]}"><img src="${escapeHtml(src)}" alt="${escapeHtml(p.name[state.lang]||p.name.en)}" loading="lazy" onerror="this.style.display='none';this.parentElement.classList.add('img-broken');"></div>`;
   }
-  return `<div class="thumb product-clickable" data-order="${p.id}" style="--tc1:${colors[0]};--tc2:${colors[1]}">${ICONS[p.category]||ICONS.dresses}${hint}</div>`;
+  return `<div class="thumb product-clickable" data-order="${p.id}" style="--tc1:${colors[0]};--tc2:${colors[1]}">${ICONS[p.category]||ICONS.dresses}</div>`;
 }
 
 function renderShop(){
@@ -1500,7 +1499,7 @@ function renderShop(){
       </div>` : `
     <div class="grid">
       ${items.map((p, i) => `
-        <div class="card reveal" style="transition-delay:${Math.min(i%6,5) * 0.06}s">
+        <div class="card reveal" data-product-link="${p.id}" style="transition-delay:${Math.min(i%6,5) * 0.06}s;cursor:pointer;">
           ${productThumb(p, {hint:true})}
           ${!p.stock ? `<div class="stock-badge">${t('out_of_stock')}</div>` : ''}
           <div class="card-body">
@@ -1973,7 +1972,16 @@ function bindEvents(){
     const el = document.getElementById(b.dataset.scroll);
     if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
   });
-  document.querySelectorAll('[data-order]').forEach(b=> b.onclick = ()=>{
+  document.querySelectorAll('[data-product-link]').forEach(card=> card.onclick = (e)=>{
+    if(state.view!=='shop') return;
+    if(e.target.closest('button,a,input,select,textarea')) return;
+    const productId = card.dataset.productLink;
+    if(!productId) return;
+    window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
+  });
+
+  document.querySelectorAll('[data-order]').forEach(b=> b.onclick = (e)=>{
+    e.stopPropagation();
     if(state.view!=='shop') return;
     const productId = b.dataset.order;
     if(!productId) return;
@@ -2473,6 +2481,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
         id:'p'+Date.now(),
         category:document.getElementById('pf-category').value,
         price,
+        oldPrice,
         image:extraImageUrls[0]||'',
         stock:document.getElementById('pf-stock').checked,
         name,
