@@ -183,6 +183,26 @@
 
     /* ================= ORDER ================= */
 
+    .out-of-stock-box {
+      background: #fff;
+      border: 1px solid #eadde3;
+      border-radius: 18px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(80, 40, 60, 0.06);
+    }
+
+    .out-of-stock-box h2 {
+      margin: 0 0 8px;
+      color: #9b5575;
+    }
+
+    .out-of-stock-box p {
+      margin: 0;
+      color: #7d6871;
+      line-height: 1.6;
+    }
+
     .order-box {
       background: white;
       border: 1px solid #eadde3;
@@ -945,6 +965,12 @@
 
             <!-- ================= ORDER BOX ================= -->
 
+            ${!currentProduct.stock ? `
+              <div class="out-of-stock-box">
+                <h2>غير متوفر حاليًا</h2>
+                <p>هذا المنتج نفد من المخزون حاليًا. يمكنك العودة للمتجر والاطلاع على باقي المنتجات.</p>
+              </div>
+            ` : `
             <div class="order-box">
 
               <h2 class="order-title">
@@ -1174,6 +1200,7 @@
               </form>
 
             </div>
+            `}
 
           </div>
 
@@ -1482,6 +1509,10 @@
 
 
       if (!currentProduct) {
+        return;
+      }
+
+      if (currentProduct.stock === false) {
         return;
       }
 
