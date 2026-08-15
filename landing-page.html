@@ -296,6 +296,33 @@
       transform: none;
     }
 
+    /* ================= ORDER LIMIT OVERLAY ================= */
+    #order-limit-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .order-limit-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(43, 34, 38, 0.38);
+      backdrop-filter: blur(3px);
+    }
+
+    .order-limit-card {
+      position: relative;
+      width: min(500px, 100%);
+      background: #fff;
+      border-radius: 22px;
+      padding: 30px 24px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(50, 25, 40, 0.22);
+    }
+
     /* ================= STATES ================= */
 
     .loading,
@@ -518,7 +545,8 @@
 
 
     /* Order limit: 2 active orders per product on this device.
-       When both become DONE in Admin, the customer can order again. */
+       Deleted orders do not count.
+       A new cycle starts only after the current 2 orders are both DONE. */
     function getDeviceId() {
       const key = 'blossom_device_id';
       try {
@@ -537,17 +565,27 @@
     let activeOrderCount = 0;
 
     function showOrderLimitReached() {
-      document.getElementById('app').innerHTML = `
-        <div class="success-box">
-          <div class="message-card">
-            <div class="success-icon">✓</div>
-            <h2>لديك طلبان قيد المعالجة ❤️</h2>
-            <p>يمكنك إجراء طلبين كحد أقصى لهذا المنتج في نفس الوقت.</p>
-            <p>بعد أن ينتهي الأدمن من الطلبين ويصبحان <strong>DONE</strong>، يمكنك الطلب من جديد.</p>
-            <a href="/" class="back-btn">العودة إلى الصفحة الرئيسية</a>
-          </div>
+      if (document.getElementById('order-limit-overlay')) return;
+      const overlay = document.createElement('div');
+      overlay.id = 'order-limit-overlay';
+      overlay.innerHTML = `
+        <div class="order-limit-backdrop"></div>
+        <div class="order-limit-card" role="dialog" aria-modal="true" aria-live="polite">
+          <div class="success-icon">✓</div>
+          <h2>لديك طلبان قيد المعالجة ❤️</h2>
+          <p>لقد وصلت إلى الحد الأقصى وهو طلبان لهذا المنتج.</p>
+          <p>بعد أن يصبح الطلبان <strong>DONE</strong> يمكنك الطلب من جديد.</p>
+          <button type="button" class="back-btn" id="order-limit-close">حسنًا</button>
         </div>
       `;
+      document.body.appendChild(overlay);
+      const close = document.getElementById('order-limit-close');
+      if (close) close.onclick = () => overlay.remove();
+    }
+
+    function hideOrderLimitReached() {
+      const overlay = document.getElementById('order-limit-overlay');
+      if (overlay) overlay.remove();
     }
 
     async function getActiveOrderCount() {
@@ -562,46 +600,47 @@
         if (error) throw error;
 
         const orders = (data || [])
-          .filter(row => {
-            const order = row && row.data ? row.data : {};
-            return order.deviceId === deviceId;
+          .map(row => ({
+            row,
+            order: row && row.data ? row.data : {}
+          }))
+          .filter(({ order }) => {
+            return order.deviceId === deviceId && order.status !== 'deleted';
           })
-          .sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
+          .sort((a, b) => {
+            const ad = new Date(a.row.created_at || a.order.createdAt || 0).getTime();
+            const bd = new Date(b.row.created_at || b.order.createdAt || 0).getTime();
+            return ad - bd;
+          });
 
-        // A customer gets exactly 2 orders per cycle.
-        // A new cycle starts ONLY after BOTH orders in the current cycle are DONE.
-        // Archived/deleted orders still belong to the current cycle, so deleting
-        // an order in Admin does not reset the customer's allowance.
+        /* Work in 2-order cycles from oldest to newest.
+           - 0 or 1 order in the current cycle => that count is active.
+           - 2 orders both DONE => the cycle is finished and count is 0.
+           - 2 orders with any non-DONE status => count is 2.
+           - Deleted rows were removed from the calculation above. */
         let cycle = [];
 
-        for (const row of orders) {
-          const status = row?.data?.status || 'new';
-
+        for (const item of orders) {
           if (cycle.length === 2) {
-            const bothDone = cycle.every(item => item.status === 'done');
-
+            const bothDone = cycle.every(x => x.status === 'done');
             if (bothDone) {
               cycle = [];
             } else {
-              // Still in the current cycle. Do not open a third order.
               break;
             }
           }
 
           cycle.push({
-            id: row.id,
-            status
+            id: item.row.id,
+            status: item.order.status || 'new'
           });
         }
 
-        // Important: when the database contains exactly two orders and both
-        // are DONE, the loop ends before the cycle check above runs again.
-        // Reset the cycle here so the customer can place two new orders.
-        if (cycle.length === 2 && cycle.every(item => item.status === 'done')) {
-          cycle = [];
+        if (cycle.length === 2 && cycle.every(x => x.status === 'done')) {
+          return 0;
         }
 
-        return cycle.length;
+        return Math.min(cycle.length, 2);
       } catch (e) {
         console.error('ORDER LIMIT CHECK ERROR:', e);
         return 0;
@@ -612,9 +651,10 @@
       activeOrderCount = await getActiveOrderCount();
       if (activeOrderCount >= 2) {
         showOrderLimitReached();
+      } else {
+        hideOrderLimitReached();
       }
     }
-
 
     function escapeHtml(value) {
       return String(value ?? '')
