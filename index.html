@@ -1044,43 +1044,14 @@ function fmtDate(iso){
 
 /* ============ STORAGE ============ */
 async function loadData(){
-  // Load independent data sources in parallel so the homepage enters faster.
-  // Nothing in the design or rendering is changed here.
-  const productsPromise = supabaseClient
-    .from('products')
-    .select('*')
-    .order('created_at', { ascending: true });
-
-  const productImagesPromise = supabaseClient
-    .from('product_images')
-    .select('product_id, image_url')
-    .order('id', { ascending: true });
-
-  const ordersPromise = (async()=>{
-    try{
-      return await window.storage.get(STORAGE_ORDERS_KEY, true);
-    }catch(e){
-      return null;
-    }
-  })();
-
-  const settingsPromise = supabaseClient
-    .from('store_settings')
-    .select('data')
-    .eq('id', 1)
-    .maybeSingle();
-
-  const [productsResult, productImagesResult, ordersResult, settingsResult] = await Promise.all([
-    productsPromise.catch(error => ({ error })),
-    productImagesPromise.catch(error => ({ error })),
-    ordersPromise,
-    settingsPromise.catch(error => ({ error }))
-  ]);
-
-  // Products
   try{
-    const { data, error } = productsResult || {};
+    const { data, error } = await supabaseClient
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: true });
+
     if(error) throw error;
+
     state.products = (data || []).map(p => ({
       id: p.id,
       category: p.category,
@@ -1095,11 +1066,14 @@ async function loadData(){
     console.error('loadProducts error:', e);
     state.products = [];
   }
-
-  // Extra product images
   try{
-    const { data, error } = productImagesResult || {};
+    const { data, error } = await supabaseClient
+      .from('product_images')
+      .select('product_id, image_url')
+      .order('id', { ascending: true });
+
     if(error) throw error;
+
     state.productImages = {};
     (data || []).forEach(row => {
       if(!row.product_id || !row.image_url) return;
@@ -1110,33 +1084,34 @@ async function loadData(){
     console.error('loadProductImages error:', e);
     state.productImages = {};
   }
-
-  // Local orders
   try{
-    const r2 = ordersResult;
+    const r2 = await window.storage.get(STORAGE_ORDERS_KEY, true);
     state.orders = r2 && r2.value ? JSON.parse(r2.value) : [];
   }catch(e){
     state.orders = [];
   }
-
-  // Store settings
   try{
-    const { data, error } = settingsResult || {};
-    if(error) throw error;
-    state.settings = data && data.data
-      ? Object.assign(defaultSettings(), data.data)
-      : defaultSettings();
-    state.settings.delivery = normalizeDelivery(state.settings.delivery);
-  }catch(e){
-    console.error('loadSettings error:', e);
-    state.settings = defaultSettings();
-  }
+  const { data, error } = await supabaseClient
+    .from('store_settings')
+    .select('data')
+    .eq('id', 1)
+    .maybeSingle();
 
+  if(error) throw error;
+
+  state.settings = data && data.data
+    ? Object.assign(defaultSettings(), data.data)
+    : defaultSettings();
+  state.settings.delivery = normalizeDelivery(state.settings.delivery);
+
+}catch(e){
+  console.error('loadSettings error:', e);
+  state.settings = defaultSettings();
+}
   state.loaded = true;
   render();
   requestAnimationFrame(setupHeroParallax);
 }
-
 async function saveProducts(){
   try{
     const { error } = await supabaseClient
