@@ -1125,6 +1125,8 @@ async function saveProducts(){
           old_price: p.oldPrice ?? null,
           image: p.image,
           description: p.desc,
+          stock: p.stock !== false,
+          source_lang: p.sourceLang || null,
           updated_at: new Date().toISOString()
         })),
         { onConflict: 'id' }
@@ -1379,7 +1381,7 @@ function renderBestsellers(){
             <h3 class="card-name">${escapeHtml(p.name[state.lang] || p.name.en)}</h3>
             <div class="card-foot">
               <div class="price">${renderProductPrice(p)}</div>
-              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${t('order_now')}</button>
+              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${p.stock ? t('order_now') : t('out_of_stock')}</button>
             </div>
           </div>
         </div>
@@ -1443,7 +1445,7 @@ function renderNewArrivals(){
             <p class="card-desc">${escapeHtml(p.desc[state.lang] || p.desc.en)}</p>
             <div class="card-foot">
               <div class="price">${renderProductPrice(p)}</div>
-              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${t('order_now')}</button>
+              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${p.stock ? t('order_now') : t('out_of_stock')}</button>
             </div>
           </div>
         </div>
@@ -1510,7 +1512,7 @@ function renderShop(){
             <p class="card-desc">${escapeHtml(p.desc[state.lang] || p.desc.en)}</p>
             <div class="card-foot">
               <div class="price">${renderProductPrice(p)}</div>
-              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${t('order_now')}</button>
+              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${p.stock ? t('order_now') : t('out_of_stock')}</button>
             </div>
           </div>
         </div>
@@ -1826,7 +1828,7 @@ function renderProductForm(){
   const isNew = editing === 'new';
   const p = isNew ? {id:null,category:'dresses',price:'',oldPrice:null,stock:true,image:'',name:{en:'',ar:'',fr:''},desc:{en:'',ar:'',fr:''}} : state.products.find(x=>x.id===editing);
   if(!p) return '';
-  const sourceLang = state.productSourceLang || state.lang;
+  const sourceLang = state.productSourceLang || p.sourceLang || state.lang;
   const sourceName = p.name[sourceLang] || p.name.en || p.name.fr || p.name.ar || '';
   const sourceDesc = p.desc[sourceLang] || p.desc.en || p.desc.fr || p.desc.ar || '';
   const extraImages = p.id ? (state.productImages[p.id] || []) : [];
@@ -1978,6 +1980,8 @@ function bindEvents(){
     if(e.target.closest('button,a,input,select,textarea')) return;
     const productId = card.dataset.productLink;
     if(!productId) return;
+    const product = state.products.find(p=>p.id===productId);
+    if(!product || product.stock === false) return;
     window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
   });
 
