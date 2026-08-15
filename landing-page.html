@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -589,17 +590,58 @@
     }
 
     async function getActiveOrderCount() {
-      if (!currentProduct?.id || !deviceId) return 0;
+      if (!currentProduct?.id) return 0;
 
       try {
-        const { data, error } = await supabaseClient.rpc('get_order_cycle_count', {
-          p_product_id: currentProduct.id,
-          p_device_id: deviceId
-        });
+        const { data, error } = await supabaseClient
+          .from('orders')
+          .select('id,data,created_at,updated_at')
+          .eq('data->>productId', currentProduct.id);
 
         if (error) throw error;
 
-        return Math.min(Number(data) || 0, 2);
+        const orders = (data || [])
+          .map(row => ({
+            row,
+            order: row && row.data ? row.data : {}
+          }))
+          .filter(({ order }) => {
+            return order.deviceId === deviceId && order.status !== 'deleted';
+          })
+          .sort((a, b) => {
+            const ad = new Date(a.row.created_at || a.order.createdAt || 0).getTime();
+            const bd = new Date(b.row.created_at || b.order.createdAt || 0).getTime();
+            return ad - bd;
+          });
+
+        /* Work in 2-order cycles from oldest to newest.
+           - 0 or 1 order in the current cycle => that count is active.
+           - 2 orders both DONE => the cycle is finished and count is 0.
+           - 2 orders with any non-DONE status => count is 2.
+           - Deleted rows were removed from the calculation above. */
+        let cycle = [];
+
+        for (const item of orders) {
+          if (cycle.length === 2) {
+            const bothDone = cycle.every(x => x.status === 'done');
+            if (bothDone) {
+              cycle = [];
+            } else {
+              break;
+            }
+          }
+
+          cycle.push({
+            id: item.row.id,
+            status: item.order.status || 'new'
+          });
+        }
+
+        if (cycle.length === 2 && cycle.every(x => x.status === 'done')) {
+          return 0;
+        }
+
+        return Math.min(cycle.length, 2);
       } catch (e) {
         console.error('ORDER LIMIT CHECK ERROR:', e);
         return 0;
@@ -1801,22 +1843,6 @@
         console.log(
           'ORDER SAVED SUCCESSFULLY'
         );
-
-        /* ---------- Send order notification to Telegram ---------- */
-        try {
-          const { data: telegramData, error: telegramError } =
-            await supabaseClient.functions.invoke('telegram-order', {
-              body: { data: order }
-            });
-
-          if (telegramError) {
-            console.error('TELEGRAM NOTIFICATION ERROR:', telegramError);
-          } else {
-            console.log('TELEGRAM NOTIFICATION SENT:', telegramData);
-          }
-        } catch (telegramError) {
-          console.error('TELEGRAM NOTIFICATION ERROR:', telegramError);
-        }
 
         activeOrderCount += 1;
 
