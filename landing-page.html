@@ -183,26 +183,6 @@
 
     /* ================= ORDER ================= */
 
-    .out-of-stock-box {
-      background: #fff;
-      border: 1px solid #eadde3;
-      border-radius: 18px;
-      padding: 24px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(80, 40, 60, 0.06);
-    }
-
-    .out-of-stock-box h2 {
-      margin: 0 0 8px;
-      color: #9b5575;
-    }
-
-    .out-of-stock-box p {
-      margin: 0;
-      color: #7d6871;
-      line-height: 1.6;
-    }
-
     .order-box {
       background: white;
       border: 1px solid #eadde3;
@@ -794,13 +774,6 @@
         currentProduct = product;
 
 
-        // Stock is controlled by Admin/Supabase. Never allow a sold-out
-        // product to open an order form or accept an order.
-        if (currentProduct.stock === false) {
-          currentProduct.stock = false;
-        }
-
-
         /* ---------- Main product image ---------- */
 
         currentImages = [];
@@ -972,12 +945,6 @@
 
             <!-- ================= ORDER BOX ================= -->
 
-            ${currentProduct.stock === false ? `
-              <div class="out-of-stock-box">
-                <h2>غير متوفر حاليًا</h2>
-                <p>هذا المنتج نفد من المخزون حاليًا. يمكنك العودة للمتجر والاطلاع على باقي المنتجات.</p>
-              </div>
-            ` : `
             <div class="order-box">
 
               <h2 class="order-title">
@@ -1207,7 +1174,6 @@
               </form>
 
             </div>
-            `}
 
           </div>
 
@@ -1216,8 +1182,20 @@
 
 
       renderThumbnails();
-      bindProductEvents();
-      updateOrderSummary();
+
+      // Products marked out of stock cannot be ordered from this page.
+      const orderBox = document.querySelector('.order-box');
+      if (currentProduct && currentProduct.stock === false && orderBox) {
+        orderBox.innerHTML = `
+          <div style="text-align:center;padding:24px 10px;">
+            <div style="font-size:38px;margin-bottom:10px;">⛔</div>
+            <h2 class="order-title">المنتج غير متوفر حاليًا</h2>
+            <p class="order-subtitle" style="margin-bottom:0;">يمكنك العودة لاحقًا، سنوفره من جديد عند توفره.</p>
+          </div>`;
+      } else {
+        bindProductEvents();
+        updateOrderSummary();
+      }
 
     }
 
