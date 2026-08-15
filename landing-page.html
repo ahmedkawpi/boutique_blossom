@@ -399,19 +399,13 @@
   <div class="page">
 
     <header class="top-bar">
-      <div>
+      <a href="/" aria-label="Boutique Blossom - الصفحة الرئيسية" style="text-decoration:none;color:inherit;cursor:pointer;">
         <div class="brand">Blossom</div>
         <div class="brand-small">Boutique Blossom</div>
-      </div>
+      </a>
     </header>
 
-    <main id="app">
-      <div class="loading">
-        <div class="message-card">
-          جاري تحميل المنتج...
-        </div>
-      </div>
-    </main>
+    <main id="app"></main>
 
   </div>
 
@@ -523,39 +517,89 @@
     let deliverySettings = null;
 
 
-    /* One successful Landing Page order per product on this device. */
-    function landingOrderKey(id) {
-      return `blossom_landing_order_${id}`;
-    }
-
-    function hasLandingOrder(id) {
-      if (!id) return false;
+    /* Order limit: 2 active orders per product on this device.
+       When both become DONE in Admin, the customer can order again. */
+    function getDeviceId() {
+      const key = 'blossom_device_id';
       try {
-        return localStorage.getItem(landingOrderKey(id)) === '1';
+        let id = localStorage.getItem(key);
+        if (!id) {
+          id = 'd' + Date.now() + Math.random().toString(36).slice(2, 10);
+          localStorage.setItem(key, id);
+        }
+        return id;
       } catch (e) {
-        return false;
+        return 'd-fallback-' + Math.random().toString(36).slice(2, 10);
       }
     }
 
-    function markLandingOrder(id) {
-      if (!id) return;
-      try {
-        localStorage.setItem(landingOrderKey(id), '1');
-      } catch (e) {}
-    }
+    const deviceId = getDeviceId();
+    let activeOrderCount = 0;
 
-    function showAlreadyOrdered() {
+    function showOrderLimitReached() {
       document.getElementById('app').innerHTML = `
         <div class="success-box">
           <div class="message-card">
             <div class="success-icon">✓</div>
-            <h2>تم تسجيل طلبك مسبقاً ❤️</h2>
-            <p>شكراً لك. لقد تم إرسال طلب لهذا المنتج من هذا الجهاز بالفعل.</p>
-            <p>راح نتواصل معاك في أقرب وقت لتأكيد الطلب.</p>
+            <h2>لديك طلبان قيد المعالجة ❤️</h2>
+            <p>يمكنك إجراء طلبين كحد أقصى لهذا المنتج في نفس الوقت.</p>
+            <p>بعد أن ينتهي الأدمن من الطلبين ويصبحان <strong>DONE</strong>، يمكنك الطلب من جديد.</p>
             <a href="/" class="back-btn">العودة إلى الصفحة الرئيسية</a>
           </div>
         </div>
       `;
+    }
+
+    async function getActiveOrderCount() {
+      if (!currentProduct?.id) return 0;
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('orders')
+          .select('id,data,created_at,updated_at')
+          .eq('data->>productId', currentProduct.id);
+
+        if (error) throw error;
+
+        const orders = (data || [])
+          .filter(row => {
+            const order = row && row.data ? row.data : {};
+            return order.deviceId === deviceId;
+          })
+          .sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
+
+        // A customer gets exactly 2 orders per cycle.
+        // A new cycle starts only after BOTH orders in the previous cycle are DONE.
+        let cycle = [];
+
+        for (const row of orders) {
+          if (cycle.length === 2 && cycle.every(item => item.status === 'done')) {
+            cycle = [];
+          }
+
+          cycle.push({
+            id: row.id,
+            status: row?.data?.status || 'new'
+          });
+
+          if (cycle.length > 2) {
+            // Safety fallback for malformed/legacy data.
+            break;
+          }
+        }
+
+        return cycle.length;
+      } catch (e) {
+        console.error('ORDER LIMIT CHECK ERROR:', e);
+        return 0;
+      }
+    }
+
+    async function refreshOrderAvailability() {
+      activeOrderCount = await getActiveOrderCount();
+      if (activeOrderCount >= 2) {
+        showOrderLimitReached();
+      }
     }
 
 
@@ -685,6 +729,8 @@
       } catch (error) {
         console.error('DELIVERY SETTINGS ERROR:', error);
         deliverySettings = defaultDelivery();
+      } finally {
+        updateOrderSummary();
       }
     }
 
@@ -725,8 +771,18 @@
         }
 
 
-        /* ---------- Additional images ---------- */
+        if (!currentImages.length) {
+          currentImages.push(
+            'https://via.placeholder.com/800x1000?text=Boutique+Blossom'
+          );
+        }
 
+        currentImageIndex = 0;
+
+        // Render the main product immediately. Extra gallery images load after.
+        renderProduct();
+
+        /* ---------- Additional images (background) ---------- */
         const { data: extraImages, error: imagesError } =
           await supabaseClient
             .from('product_images')
@@ -739,34 +795,21 @@
             'PRODUCT IMAGES ERROR:',
             imagesError
           );
+          return;
         }
 
         if (extraImages && extraImages.length) {
-
           extraImages.forEach(item => {
-
             if (
               item.image_url &&
               !currentImages.includes(item.image_url)
             ) {
               currentImages.push(item.image_url);
             }
-
           });
 
+          renderThumbnails();
         }
-
-
-        if (!currentImages.length) {
-          currentImages.push(
-            'https://via.placeholder.com/800x1000?text=Boutique+Blossom'
-          );
-        }
-
-
-        currentImageIndex = 0;
-
-        renderProduct();
 
       } catch (error) {
 
@@ -852,7 +895,7 @@
             <div class="price-row">
 
               ${
-                oldPrice
+                (oldPrice && oldPrice > price)
                   ? `<div style="background:#9b5575;color:#fff;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;">SOLDE</div>`
                   : ''
               }
@@ -862,7 +905,7 @@
               </div>
 
               ${
-                oldPrice
+                (oldPrice && oldPrice > price)
                   ? `
                     <div class="old-price">
                       ${formatPrice(oldPrice)} DA
@@ -1430,9 +1473,9 @@
         return;
       }
 
-
-      if (hasLandingOrder(currentProduct.id)) {
-        showAlreadyOrdered();
+      activeOrderCount = await getActiveOrderCount();
+      if (activeOrderCount >= 2) {
+        showOrderLimitReached();
         return;
       }
 
@@ -1639,6 +1682,10 @@
             currentProduct.id,
 
 
+          deviceId:
+            deviceId,
+
+
           productName:
             productName,
 
@@ -1743,9 +1790,7 @@
           'ORDER SAVED SUCCESSFULLY'
         );
 
-
-        markLandingOrder(currentProduct.id);
-
+        activeOrderCount += 1;
 
         showSuccess(
           order
@@ -1873,12 +1918,14 @@
 
     async function init() {
 
-      await loadDeliverySettings();
+      // Start both requests together so the page does not wait on delivery settings first.
+      await Promise.all([
+        loadDeliverySettings(),
+        loadProduct()
+      ]);
 
-      await loadProduct();
-
-      if (currentProduct && hasLandingOrder(currentProduct.id)) {
-        showAlreadyOrdered();
+      if (currentProduct) {
+        await refreshOrderAvailability();
       }
 
     }
