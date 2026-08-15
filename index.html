@@ -1057,11 +1057,10 @@ async function loadData(){
       category: p.category,
       price: p.price,
       oldPrice: p.old_price ?? undefined,
-      stock: p.stock !== false,
+      stock: true,
       image: p.image,
       name: p.name,
-      desc: p.description,
-      sourceLang: p.source_lang || null
+      desc: p.description
     }));
   }catch(e){
     console.error('loadProducts error:', e);
@@ -1126,8 +1125,6 @@ async function saveProducts(){
           old_price: p.oldPrice ?? null,
           image: p.image,
           description: p.desc,
-          stock: p.stock !== false,
-          source_lang: p.sourceLang || null,
           updated_at: new Date().toISOString()
         })),
         { onConflict: 'id' }
@@ -1981,8 +1978,6 @@ function bindEvents(){
     if(e.target.closest('button,a,input,select,textarea')) return;
     const productId = card.dataset.productLink;
     if(!productId) return;
-    const product = state.products.find(p=>p.id===productId);
-    if(!product || product.stock === false) return;
     window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
   });
 
@@ -1991,8 +1986,6 @@ function bindEvents(){
     if(state.view!=='shop') return;
     const productId = b.dataset.order;
     if(!productId) return;
-    const product = state.products.find(p=>p.id===productId);
-    if(!product || product.stock === false) return;
     window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
   });
   document.querySelectorAll('[data-modal-image]').forEach(b=> b.onclick = ()=>{
@@ -2555,3 +2548,4 @@ loadData().then(restoreRememberedAdmin);
 </script>
 </body>
 </html>
+
