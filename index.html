@@ -1044,32 +1044,12 @@ function fmtDate(iso){
 
 /* ============ STORAGE ============ */
 async function loadData(){
-  // Start all independent requests at the same time so the page does not
-  // wait for one network request to finish before starting the next one.
-  const productsPromise = supabaseClient
-    .from('products')
-    .select('*')
-    .order('created_at', { ascending: true });
-
-  const settingsPromise = supabaseClient
-    .from('store_settings')
-    .select('data')
-    .eq('id', 1)
-    .maybeSingle();
-
-  const ordersPromise = (async()=>{
-    try{
-      const r = await window.storage.get(STORAGE_ORDERS_KEY, true);
-      return { value: r && r.value ? r.value : null };
-    }catch(e){
-      return { value: null, error: e };
-    }
-  })();
-
-  // Products are the only data required to show the shop immediately.
-  // Render as soon as they arrive instead of waiting for images/settings/orders.
   try{
-    const { data, error } = await productsPromise;
+    const { data, error } = await supabaseClient
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: true });
+
     if(error) throw error;
 
     state.products = (data || []).map(p => ({
@@ -1077,8 +1057,7 @@ async function loadData(){
       category: p.category,
       price: p.price,
       oldPrice: p.old_price ?? undefined,
-      stock: p.stock ?? true,
-      sourceLang: p.source_lang ?? undefined,
+      stock: true,
       image: p.image,
       name: p.name,
       desc: p.description
@@ -1087,42 +1066,52 @@ async function loadData(){
     console.error('loadProducts error:', e);
     state.products = [];
   }
+  try{
+    const { data, error } = await supabaseClient
+      .from('product_images')
+      .select('product_id, image_url')
+      .order('id', { ascending: true });
 
-  // Use defaults initially. Settings are applied in the background below.
+    if(error) throw error;
+
+    state.productImages = {};
+    (data || []).forEach(row => {
+      if(!row.product_id || !row.image_url) return;
+      if(!state.productImages[row.product_id]) state.productImages[row.product_id] = [];
+      state.productImages[row.product_id].push(row.image_url);
+    });
+  }catch(e){
+    console.error('loadProductImages error:', e);
+    state.productImages = {};
+  }
+  try{
+    const r2 = await window.storage.get(STORAGE_ORDERS_KEY, true);
+    state.orders = r2 && r2.value ? JSON.parse(r2.value) : [];
+  }catch(e){
+    state.orders = [];
+  }
+  try{
+  const { data, error } = await supabaseClient
+    .from('store_settings')
+    .select('data')
+    .eq('id', 1)
+    .maybeSingle();
+
+  if(error) throw error;
+
+  state.settings = data && data.data
+    ? Object.assign(defaultSettings(), data.data)
+    : defaultSettings();
+  state.settings.delivery = normalizeDelivery(state.settings.delivery);
+
+}catch(e){
+  console.error('loadSettings error:', e);
   state.settings = defaultSettings();
-  state.productImages = {};
-  state.orders = [];
+}
   state.loaded = true;
   render();
-
-  // Everything below is non-blocking for the first screen.
-  settingsPromise.then(({data, error})=>{
-    if(error) throw error;
-    state.settings = data && data.data
-      ? Object.assign(defaultSettings(), data.data)
-      : defaultSettings();
-    state.settings.delivery = normalizeDelivery(state.settings.delivery);
-    if(state.view !== 'admin') render();
-  }).catch(e=>{
-    console.error('loadSettings error:', e);
-  });
-
-  ordersPromise.then(r=>{
-    if(r && r.value){
-      try{ state.orders = JSON.parse(r.value) || []; }
-      catch(e){ state.orders = []; }
-    }
-  }).catch(e=>{
-    console.error('loadOrders error:', e);
-    state.orders = [];
-  });
-
-  // Extra product images are NOT loaded on the home/shop page.
-  // They are fetched only when the admin opens a product editor.
-
   requestAnimationFrame(setupHeroParallax);
 }
-
 async function saveProducts(){
   try{
     const { error } = await supabaseClient
@@ -1148,7 +1137,6 @@ async function saveProducts(){
   }
 }
 async function saveProductImages(productId, urls){
-  // Always keep only unique, non-empty image URLs for this product.
   const cleanUrls = [...new Set((urls || []).map(x => String(x || '').trim()).filter(Boolean))];
   try{
     const { error: deleteError } = await supabaseClient
@@ -1753,7 +1741,7 @@ function renderOrderModal(p){
       <p class="sub">${t('cart_add_sub')}</p>
       <div class="order-summary">
         ${(() => {
-          const galleryImages = [...new Set([p.image, ...(state.productImages[p.id] || [])].filter(Boolean))];
+          const galleryImages = [p.image, ...(state.productImages[p.id] || [])].filter(Boolean);
           const mainImage = galleryImages[0] || '';
           return galleryImages.length ? `
             <div class="product-modal-gallery">
@@ -1833,35 +1821,6 @@ function renderSuccessModal(){
   </div>`;
 }
 
-async function ensureProductImagesLoaded(productId){
-  if(!productId) return;
-  if(Object.prototype.hasOwnProperty.call(state.productImages, productId)) return;
-
-  // Mark as loaded immediately so duplicate requests cannot happen.
-  state.productImages[productId] = [];
-
-  try{
-    const { data, error } = await supabaseClient
-      .from('product_images')
-      .select('image_url')
-      .eq('product_id', productId)
-      .order('id', { ascending: true });
-
-    if(error) throw error;
-
-    state.productImages[productId] = [...new Set(
-      (data || [])
-        .map(row => String(row.image_url || '').trim())
-        .filter(Boolean)
-    )];
-
-    if(state.editingProduct === productId) render();
-  }catch(e){
-    console.error('loadProductImages error:', e);
-    state.productImages[productId] = [];
-  }
-}
-
 function renderProductForm(){
   const editing = state.editingProduct;
   const isNew = editing === 'new';
@@ -1870,9 +1829,6 @@ function renderProductForm(){
   const sourceLang = state.productSourceLang || state.lang;
   const sourceName = p.name[sourceLang] || p.name.en || p.name.fr || p.name.ar || '';
   const sourceDesc = p.desc[sourceLang] || p.desc.en || p.desc.fr || p.desc.ar || '';
-  if(p.id && !Object.prototype.hasOwnProperty.call(state.productImages, p.id)){
-    ensureProductImagesLoaded(p.id);
-  }
   const extraImages = p.id ? (state.productImages[p.id] || []) : [];
   const galleryImages = [...new Set([p.image, ...extraImages].filter(Boolean))];
   return `<div class="overlay" data-close="product"><div class="modal" onclick="event.stopPropagation()" style="max-width:520px;">
