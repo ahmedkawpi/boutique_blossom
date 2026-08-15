@@ -2520,6 +2520,12 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
 
 async function restoreRememberedAdmin(){
   try{
+    // Only restore the Admin page when the user explicitly chose
+    // 'Remember me'. A normal refresh of the homepage must stay on the shop.
+    let remember = false;
+    try{ remember = localStorage.getItem('blossom_admin_remember') === '1'; }catch(e){}
+    if(!remember) return;
+
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const user = sessionData && sessionData.session && sessionData.session.user;
     if(!user) return;
