@@ -1058,10 +1058,10 @@ async function loadData(){
       price: p.price,
       oldPrice: p.old_price ?? undefined,
       stock: p.stock !== false,
+      sourceLang: p.source_lang || null,
       image: p.image,
       name: p.name,
-      desc: p.description,
-      sourceLang: p.source_lang || null
+      desc: p.description
     }));
   }catch(e){
     console.error('loadProducts error:', e);
@@ -1124,10 +1124,10 @@ async function saveProducts(){
           category: p.category,
           price: p.price,
           old_price: p.oldPrice ?? null,
-          image: p.image,
-          description: p.desc,
           stock: p.stock !== false,
           source_lang: p.sourceLang || null,
+          image: p.image,
+          description: p.desc,
           updated_at: new Date().toISOString()
         })),
         { onConflict: 'id' }
@@ -1375,7 +1375,6 @@ function renderBestsellers(){
         <div class="card reveal" data-product-link="${p.id}" style="transition-delay:${i*0.06}s;cursor:pointer;">
           <div style="position:relative;">
             ${productThumb(p, {hint:true})}
-            ${!p.stock ? `<div class="stock-badge">${t('out_of_stock')}</div>` : ''}
             <div class="card-tag bestseller">${state.lang==='ar'?'الأكثر مبيعًا':(state.lang==='fr'?'Bestseller':'Bestseller')}</div>
           </div>
           <div class="card-body">
@@ -1383,7 +1382,7 @@ function renderBestsellers(){
             <h3 class="card-name">${escapeHtml(p.name[state.lang] || p.name.en)}</h3>
             <div class="card-foot">
               <div class="price">${renderProductPrice(p)}</div>
-              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${p.stock ? t('order_now') : t('out_of_stock')}</button>
+              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${t('order_now')}</button>
             </div>
           </div>
         </div>
@@ -1439,7 +1438,6 @@ function renderNewArrivals(){
         <div class="card reveal" data-product-link="${p.id}" style="transition-delay:${i*0.06}s;cursor:pointer;">
           <div style="position:relative;">
             ${productThumb(p, {hint:true})}
-            ${!p.stock ? `<div class="stock-badge">${t('out_of_stock')}</div>` : ''}
             <div class="card-tag new">${state.lang==='ar'?'جديد':(state.lang==='fr'?'Nouveau':'New')}</div>
           </div>
           <div class="card-body">
@@ -1448,7 +1446,7 @@ function renderNewArrivals(){
             <p class="card-desc">${escapeHtml(p.desc[state.lang] || p.desc.en)}</p>
             <div class="card-foot">
               <div class="price">${renderProductPrice(p)}</div>
-              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${p.stock ? t('order_now') : t('out_of_stock')}</button>
+              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${t('order_now')}</button>
             </div>
           </div>
         </div>
@@ -1515,7 +1513,7 @@ function renderShop(){
             <p class="card-desc">${escapeHtml(p.desc[state.lang] || p.desc.en)}</p>
             <div class="card-foot">
               <div class="price">${renderProductPrice(p)}</div>
-              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${p.stock ? t('order_now') : t('out_of_stock')}</button>
+              <button class="order-btn" data-order="${p.id}" ${!p.stock?'disabled':''}>${t('order_now')}</button>
             </div>
           </div>
         </div>
@@ -1831,7 +1829,7 @@ function renderProductForm(){
   const isNew = editing === 'new';
   const p = isNew ? {id:null,category:'dresses',price:'',oldPrice:null,stock:true,image:'',name:{en:'',ar:'',fr:''},desc:{en:'',ar:'',fr:''}} : state.products.find(x=>x.id===editing);
   if(!p) return '';
-  const sourceLang = state.productSourceLang || p.sourceLang || state.lang;
+  const sourceLang = state.productSourceLang || state.lang;
   const sourceName = p.name[sourceLang] || p.name.en || p.name.fr || p.name.ar || '';
   const sourceDesc = p.desc[sourceLang] || p.desc.en || p.desc.fr || p.desc.ar || '';
   const extraImages = p.id ? (state.productImages[p.id] || []) : [];
@@ -1983,8 +1981,8 @@ function bindEvents(){
     if(e.target.closest('button,a,input,select,textarea')) return;
     const productId = card.dataset.productLink;
     if(!productId) return;
-    const product = state.products.find(p=>p.id===productId);
-    if(!product || product.stock === false) return;
+    const product = state.products.find(x=>x.id===productId);
+    if(product && product.stock === false) return;
     window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
   });
 
@@ -1993,8 +1991,8 @@ function bindEvents(){
     if(state.view!=='shop') return;
     const productId = b.dataset.order;
     if(!productId) return;
-    const product = state.products.find(p=>p.id===productId);
-    if(!product || product.stock === false) return;
+    const product = state.products.find(x=>x.id===productId);
+    if(product && product.stock === false) return;
     window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
   });
   document.querySelectorAll('[data-modal-image]').forEach(b=> b.onclick = ()=>{
@@ -2522,11 +2520,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       }
     }
     unlockSave();
-    state.editingProduct = null;
-    state.productSourceLang = null;
-    state.adminTab = 'products';
-    render();
-    showToast(state.lang==='ar'?'تم الحفظ':(state.lang==='fr'?'Enregistré':'Saved'));
+    state.editingProduct=null; state.productSourceLang=null; render(); showToast(state.lang==='ar'?'تم الحفظ':(state.lang==='fr'?'Enregistré':'Saved'));
   };
 }
 
