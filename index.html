@@ -1044,7 +1044,6 @@ function fmtDate(iso){
 
 /* ============ STORAGE ============ */
 async function loadData(){
-  // Load essential products first so the homepage can appear quickly.
   try{
     const { data, error } = await supabaseClient
       .from('products')
@@ -1067,61 +1066,51 @@ async function loadData(){
     console.error('loadProducts error:', e);
     state.products = [];
   }
+  try{
+    const { data, error } = await supabaseClient
+      .from('product_images')
+      .select('product_id, image_url')
+      .order('id', { ascending: true });
 
-  // Show the homepage immediately; secondary data loads in the background.
+    if(error) throw error;
+
+    state.productImages = {};
+    (data || []).forEach(row => {
+      if(!row.product_id || !row.image_url) return;
+      if(!state.productImages[row.product_id]) state.productImages[row.product_id] = [];
+      state.productImages[row.product_id].push(row.image_url);
+    });
+  }catch(e){
+    console.error('loadProductImages error:', e);
+    state.productImages = {};
+  }
+  try{
+    const r2 = await window.storage.get(STORAGE_ORDERS_KEY, true);
+    state.orders = r2 && r2.value ? JSON.parse(r2.value) : [];
+  }catch(e){
+    state.orders = [];
+  }
+  try{
+  const { data, error } = await supabaseClient
+    .from('store_settings')
+    .select('data')
+    .eq('id', 1)
+    .maybeSingle();
+
+  if(error) throw error;
+
+  state.settings = data && data.data
+    ? Object.assign(defaultSettings(), data.data)
+    : defaultSettings();
+  state.settings.delivery = normalizeDelivery(state.settings.delivery);
+
+}catch(e){
+  console.error('loadSettings error:', e);
+  state.settings = defaultSettings();
+}
   state.loaded = true;
   render();
   requestAnimationFrame(setupHeroParallax);
-
-  Promise.all([
-    (async()=>{
-      try{
-        const { data, error } = await supabaseClient
-          .from('product_images')
-          .select('product_id, image_url')
-          .order('id', { ascending: true });
-        if(error) throw error;
-
-        state.productImages = {};
-        (data || []).forEach(row => {
-          if(!row.product_id || !row.image_url) return;
-          if(!state.productImages[row.product_id]) state.productImages[row.product_id] = [];
-          state.productImages[row.product_id].push(row.image_url);
-        });
-      }catch(e){
-        console.error('loadProductImages error:', e);
-        state.productImages = {};
-      }
-    })(),
-
-    (async()=>{
-      try{
-        const r2 = await window.storage.get(STORAGE_ORDERS_KEY, true);
-        state.orders = r2 && r2.value ? JSON.parse(r2.value) : [];
-      }catch(e){
-        state.orders = [];
-      }
-    })(),
-
-    (async()=>{
-      try{
-        const { data, error } = await supabaseClient
-          .from('store_settings')
-          .select('data')
-          .eq('id', 1)
-          .maybeSingle();
-        if(error) throw error;
-
-        state.settings = data && data.data
-          ? Object.assign(defaultSettings(), data.data)
-          : defaultSettings();
-        state.settings.delivery = normalizeDelivery(state.settings.delivery);
-      }catch(e){
-        console.error('loadSettings error:', e);
-        state.settings = defaultSettings();
-      }
-    })()
-  ]).then(()=> render());
 }
 async function saveProducts(){
   try{
