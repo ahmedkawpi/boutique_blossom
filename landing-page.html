@@ -569,23 +569,29 @@
           .sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0));
 
         // A customer gets exactly 2 orders per cycle.
-        // A new cycle starts only after BOTH orders in the previous cycle are DONE.
+        // A new cycle starts ONLY after BOTH orders in the current cycle are DONE.
+        // Archived/deleted orders still belong to the current cycle, so deleting
+        // an order in Admin does not reset the customer's allowance.
         let cycle = [];
 
         for (const row of orders) {
-          if (cycle.length === 2 && cycle.every(item => item.status === 'done')) {
-            cycle = [];
+          const status = row?.data?.status || 'new';
+
+          if (cycle.length === 2) {
+            const bothDone = cycle.every(item => item.status === 'done');
+
+            if (bothDone) {
+              cycle = [];
+            } else {
+              // Still in the current cycle. Do not open a third order.
+              break;
+            }
           }
 
           cycle.push({
             id: row.id,
-            status: row?.data?.status || 'new'
+            status
           });
-
-          if (cycle.length > 2) {
-            // Safety fallback for malformed/legacy data.
-            break;
-          }
         }
 
         return cycle.length;
