@@ -594,6 +594,13 @@
           });
         }
 
+        // Important: when the database contains exactly two orders and both
+        // are DONE, the loop ends before the cycle check above runs again.
+        // Reset the cycle here so the customer can place two new orders.
+        if (cycle.length === 2 && cycle.every(item => item.status === 'done')) {
+          cycle = [];
+        }
+
         return cycle.length;
       } catch (e) {
         console.error('ORDER LIMIT CHECK ERROR:', e);
