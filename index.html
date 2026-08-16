@@ -1123,29 +1123,35 @@ async function loadData(){
   render();
   requestAnimationFrame(setupHeroParallax);
 }
-async function saveProducts(){
-  try{
-    const { error } = await supabaseClient
-      .from('products')
-      .upsert(
-        state.products.map(p => ({
-          id: p.id,
-          name: p.name,
-          category: p.category,
-          price: p.price,
-          old_price: p.oldPrice ?? null,
-          image: p.image || null,
-          stock: p.stock !== false,
-          description: p.desc,
-          updated_at: new Date().toISOString()
-        })),
-        { onConflict: 'id' }
-      );
+async function saveProductRecord(product, isNew=false){
+  const row = {
+    name: product.name,
+    category: product.category,
+    price: product.price,
+    old_price: product.oldPrice ?? null,
+    image: product.image || null,
+    stock: product.stock !== false,
+    description: product.desc,
+    updated_at: new Date().toISOString()
+  };
 
-    if(error) throw error;
+  try{
+    let result;
+    if(isNew){
+      result = await supabaseClient
+        .from('products')
+        .insert({ id: product.id, ...row });
+    }else{
+      result = await supabaseClient
+        .from('products')
+        .update(row)
+        .eq('id', product.id);
+    }
+
+    if(result.error) throw result.error;
   }catch(e){
-    console.error('saveProducts error:', e);
-    showToast('Could not save — please retry.');
+    console.error('saveProductRecord error:', e);
+    showToast('Could not save product — please retry.');
     throw e;
   }
 }
@@ -1991,6 +1997,8 @@ function bindEvents(){
     if(e.target.closest('button,a,input,select,textarea')) return;
     const productId = card.dataset.productLink;
     if(!productId) return;
+    const product = state.products.find(p=>p.id===productId);
+    if(product && product.stock === false) return;
     window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
   });
 
@@ -1999,6 +2007,8 @@ function bindEvents(){
     if(state.view!=='shop') return;
     const productId = b.dataset.order;
     if(!productId) return;
+    const product = state.products.find(p=>p.id===productId);
+    if(product && product.stock === false) return;
     window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
   });
   document.querySelectorAll('[data-modal-image]').forEach(b=> b.onclick = ()=>{
@@ -2492,7 +2502,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       state.products[idx] = data;
 
       try{
-        await saveProducts();
+        await saveProductRecord(data, false);
         await saveProductImages(data.id, extraImageUrls);
       }catch(err){
         console.error('save product/images error:', err);
@@ -2516,7 +2526,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       state.products.push(data);
 
       try{
-        await saveProducts();
+        await saveProductRecord(data, true);
         await saveProductImages(data.id, extraImageUrls);
       }catch(err){
         console.error('save product/images error:', err);
@@ -2561,6 +2571,7 @@ loadData().then(restoreRememberedAdmin);
 </script>
 </body>
 </html>
+
 
 
 
