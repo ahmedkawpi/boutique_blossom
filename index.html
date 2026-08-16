@@ -1036,6 +1036,17 @@ function catLabel(cat){ return t('cat_' + cat); }
 function escapeHtml(s){
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+function normalizeProductText(value){
+  if(value && typeof value === 'object') return value;
+  if(typeof value === 'string'){
+    try{
+      const parsed = JSON.parse(value);
+      if(parsed && typeof parsed === 'object') return parsed;
+    }catch(e){}
+    return {en:value,fr:value,ar:value};
+  }
+  return {en:'',fr:'',ar:''};
+}
 function fmtPrice(n){ return Number(n).toLocaleString(state.lang === 'ar' ? 'ar-DZ' : (state.lang === 'fr' ? 'fr-DZ' : 'en-US')); }
 function fmtDate(iso){
   const d = new Date(iso);
@@ -1057,10 +1068,10 @@ async function loadData(){
       category: p.category,
       price: p.price,
       oldPrice: p.old_price ?? undefined,
-      stock: true,
-      image: '',
-      name: p.name,
-      desc: p.description
+      stock: p.stock !== false,
+      image: p.image || '',
+      name: normalizeProductText(p.name),
+      desc: normalizeProductText(p.description)
     }));
   }catch(e){
     console.error('loadProducts error:', e);
@@ -1123,7 +1134,8 @@ async function saveProducts(){
           category: p.category,
           price: p.price,
           old_price: p.oldPrice ?? null,
-          image: p.image,
+          image: p.image || null,
+          stock: p.stock !== false,
           description: p.desc,
           updated_at: new Date().toISOString()
         })),
@@ -2548,3 +2560,4 @@ loadData().then(restoreRememberedAdmin);
 </script>
 </body>
 </html>
+
