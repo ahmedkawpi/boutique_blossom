@@ -1146,6 +1146,7 @@ async function saveProducts(){
   }catch(e){
     console.error('saveProducts error:', e);
     showToast('Could not save — please retry.');
+    throw e;
   }
 }
 async function saveProductImages(productId, urls){
@@ -2560,4 +2561,5 @@ loadData().then(restoreRememberedAdmin);
 </script>
 </body>
 </html>
+
 
