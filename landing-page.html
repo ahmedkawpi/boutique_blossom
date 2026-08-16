@@ -94,6 +94,11 @@
       object-fit: cover;
     }
 
+    .product-colors { margin-top:16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .product-colors-label { font-size:13px; font-weight:700; color:#65575d; margin-inline-end:2px; }
+    .color-option { width:34px; height:34px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 0 1px #d8cbd1; padding:0; transition:.18s; }
+    .color-option.active { box-shadow:0 0 0 2px #a45f7d; transform:scale(1.08); }
+
     .thumbnails {
       display: flex;
       gap: 10px;
@@ -541,6 +546,8 @@
     let currentProduct = null;
     let currentImages = [];
     let currentImageIndex = 0;
+    let productColors = [];
+    let selectedColor = null;
     let deliverySettings = null;
 
 
@@ -773,14 +780,36 @@
 
         currentProduct = product;
 
+        /* ---------- Product colors ---------- */
+        const { data: colorRows, error: colorsError } = await supabaseClient
+          .from('product_colors')
+          .select('id,name,color_value,sort_order')
+          .eq('product_id', productId)
+          .order('sort_order', { ascending: true })
+          .order('id', { ascending: true });
+        if (colorsError) throw colorsError;
+
+        productColors = [];
+        if (colorRows && colorRows.length) {
+          const colorIds = colorRows.map(c => c.id);
+          const { data: colorImageRows, error: colorImagesError } = await supabaseClient
+            .from('product_color_images')
+            .select('color_id,image_url,sort_order')
+            .in('color_id', colorIds)
+            .order('sort_order', { ascending: true })
+            .order('id', { ascending: true });
+          if (colorImagesError) throw colorImagesError;
+          productColors = colorRows.map(color => ({
+            id: color.id, name: color.name, value: color.color_value,
+            images: (colorImageRows || []).filter(image => image.color_id === color.id).map(image => image.image_url).filter(Boolean)
+          }));
+        }
+        selectedColor = productColors[0] || null;
 
         /* ---------- Main product image ---------- */
-
         currentImages = [];
-
-        if (product.image) {
-          currentImages.push(product.image);
-        }
+        if (selectedColor && selectedColor.images.length) currentImages = [...selectedColor.images];
+        else if (product.image) currentImages.push(product.image);
 
 
         if (!currentImages.length) {
@@ -810,18 +839,14 @@
           return;
         }
 
-        if (extraImages && extraImages.length) {
+        if (!selectedColor && extraImages && extraImages.length) {
           extraImages.forEach(item => {
-            if (
-              item.image_url &&
-              !currentImages.includes(item.image_url)
-            ) {
-              currentImages.push(item.image_url);
-            }
+            if (item.image_url && !currentImages.includes(item.image_url)) currentImages.push(item.image_url);
           });
-
-          renderThumbnails();
         }
+
+        renderThumbnails();
+        renderColorOptions();
 
       } catch (error) {
 
@@ -887,6 +912,8 @@
               class="thumbnails"
               id="thumbnails"
             ></div>
+
+            ${productColors.length ? `<div class="product-colors" id="product-colors"></div>` : ''}
 
           </div>
 
@@ -1185,6 +1212,27 @@
       bindProductEvents();
       updateOrderSummary();
 
+    }
+
+
+    function renderColorOptions() {
+      const container = document.getElementById('product-colors');
+      if (!container) return;
+      container.innerHTML = `<span class="product-colors-label">اللون:</span>${productColors.map(color => `<button type="button" class="color-option ${selectedColor && selectedColor.id === color.id ? 'active' : ''}" style="background:${escapeHtml(color.value)}" title="${escapeHtml(color.name)}" aria-label="${escapeHtml(color.name)}" data-color-id="${color.id}"></button>`).join('')}`;
+      container.querySelectorAll('.color-option').forEach(button => {
+        button.addEventListener('click', () => {
+          const color = productColors.find(item => item.id === Number(button.dataset.colorId));
+          if (!color) return;
+          selectedColor = color;
+          currentImages = color.images.length ? [...color.images] : (currentProduct.image ? [currentProduct.image] : []);
+          if (!currentImages.length) currentImages.push('https://via.placeholder.com/800x1000?text=Boutique+Blossom');
+          currentImageIndex = 0;
+          const mainImage = document.getElementById('main-product-image');
+          if (mainImage) mainImage.src = currentImages[0];
+          renderThumbnails();
+          renderColorOptions();
+        });
+      });
     }
 
 
@@ -1577,6 +1625,11 @@
       }
 
 
+      if (productColors.length && !selectedColor) {
+        alert('يرجى اختيار اللون.');
+        return;
+      }
+
       if (!wilayaCode) {
         alert(
           'يرجى اختيار الولاية.'
@@ -1965,4 +2018,6 @@
 
 </body>
 </html>
+
+
 
