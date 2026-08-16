@@ -2496,7 +2496,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
         await saveProductImages(data.id, extraImageUrls);
       }catch(err){
         console.error('save product/images error:', err);
-        showToast('Could not save product images — please retry.');
+        showToast('Could not save product — please retry.');
         unlockSave();
         return;
       }
@@ -2520,7 +2520,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
         await saveProductImages(data.id, extraImageUrls);
       }catch(err){
         console.error('save product/images error:', err);
-        showToast('Could not save product images — please retry.');
+        showToast('Could not save product — please retry.');
         unlockSave();
         return;
       }
@@ -2561,5 +2561,6 @@ loadData().then(restoreRememberedAdmin);
 </script>
 </body>
 </html>
+
 
 
