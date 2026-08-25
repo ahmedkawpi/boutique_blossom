@@ -796,7 +796,10 @@ function defaultSettings(){
   return {
     heroImage: HERO_IMAGE,
     lookbookImages: LOOKBOOK_IMAGES_DEFAULT.slice(),
-    delivery: defaultDelivery()
+    delivery: defaultDelivery(),
+    tracking: {
+      metaPixelId: ''
+    }
   };
 }
 
@@ -1706,12 +1709,13 @@ function renderAdmin(){
       <button class="tab-btn ${state.adminTab==='products'?'active':''}" data-tab="products">${t('tab_products')}</button>
       <button class="tab-btn ${state.adminTab==='delivery'?'active':''}" data-tab="delivery">${t('tab_delivery')}</button>
       <button class="tab-btn ${state.adminTab==='design'?'active':''}" data-tab="design">${t('tab_design')}</button>
+      <button class="tab-btn ${state.adminTab==='tracking'?'active':''}" data-tab="tracking">📊 Tracking</button>
     </div>
     ${state.adminTab==='orders'
       ? renderOrdersTab(newOrders)
       : (state.adminTab==='done'
         ? renderOrdersTab(doneOrders)
-        : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : renderDesignTab())))}
+        : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : (state.adminTab==='tracking' ? renderTrackingTab() : renderDesignTab()))))}
   </div>`;
 }
 
@@ -1725,6 +1729,25 @@ function renderDeliveryTab(){
     <button type="submit" class="btn btn-primary" style="margin-top:16px;">${t('delivery_save')}</button>
   </form>`;
 }
+function renderTrackingTab(){
+  const tracking = (state.settings && state.settings.tracking) || {};
+  return `
+  <form id="tracking-form">
+    <div class="design-card">
+      <h4>📊 Meta / Facebook Pixel</h4>
+      <p class="hint">ضع Pixel ID هنا. إذا تركته فارغًا، لن يتم تشغيل Meta Pixel على الموقع.</p>
+      <div class="field">
+        <label>Meta Pixel ID</label>
+        <input id="meta-pixel-id" type="text" inputmode="numeric" autocomplete="off" placeholder="مثال: 123456789012345" value="${escapeHtml(tracking.metaPixelId || '')}">
+      </div>
+      <p class="hint" style="margin-top:12px;">هذا الـID ليس Secret ويمكن تغييره من هنا حسب حساب الإعلانات المستخدم حاليًا.</p>
+    </div>
+    <div class="design-save-bar">
+      <button type="submit" class="btn btn-primary">حفظ إعدادات Tracking</button>
+    </div>
+  </form>`;
+}
+
 function renderDesignTab(){
   const s = state.settings || defaultSettings();
   return `
@@ -2508,6 +2531,16 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
     showToast(state.lang==='ar' ? 'تم الحفظ' : (state.lang==='fr' ? 'Enregistré' : 'Saved'));
   };
 
+  const trackingForm=document.getElementById('tracking-form');
+  if(trackingForm) trackingForm.onsubmit=async(e)=>{
+    e.preventDefault();
+    const metaPixelId=document.getElementById('meta-pixel-id').value.trim().replace(/\s+/g,'');
+    const currentTracking=(state.settings && state.settings.tracking) || {};
+    state.settings=Object.assign({},state.settings,{tracking:Object.assign({},currentTracking,{metaPixelId})});
+    await saveSettings();
+    showToast('تم حفظ إعدادات Meta Pixel');
+  };
+
   const openCart=document.getElementById('open-cart-btn');
   if(openCart) openCart.onclick=()=>{ if(state.view!=='shop') return; state.cartOpen=true; state.checkoutOpen=false; render(); };
   document.querySelectorAll('[data-cart-inc]').forEach(b=>b.onclick=()=>{ const i=+b.dataset.cartInc; state.cart[i].qty++; render(); });
@@ -2765,6 +2798,13 @@ loadData().then(restoreRememberedAdmin);
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
