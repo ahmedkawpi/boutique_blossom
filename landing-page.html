@@ -734,7 +734,11 @@
 
     function initMetaPixel() {
       const pixelId = String(trackingSettings?.metaPixelId || '').trim();
-      if (!pixelId || metaPixelInitialized) return;
+      if (!pixelId) {
+        console.info('[Meta Pixel TEST] PageView (Pixel ID not set)');
+        return;
+      }
+      if (metaPixelInitialized) return;
       if (!/^\d+$/.test(pixelId)) {
         console.warn('Invalid Meta Pixel ID');
         return;
@@ -760,7 +764,10 @@
     }
 
     function trackMetaEvent(eventName, params = {}) {
-      if (!metaPixelInitialized || typeof window.fbq !== 'function') return;
+      if (!metaPixelInitialized || typeof window.fbq !== 'function') {
+        console.info('[Meta Pixel TEST]', eventName, params);
+        return;
+      }
       window.fbq('track', eventName, params);
     }
 
@@ -2086,7 +2093,6 @@
 
 </body>
 </html>
-
 
 
 
