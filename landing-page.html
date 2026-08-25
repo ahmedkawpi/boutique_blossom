@@ -1924,13 +1924,17 @@
           'ORDER SAVED SUCCESSFULLY'
         );
 
-        trackMetaEvent('Purchase', {
-          content_ids: [String(currentProduct.id)],
-          content_name: productNameForTracking(),
-          content_type: 'product',
-          value: total,
-          currency: 'USD'
-        });
+// Convert DZD to EUR only for Meta Purchase event
+const DZD_TO_EUR_RATE = 0.0068;
+const totalEUR = Number((total * DZD_TO_EUR_RATE).toFixed(2));
+
+trackMetaEvent('Purchase', {
+  content_ids: [String(currentProduct.id)],
+  content_name: productNameForTracking(),
+  content_type: 'product',
+  value: totalEUR,
+  currency: 'EUR'
+});
 
         /* ---------- Send order notification to Telegram ---------- */
         try {
