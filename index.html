@@ -1754,7 +1754,7 @@ function renderOrdersTab(sortedOrders){
     return `<div class="order-row status-${o.status}">
       <div class="order-main">
         <div class="order-top"><div class="order-id">#${o.id.slice(-6).toUpperCase()} · ${fmtDate(o.createdAt)}</div><span class="order-status-pill ${o.status}">${o.status==='done'?t('status_done'):t('status_new')}</span></div>
-        <div class="order-items-list">${items.map(it=>{ const n=(it.productName&&typeof it.productName==='object') ? (it.productName[state.lang]||it.productName.en||it.productName.fr||it.productName.ar||'Product') : (it.productName||'Product'); return `<div class="admin-order-item"><span>${escapeHtml(n)}</span></div>`; }).join('')}</div>
+        <div class="order-items-list">${items.map(it=>{ const n=(it.productName&&typeof it.productName==='object') ? (it.productName[state.lang]||it.productName.en||it.productName.fr||it.productName.ar||'Product') : (it.productName||'Product'); const details=[it.color?`اللون: ${escapeHtml(it.color)}`:'',it.size?`المقاس: ${escapeHtml(it.size)}`:'',it.qty!=null?`الكمية: ${escapeHtml(String(it.qty))}`:''].filter(Boolean).join(' · '); return `<div class="admin-order-item"><span>${escapeHtml(n)}</span>${details?`<small>${details}</small>`:''}</div>`; }).join('')}</div>
         <div class="order-total"><span>${t('cart_subtotal')}</span><b>${fmtPrice(subtotal)} ${t('price_da')}</b></div>
         <div class="order-delivery-summary"><span>${t('delivery_type')}</span><b>${o.deliveryType==='office'?t('delivery_office'):t('delivery_home')} · ${fmtPrice(fee)} ${t('price_da')}</b></div>
         <div class="order-total grand"><span>${t('grand_total')}</span><b>${fmtPrice(total)} ${t('price_da')}</b></div>
@@ -2764,6 +2764,13 @@ loadData().then(restoreRememberedAdmin);
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
