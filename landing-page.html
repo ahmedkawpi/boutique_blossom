@@ -549,6 +549,8 @@
     let productColors = [];
     let selectedColor = null;
     let deliverySettings = null;
+    let trackingSettings = { metaPixelId: '' };
+    let metaPixelInitialized = false;
 
 
     /* Order limit: 2 active orders per product on this device.
@@ -730,6 +732,38 @@
     }
 
 
+    function initMetaPixel() {
+      const pixelId = String(trackingSettings?.metaPixelId || '').trim();
+      if (!pixelId || metaPixelInitialized) return;
+      if (!/^\d+$/.test(pixelId)) {
+        console.warn('Invalid Meta Pixel ID');
+        return;
+      }
+
+      window.fbq = window.fbq || function() {
+        window.fbq.callMethod ? window.fbq.callMethod.apply(window.fbq, arguments) : window.fbq.queue.push(arguments);
+      };
+      if (!window._fbq) window._fbq = window.fbq;
+      window.fbq.push = window.fbq;
+      window.fbq.loaded = true;
+      window.fbq.version = '2.0';
+      window.fbq.queue = [];
+      window.fbq('init', pixelId);
+      window.fbq('track', 'PageView');
+
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://connect.facebook.net/en_US/fbevents.js';
+      document.head.appendChild(script);
+
+      metaPixelInitialized = true;
+    }
+
+    function trackMetaEvent(eventName, params = {}) {
+      if (!metaPixelInitialized || typeof window.fbq !== 'function') return;
+      window.fbq('track', eventName, params);
+    }
+
     async function loadDeliverySettings() {
       try {
         const { data, error } = await supabaseClient
@@ -740,10 +774,12 @@
 
         if (error) throw error;
 
-        deliverySettings =
-          data && data.data
-            ? data.data.delivery
-            : defaultDelivery();
+        const settings = data && data.data ? data.data : {};
+        deliverySettings = settings.delivery || defaultDelivery();
+        trackingSettings = {
+          metaPixelId: String(settings.tracking?.metaPixelId || '').trim()
+        };
+        initMetaPixel();
 
       } catch (error) {
         console.error('DELIVERY SETTINGS ERROR:', error);
@@ -753,6 +789,10 @@
       }
     }
 
+
+    function productNameForTracking() {
+      return parseTranslation(currentProduct?.name, 'Product');
+    }
 
     /* =========================================================
        LOAD PRODUCT
@@ -822,6 +862,13 @@
 
         // Render the main product immediately. Extra gallery images load after.
         renderProduct();
+        trackMetaEvent('ViewContent', {
+          content_ids: [String(currentProduct.id)],
+          content_name: productNameForTracking(),
+          content_type: 'product',
+          value: Number(currentProduct.price || 0),
+          currency: 'DZD'
+        });
 
         /* ---------- Additional images (background) ---------- */
         const { data: extraImages, error: imagesError } =
@@ -1649,6 +1696,14 @@
       }
 
 
+      trackMetaEvent('InitiateCheckout', {
+        content_ids: [String(currentProduct.id)],
+        content_name: productNameForTracking(),
+        content_type: 'product',
+        value: Number(currentProduct.price || 0) * quantity,
+        currency: 'DZD'
+      });
+
       /* ---------- Disable button ---------- */
 
       if (button) {
@@ -1862,6 +1917,14 @@
           'ORDER SAVED SUCCESSFULLY'
         );
 
+        trackMetaEvent('Purchase', {
+          content_ids: [String(currentProduct.id)],
+          content_name: productNameForTracking(),
+          content_type: 'product',
+          value: total,
+          currency: 'DZD'
+        });
+
         /* ---------- Send order notification to Telegram ---------- */
         try {
           const { data: telegramData, error: telegramError } =
@@ -2006,11 +2069,9 @@
 
     async function init() {
 
-      // Start both requests together so the page does not wait on delivery settings first.
-      await Promise.all([
-        loadDeliverySettings(),
-        loadProduct()
-      ]);
+      // Load tracking settings first so Meta Pixel is ready before product events fire.
+      await loadDeliverySettings();
+      await loadProduct();
 
       if (currentProduct) {
         await refreshOrderAvailability();
@@ -2025,6 +2086,9 @@
 
 </body>
 </html>
+
+
+
 
 
 
