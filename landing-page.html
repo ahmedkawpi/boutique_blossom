@@ -1928,6 +1928,12 @@
 const DZD_TO_EUR_RATE = 0.0068;
 const totalEUR = Number((total * DZD_TO_EUR_RATE).toFixed(2));
 
+console.log('PURCHASE TRACKING REACHED', {
+  total,
+  totalEUR,
+  productId: currentProduct.id
+});
+        
 trackMetaEvent('Purchase', {
   content_ids: [String(currentProduct.id)],
   content_name: productNameForTracking(),
