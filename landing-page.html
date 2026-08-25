@@ -1933,7 +1933,13 @@ console.log('PURCHASE TRACKING REACHED', {
   totalEUR,
   productId: currentProduct.id
 });
-        
+
+console.log('META STATUS', {
+  initialized: metaPixelInitialized,
+  fbqExists: typeof window.fbq === 'function',
+  pixelId: trackingSettings.metaPixelId
+});
+
 trackMetaEvent('Purchase', {
   content_ids: [String(currentProduct.id)],
   content_name: productNameForTracking(),
