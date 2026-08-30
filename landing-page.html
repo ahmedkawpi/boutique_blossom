@@ -794,33 +794,73 @@
   .submit-btn{padding:11px;font-size:12px;}
 }
 </style>
-<style id="blossom-fluid-width-fix">
-@media (min-width:901px){
-  .page{
-    width:calc(100% - 40px);
-    max-width:1440px!important;
-    margin-left:auto;
-    margin-right:auto;
-    box-sizing:border-box;
-    padding-left:20px;
-    padding-right:20px;
+
+<style id="landing-info-compact-fix">
+/* Keep the product information column visually compact on desktop. */
+@media (min-width: 901px){
+  .product-info{
+    max-width:455px;
+    align-self:start;
   }
-  .top-bar{width:100%;max-width:none;box-sizing:border-box;}
-  .product-section{
-    width:100%;
-    max-width:1200px!important;
-    margin-left:auto;
-    margin-right:auto;
-    box-sizing:border-box;
-    grid-template-columns:minmax(0,455px) minmax(0,455px);
+
+  .product-description,
+  .description{
+    max-height:3.1em;
+    overflow:hidden;
+    line-height:1.5;
+    margin-bottom:9px !important;
   }
-  .main-image-wrap{width:100%;max-width:455px;}
-  .product-info{min-width:0;}
-  .details-section,.related-section{
-    width:100%;max-width:1200px;margin-left:auto;margin-right:auto;box-sizing:border-box;
+
+  .divider{
+    margin:9px 0 !important;
+  }
+
+  .order-box{
+    padding:12px !important;
+  }
+
+  .order-title{
+    margin-bottom:3px !important;
+  }
+
+  .order-subtitle{
+    margin-bottom:8px !important;
+  }
+
+  .field{
+    margin-bottom:6px !important;
+  }
+
+  .field label{
+    margin-bottom:3px !important;
+  }
+
+  .field input,
+  .field select,
+  .field textarea{
+    padding:7px 9px !important;
+  }
+
+  .field textarea{
+    min-height:46px !important;
+  }
+
+  .delivery-summary{
+    padding:7px 9px !important;
+    margin-top:7px !important;
+  }
+
+  .summary-line{
+    line-height:1.3;
+  }
+
+  .submit-btn{
+    padding:9px 11px !important;
+    margin-top:7px !important;
   }
 }
 </style>
+
 </head>
 
 <body>
