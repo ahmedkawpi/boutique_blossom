@@ -83,7 +83,6 @@ a{color:inherit;text-decoration:none;}
 @keyframes shimmer{ 0%{background-position:-200% 0;} 100%{background-position:200% 0;} }
 @keyframes drawCheck{ from{stroke-dashoffset:36;} to{stroke-dashoffset:0;} }
 @keyframes popIn{ 0%{transform:scale(.4);opacity:0;} 70%{transform:scale(1.08);opacity:1;} 100%{transform:scale(1);} }
-@keyframes heroKen{ from{transform:scale(1.08) translateY(var(--parallax,0px));} to{transform:scale(1.14) translateY(var(--parallax,0px));} }
 @keyframes skeletonPulse{ 0%,100%{opacity:.5;} 50%{opacity:1;} }
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
 .reveal.in{opacity:1;transform:translateY(0);}
@@ -135,91 +134,6 @@ a{color:inherit;text-decoration:none;}
 }
 .theme-toggle:hover{border-color:var(--pink);color:var(--pink-deep);}
 .theme-toggle svg{width:17px;height:17px;}
-
-/* ===== Hero (full-bleed editorial) ===== */
-.hero{
-  position:relative;overflow:hidden;
-  min-height:min(92vh,860px);
-  display:flex;align-items:flex-end;
-  color:#fff;padding:0;
-  isolation:isolate;
-}
-.hero-bg{
-  position:absolute;inset:0;z-index:0;overflow:hidden;background:linear-gradient(150deg,#3a1f2e,#1b1116);
-}
-.hero-bg.img-broken{background:linear-gradient(150deg,#ff6fa8,#e0117a);}
-.hero-bg img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%;
-  transform:scale(1.08);
-  transition:transform 1.2s var(--ease);
-  will-change:transform;
-}
-.hero-bg::after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(0deg,rgba(15,9,13,0.86) 0%,rgba(15,9,13,0.42) 42%,rgba(15,9,13,0.18) 68%,rgba(15,9,13,0.30) 100%);
-  z-index:1;
-}
-.hero-bg::before{
-  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
-  background:radial-gradient(circle at 85% 8%, rgba(255,46,136,0.28), transparent 42%);
-}
-.hero-content{
-  position:relative;z-index:2;max-width:1180px;margin:0 auto;width:100%;
-  padding:120px 28px 68px;
-}
-.hero-inner{position:relative;max-width:620px;}
-@media(max-width:900px){
-  .hero{min-height:100vh;}
-  .hero-content{padding:100px 20px 48px;text-align:left;}
-}
-.hero-eyebrow{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff;
-  backdrop-filter:blur(6px);
-  padding:7px 18px;border-radius:999px;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
-  margin-bottom:24px;font-weight:600;
-  animation:fadeInUp .8s var(--ease) both;
-}
-.hero h1{
-  font-family:var(--font-display);
-  font-size:clamp(38px,6.4vw,68px);
-  line-height:1.05;margin:0 0 18px;font-weight:600;color:#fff;
-  letter-spacing:-.01em;
-  text-shadow:0 4px 30px rgba(0,0,0,0.25);
-  animation:fadeInUp .8s var(--ease) both .1s;
-}
-.hero h1 span{
-  font-family:var(--font-script);
-  color:#ffb6d5;
-  font-size:1.24em;
-  display:inline-block;
-  animation:popIn .7s var(--ease) both .55s;
-}
-.hero p{font-size:17px;color:rgba(255,255,255,0.86);max-width:480px;margin:0 0 32px;line-height:1.7;animation:fadeInUp .8s var(--ease) both .2s;}
-.hero-actions{display:flex;gap:14px;justify-content:flex-start;flex-wrap:wrap;animation:fadeInUp .8s var(--ease) both .3s;}
-.btn{
-  border:none;border-radius:999px;padding:14px 28px;font-weight:600;font-size:14.5px;
-  transition:.3s var(--ease);display:inline-flex;align-items:center;gap:8px;position:relative;overflow:hidden;
-}
-.btn:active{transform:scale(.96);}
-.btn-primary{background:var(--pink);color:#fff;box-shadow:0 12px 26px rgba(255,46,136,0.4);}
-.btn-primary:hover{box-shadow:0 16px 34px rgba(255,46,136,0.5);transform:translateY(-3px);}
-.btn-ghost{background:rgba(255,255,255,0.08);color:#fff;border:1.5px solid rgba(255,255,255,0.55);backdrop-filter:blur(6px);}
-.btn-ghost:hover{border-color:#fff;background:rgba(255,255,255,0.18);transform:translateY(-3px);}
-.hero-meta{
-  margin-top:38px;display:flex;gap:26px;justify-content:flex-start;flex-wrap:wrap;
-  font-size:13px;color:rgba(255,255,255,0.75);font-weight:500;
-  animation:fadeInUp .8s var(--ease) both .4s;
-}
-.hero-meta span{display:flex;align-items:center;gap:7px;}
-.hero-scroll-cue{
-  position:absolute;bottom:26px;inset-inline-end:28px;z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px;
-  color:rgba(255,255,255,0.75);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;
-  animation:fadeIn 1s var(--ease) both .8s;
-}
-.hero-scroll-cue .line{width:1px;height:34px;background:linear-gradient(180deg,rgba(255,255,255,0.85),transparent);animation:scrollCue 1.8s ease-in-out infinite;}
-@keyframes scrollCue{ 0%{opacity:.3;} 50%{opacity:1;} 100%{opacity:.3;} }
-@media(max-width:640px){ .hero-scroll-cue{display:none;} }
 
 /* ===== Ticker ===== */
 .ticker-wrap{
@@ -955,7 +869,6 @@ function deliveryPrice(type, code){
 }
 
 
-const HERO_IMAGE = 'https://images.pexels.com/photos/38472465/pexels-photo-38472465.jpeg?auto=compress&cs=tinysrgb&w=1600';
 const LOOKBOOK_IMAGES_DEFAULT = [
   'https://images.pexels.com/photos/27580017/pexels-photo-27580017.jpeg?auto=compress&cs=tinysrgb&w=1000',
   'https://images.pexels.com/photos/5405644/pexels-photo-5405644.jpeg?auto=compress&cs=tinysrgb&w=900',
@@ -963,7 +876,6 @@ const LOOKBOOK_IMAGES_DEFAULT = [
 ];
 function defaultSettings(){
   return {
-    heroImage: HERO_IMAGE,
     lookbookImages: LOOKBOOK_IMAGES_DEFAULT.slice(),
     delivery: defaultDelivery(),
     tracking: {
@@ -1029,11 +941,6 @@ const i18n = {
   en:{
     dir:'ltr',
     nav_shop:'Shop', nav_admin:'Admin',
-    hero_eyebrow:'Biskra · Boukhari, in front of Cem Khaoula',
-    hero_title_pre:'Dress like a', hero_title_script:'celebrity',
-    hero_sub:'Fresh arrivals every week from our Biskra boutique — women\'s fashion in bright, wearable colours. Order straight from Instagram to your door.',
-    hero_shop:'Shop the collection', hero_whatsapp:'Message on WhatsApp',
-    hero_phone:'0565 96 83 92 / 0777 91 13 04', hero_followers:'2,485 followers',
     cat_all:'All', cat_dresses:'Dresses', cat_sets:'Sets', cat_shirts:'Shirts', cat_pants:'Pants', cat_accessories:'Accessories',
     price_da:'DA', order_now:'Order now', out_of_stock:'Out of stock', empty_shop:'No pieces in this category yet — check back soon.',
     modal_order_title:'Complete your order', modal_order_sub:'We\'ll confirm by phone within a few hours.',
@@ -1050,8 +957,7 @@ const i18n = {
     admin_title:'Store admin', admin_logout:'Log out',
     stat_orders:'Total orders', stat_new:'New orders', stat_products:'Products live',
     tab_orders:'Orders', tab_done_orders:'Done Orders', tab_products:'Products', tab_design:'Design',
-    design_title:'Site photos', design_sub:'Adjust the large photos shown across your website — no code needed.',
-    design_hero:'Homepage hero photo', design_hero_hint:'The big full-width photo behind your homepage headline.',
+    design_title:'Site photos', design_sub:'Product photos are managed from the Products tab.',
     design_look1:'Lookbook photo 1 (large)', design_look2:'Lookbook photo 2', design_look3:'Lookbook photo 3',
     design_look_hint:'Shown in the "Lookbook" editorial section under the hero.',
     design_save:'Save photos',
@@ -1073,11 +979,6 @@ const i18n = {
   fr:{
     dir:'ltr',
     nav_shop:'Boutique', nav_admin:'Admin',
-    hero_eyebrow:'Biskra · Boukhari, en face de Cem Khaoula',
-    hero_title_pre:'Habillez-vous comme une', hero_title_script:'star',
-    hero_sub:'Nouveautés chaque semaine depuis notre boutique de Biskra — mode femme en couleurs vives et portables. Commandez directement depuis Instagram.',
-    hero_shop:'Voir la collection', hero_whatsapp:'Écrire sur WhatsApp',
-    hero_phone:'0565 96 83 92 / 0777 91 13 04', hero_followers:'2 485 abonnés',
     cat_all:'Tout', cat_dresses:'Robes', cat_sets:'Ensembles', cat_shirts:'Chemises', cat_pants:'Pantalons', cat_accessories:'Accessoires',
     price_da:'DA', order_now:'Commander', out_of_stock:'Épuisé', empty_shop:'Aucune pièce dans cette catégorie pour le moment.',
     modal_order_title:'Finaliser la commande', modal_order_sub:'Nous confirmerons par téléphone sous quelques heures.',
@@ -1094,8 +995,7 @@ const i18n = {
     admin_title:'Espace admin', admin_logout:'Déconnexion',
     stat_orders:'Commandes totales', stat_new:'Nouvelles commandes', stat_products:'Produits en ligne',
     tab_orders:'Commandes', tab_done_orders:'Commandes terminées', tab_products:'Produits', tab_design:'Design',
-    design_title:'Photos du site', design_sub:'Ajustez les grandes photos affichées sur votre site — aucun code requis.',
-    design_hero:'Photo principale (accueil)', design_hero_hint:"La grande photo pleine largeur derrière le titre de l'accueil.",
+    design_title:'Photos du site', design_sub:'Les photos des produits se gèrent depuis l’onglet Produits.',
     design_look1:'Photo lookbook 1 (grande)', design_look2:'Photo lookbook 2', design_look3:'Photo lookbook 3',
     design_look_hint:'Affichées dans la section éditoriale "Lookbook" sous l\'accueil.',
     design_save:'Enregistrer les photos',
@@ -1117,11 +1017,6 @@ const i18n = {
   ar:{
     dir:'rtl',
     nav_shop:'المتجر', nav_admin:'الإدارة',
-    hero_eyebrow:'بسكرة · بوخاري، أمام سام خولة',
-    hero_title_pre:'البسي مثل', hero_title_script:'نجمة',
-    hero_sub:'وصولات جديدة كل أسبوع من متجرنا في بسكرة — أزياء نسائية بألوان زاهية وقابلة للارتداء. اطلبي مباشرة عبر الموقع.',
-    hero_shop:'تسوقي المجموعة', hero_whatsapp:'راسلينا عبر واتساب',
-    hero_phone:'0565 96 83 92 / 0777 91 13 04', hero_followers:'2,485 متابع',
     cat_all:'الكل', cat_dresses:'فساتين', cat_sets:'أطقم', cat_shirts:'قمصان', cat_pants:'بناطيل', cat_accessories:'إكسسوارات',
     price_da:'دج', order_now:'اطلبي الآن', out_of_stock:'غير متوفر', empty_shop:'لا توجد قطع في هذه الفئة حاليًا.',
     modal_order_title:'إتمام الطلب', modal_order_sub:'سنؤكد الطلب عبر الهاتف خلال ساعات قليلة.',
@@ -1138,8 +1033,7 @@ const i18n = {
     admin_title:'إدارة المتجر', admin_logout:'تسجيل الخروج',
     stat_orders:'إجمالي الطلبات', stat_new:'طلبات جديدة', stat_products:'منتجات معروضة',
     tab_orders:'الطلبات', tab_done_orders:'الطلبات المنتهية', tab_products:'المنتجات', tab_design:'التصميم',
-    design_title:'صور الموقع', design_sub:'اضبطي الصور الكبيرة الظاهرة في موقعك — بدون أي برمجة.',
-    design_hero:'صورة الصفحة الرئيسية', design_hero_hint:'الصورة الكبيرة خلف عنوان الصفحة الرئيسية.',
+    design_title:'صور الموقع', design_sub:'تتم إدارة صور المنتجات من تبويب المنتجات.',
     design_look1:'صورة اللوك بوك 1 (كبيرة)', design_look2:'صورة اللوك بوك 2', design_look3:'صورة اللوك بوك 3',
     design_look_hint:'تظهر في قسم "الإطلالات" أسفل الصفحة الرئيسية.',
     design_save:'حفظ الصور',
@@ -1524,7 +1418,6 @@ function render(){
   }
   bindEvents();
   setupScrollReveal();
-  setupHeroParallax();
 }
 
 function renderHeader(){
@@ -1551,39 +1444,6 @@ function renderSampleIntro(){
   const title = state.lang==='ar' ? 'اكتشفي جديدنا' : (state.lang==='fr' ? 'DÉCOUVREZ NOS NOUVEAUTÉS' : 'DISCOVER OUR NEW ARRIVALS');
   const sub = state.lang==='ar' ? 'قطع أنثوية مختارة بعناية، بتفاصيل ناعمة وألوان تحبّيها.' : (state.lang==='fr' ? 'Des pièces féminines choisies avec soin, pensées pour votre style.' : 'Feminine pieces, carefully selected for your style.');
   return `<section class="sample-intro"><div class="sample-floral-line">✿　❀　✿</div><h1>${title} <span>⌄</span></h1><p>${sub}</p></section>`;
-}
-
-function renderHero(){
-  const heroImg = (state.settings && state.settings.heroImage) || HERO_IMAGE;
-  return `
-  <section class="hero">
-    <div class="hero-bg"><img src="${escapeHtml(heroImg)}" alt="Blossom07 editorial" loading="eager" onerror="this.parentElement.classList.add('img-broken');this.style.display='none';"></div>
-    <div class="hero-content">
-      <div class="hero-inner">
-        <div class="hero-eyebrow">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8 6 6 9 6 13a6 6 0 0012 0c0-4-2-7-6-11z"/></svg>
-          ${t('hero_eyebrow')}
-        </div>
-        <h1>${t('hero_title_pre')} <span>${t('hero_title_script')}</span></h1>
-        <p>${t('hero_sub')}</p>
-        <div class="hero-actions">
-          <button class="btn btn-primary" data-scroll="shop-grid">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2l1.5 3h9L18 2M4 6h16l-1.5 13a2 2 0 01-2 1.8H7.5A2 2 0 015.5 19L4 6z"/></svg>
-            ${t('hero_shop')}
-          </button>
-          <a class="btn btn-ghost" href="https://wa.me/${SHOP_PHONE}" target="_blank" rel="noopener">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.6 15L2 22l5.2-1.4A10 10 0 1012 2zm0 18.2c-1.6 0-3.1-.4-4.5-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1112 20.2zm4.5-6.2c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1-.2.2-.7.8-.8 1-.2.2-.3.2-.5.1-.2-.1-1.1-.4-2.1-1.3-.8-.7-1.3-1.6-1.5-1.8-.2-.2 0-.4.1-.5l.4-.5c.1-.2.2-.3.2-.5.1-.2 0-.3 0-.5s-.6-1.5-.8-2c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.2-1 1-1 2.3s1 2.7 1.1 2.9c.1.2 2 3 4.8 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>
-            ${t('hero_whatsapp')}
-          </a>
-        </div>
-        <div class="hero-meta">
-          <a href="tel:+213565968392" style="color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M3 12h18M3 19h18"/></svg>${t('hero_phone')}</a>
-          <a href="https://www.instagram.com/boutique_blossom07/" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>${t('hero_followers')}</a>
-        </div>
-      </div>
-    </div>
-    <div class="hero-scroll-cue"><span>${state.lang==='ar'?'مرري للأسفل':(state.lang==='fr'?'Défiler':'Scroll')}</span><span class="line"></span></div>
-  </section>`;
 }
 
 function renderTicker(){
@@ -1881,14 +1741,13 @@ function renderAdmin(){
       <button class="tab-btn ${state.adminTab==='done'?'active':''}" data-tab="done">${t('tab_done_orders')} <span class="tab-count">${doneOrders.length}</span></button>
       <button class="tab-btn ${state.adminTab==='products'?'active':''}" data-tab="products">${t('tab_products')}</button>
       <button class="tab-btn ${state.adminTab==='delivery'?'active':''}" data-tab="delivery">${t('tab_delivery')}</button>
-      <button class="tab-btn ${state.adminTab==='design'?'active':''}" data-tab="design">${t('tab_design')}</button>
       <button class="tab-btn ${state.adminTab==='tracking'?'active':''}" data-tab="tracking">📊 Tracking</button>
     </div>
     ${state.adminTab==='orders'
       ? renderOrdersTab(newOrders)
       : (state.adminTab==='done'
         ? renderOrdersTab(doneOrders)
-        : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : (state.adminTab==='tracking' ? renderTrackingTab() : renderDesignTab()))))}
+        : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : renderTrackingTab())))}
   </div>`;
 }
 
@@ -1917,25 +1776,6 @@ function renderTrackingTab(){
     </div>
     <div class="design-save-bar">
       <button type="submit" class="btn btn-primary">حفظ إعدادات Tracking</button>
-    </div>
-  </form>`;
-}
-
-function renderDesignTab(){
-  const s = state.settings || defaultSettings();
-  return `
-  <form id="design-form">
-    <p style="font-size:13px;color:var(--plum-soft);margin:-6px 0 20px;max-width:520px;line-height:1.6;">${t('design_sub')}</p>
-    <div class="design-grid">
-      <div class="design-card">
-        <h4>${t('design_hero')}</h4>
-        <p class="hint">${t('design_hero_hint')}</p>
-        ${renderPhotoField('design-hero-image', s.heroImage, {wide:true})}
-      </div>
-    </div>
-    <p style="font-size:12.5px;color:var(--plum-soft);margin:18px 0 0;max-width:520px;line-height:1.6;">${state.lang==='ar' ? 'تظهر قسمي "الأكثر مبيعًا" و"جديد هذا الأسبوع" تلقائيًا من صور منتجاتك — عدّليها من تبويب المنتجات.' : (state.lang==='fr' ? 'Les sections "Sélection" et "Nouveautés" utilisent automatiquement les photos de vos produits — modifiez-les depuis l\'onglet Produits.' : 'The "Selection" and "New in" sections pull automatically from your product photos — edit them from the Products tab.')}</p>
-    <div class="design-save-bar">
-      <button type="submit" class="btn btn-primary">${t('design_save')}</button>
     </div>
   </form>`;
 }
@@ -2259,26 +2099,6 @@ window.addEventListener('scroll', ()=>{
 }, {passive:true});
 
 const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-let heroParallaxBound = false;
-function setupHeroParallax(){
-  const img = document.querySelector('.hero-bg img');
-  if(!img || prefersReducedMotion) return;
-  if(heroParallaxBound) return;
-  heroParallaxBound = true;
-  let ticking = false;
-  const update = ()=>{
-    const el = document.querySelector('.hero-bg img');
-    if(el){
-      const offset = Math.min(window.scrollY * 0.28, 90);
-      el.style.transform = `scale(1.08) translateY(${offset}px)`;
-    }
-    ticking = false;
-  };
-  window.addEventListener('scroll', ()=>{
-    if(!ticking){ requestAnimationFrame(update); ticking = true; }
-  }, {passive:true});
-  update();
-}
 
 async function translateText(text, from, to){
   if(!text || from===to) return text||'';
@@ -2694,16 +2514,6 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       removeBtn.classList.add('hidden');
     };
   });
-
-  const designForm = document.getElementById('design-form');
-  if(designForm) designForm.onsubmit = async (e)=>{
-    e.preventDefault();
-    const heroVal = document.getElementById('design-hero-image').value.trim();
-    state.settings = Object.assign({}, state.settings, { heroImage: heroVal || HERO_IMAGE });
-    await saveSettings();
-    showToast(state.lang==='ar' ? 'تم الحفظ' : (state.lang==='fr' ? 'Enregistré' : 'Saved'));
-  };
-
   const trackingForm=document.getElementById('tracking-form');
   if(trackingForm) trackingForm.onsubmit=async(e)=>{
     e.preventDefault();
