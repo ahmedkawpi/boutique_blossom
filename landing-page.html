@@ -794,6 +794,33 @@
   .submit-btn{padding:11px;font-size:12px;}
 }
 </style>
+<style id="blossom-fluid-width-fix">
+@media (min-width:901px){
+  .page{
+    width:calc(100% - 40px);
+    max-width:1440px!important;
+    margin-left:auto;
+    margin-right:auto;
+    box-sizing:border-box;
+    padding-left:20px;
+    padding-right:20px;
+  }
+  .top-bar{width:100%;max-width:none;box-sizing:border-box;}
+  .product-section{
+    width:100%;
+    max-width:1200px!important;
+    margin-left:auto;
+    margin-right:auto;
+    box-sizing:border-box;
+    grid-template-columns:minmax(0,455px) minmax(0,455px);
+  }
+  .main-image-wrap{width:100%;max-width:455px;}
+  .product-info{min-width:0;}
+  .details-section,.related-section{
+    width:100%;max-width:1200px;margin-left:auto;margin-right:auto;box-sizing:border-box;
+  }
+}
+</style>
 </head>
 
 <body>
@@ -2537,17 +2564,3 @@ trackMetaEvent('Purchase', {
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
