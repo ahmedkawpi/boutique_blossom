@@ -810,6 +810,37 @@ body{min-height:100vh;transition:background .35s ease,color .35s ease;}
   .order-btn{width:100%;}
 }
 
+
+/* Mobile compact catalog — keep the desktop-like proportions */
+@media (max-width:720px){
+  .shop-wrap{padding:0 14px 42px;}
+  .shop-wrap>.grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:18px 10px !important;
+  }
+  .card .thumb{aspect-ratio:4/5 !important;border-radius:7px;}
+  .card-body{padding:7px 2px 0 !important;}
+  .card-cat{font-size:7px !important;margin-bottom:3px !important;}
+  .card-name{
+    font-size:11px !important;
+    line-height:1.25 !important;
+    margin-bottom:5px !important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .card-desc{display:none !important;}
+  .card-colors{font-size:8px !important;margin-bottom:5px !important;}
+  .price{font-size:10px !important;gap:4px !important;}
+  .price small{font-size:7px !important;}
+  .order-btn{display:none !important;}
+  .stock-badge,.card-tag{font-size:7px !important;padding:3px 6px !important;top:6px !important;}
+  .category-bar{padding:0 10px !important;margin-bottom:15px !important;gap:4px !important;}
+  .category-bar .chip{font-size:9px !important;padding:6px 9px !important;}
+  .sample-intro{padding:28px 14px 18px !important;}
+  .sample-intro h1{font-size:19px !important;}
+  .sample-intro p{font-size:10px !important;line-height:1.5 !important;}
+}
 </style>
 
 </head>
