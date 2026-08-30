@@ -435,6 +435,10 @@
       margin-top: 5px;
     }
 
+    .landing-header-actions{display:flex;align-items:center;gap:8px;}
+    .lang-switch{display:flex;align-items:center;gap:2px;background:rgba(184,95,130,.08);border-radius:999px;padding:3px;}
+    .lang-switch button{border:0;background:transparent;color:#806e77;padding:6px 8px;border-radius:999px;font-size:11px;font-weight:700;cursor:pointer;}
+    .lang-switch button.active{background:var(--pink-soft);color:#fff;}
     .landing-nav {
       display: flex;
       align-items: center;
@@ -769,15 +773,22 @@
 
     <header class="top-bar">
       <nav class="landing-nav">
-        <a href="/">الرئيسية</a>
-        <a href="/#shop-grid">المتجر</a>
-        <a href="/?contact=1">تواصل</a>
+        <a href="/" data-lkey="home">الرئيسية</a>
+        <a href="/#shop-grid" data-lkey="shop">المتجر</a>
+        <a href="/?contact=1" data-lkey="contact">تواصل</a>
       </nav>
-      <a href="/" class="brand-link" aria-label="Boutique Blossom - الصفحة الرئيسية">
+      <a href="/" class="brand-link" aria-label="Boutique Blossom">
         <div class="brand">Blossom ✿</div>
         <div class="brand-small">Boutique Blossom</div>
       </a>
-      <button class="landing-theme" id="landing-theme-toggle" type="button" aria-label="تبديل الوضع">☼</button>
+      <div class="landing-header-actions">
+        <div class="lang-switch" aria-label="Language">
+          <button type="button" data-landing-lang="en">EN</button>
+          <button type="button" data-landing-lang="fr">FR</button>
+          <button type="button" data-landing-lang="ar">ع</button>
+        </div>
+        <button class="landing-theme" id="landing-theme-toggle" type="button" aria-label="تبديل الوضع">☼</button>
+      </div>
     </header>
 
     <main id="app"></main>
@@ -977,18 +988,25 @@
     }
 
 
+    function getLandingLang(){ return localStorage.getItem('blossom07:lang') || localStorage.getItem('blossom:lang') || 'ar'; }
+    function landingText(value, fallback = '') {
+      if (!value) return fallback;
+      if (typeof value === 'object') return value[getLandingLang()] || value.ar || value.fr || value.en || fallback;
+      try { const parsed = JSON.parse(value); if (parsed && typeof parsed === 'object') return parsed[getLandingLang()] || parsed.ar || parsed.fr || parsed.en || fallback; return parsed; } catch { return value; }
+    }
+
     function parseTranslation(value, fallback = '') {
       if (!value) return fallback;
 
       if (typeof value === 'object') {
-        return value.ar || value.fr || value.en || fallback;
+        return value[getLandingLang()] || value.ar || value.fr || value.en || fallback;
       }
 
       try {
         const parsed = JSON.parse(value);
 
         if (typeof parsed === 'object') {
-          return parsed.ar || parsed.fr || parsed.en || fallback;
+          return parsed[getLandingLang()] || parsed.ar || parsed.fr || parsed.en || fallback;
         }
 
         return parsed;
@@ -2453,7 +2471,25 @@ trackMetaEvent('Purchase', {
 
   <script>
     (function(){
-      const saved = localStorage.getItem('blossom-theme') || 'light';
+      const lang = getLandingLang();
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.querySelectorAll('[data-landing-lang]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.landingLang === lang);
+        btn.addEventListener('click', () => {
+          localStorage.setItem('blossom07:lang', btn.dataset.landingLang);
+          localStorage.setItem('blossom:lang', btn.dataset.landingLang);
+          window.location.reload();
+        });
+      });
+      const labels = {en:{home:'Home',shop:'Shop',contact:'Contact'},fr:{home:'Accueil',shop:'Boutique',contact:'Contact'},ar:{home:'الرئيسية',shop:'المتجر',contact:'تواصل'}}[lang] || {};
+      document.querySelectorAll('[data-lkey]').forEach(el => { if(labels[el.dataset.lkey]) el.textContent = labels[el.dataset.lkey]; });
+    })();
+  </script>
+
+  <script>
+    (function(){
+      const saved = localStorage.getItem('blossom-theme') || localStorage.getItem('blossom07:theme') || 'light';
       document.documentElement.setAttribute('data-theme', saved);
       const btn = document.getElementById('landing-theme-toggle');
       const update = () => {
@@ -2465,13 +2501,14 @@ trackMetaEvent('Purchase', {
         const dark = document.documentElement.getAttribute('data-theme') === 'dark';
         const next = dark ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('blossom-theme', next);
+        localStorage.setItem('blossom-theme', next); localStorage.setItem('blossom07:theme', next);
         update();
       });
     })();
   </script>
 </body>
 </html>
+
 
 
 
