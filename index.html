@@ -843,6 +843,21 @@ body{min-height:100vh;transition:background .35s ease,color .35s ease;}
 }
 </style>
 
+<style id="blossom-fluid-width-fix">
+@media (min-width:721px){
+  .sample-header,.lookbook,.cat-section,.feature-row,.cta-banner,.category-bar,.shop-wrap,
+  .site-footer .footer-inner,.site-footer .footer-bottom{
+    width:calc(100% - 40px);
+    max-width:1440px;
+    box-sizing:border-box;
+  }
+  .sample-header{margin-left:auto;margin-right:auto;padding-left:28px;padding-right:28px;}
+  .lookbook,.cat-section,.feature-row,.cta-banner,.category-bar,.shop-wrap{margin-left:auto;margin-right:auto;}
+  .lookbook,.cat-section,.feature-row,.cta-banner,.category-bar,.shop-wrap{max-width:1440px;}
+  .shop-wrap>.grid,.new-grid,.cat-grid{width:100%;}
+}
+@media (max-width:720px){.sample-header{width:100%;}}
+</style>
 </head>
 <body>
 
@@ -2812,28 +2827,3 @@ loadData().then(restoreRememberedAdmin);
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
