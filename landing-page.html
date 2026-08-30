@@ -703,6 +703,64 @@
       }
     }
   </style>
+
+<style id="mobile-compact-overrides">
+@media (max-width: 640px){
+  body{font-size:13px;}
+  .site-header{padding:10px 14px;gap:8px;}
+  .site-header.scrolled{padding:8px 14px;}
+  .brand-mark{font-size:25px;}
+  .brand-sub{font-size:8px;}
+  .header-right{gap:7px;}
+  .lang-switch button{padding:5px 8px;font-size:10px;}
+  .theme-toggle{width:32px;height:32px;}
+  .product-page{padding:18px 12px 55px;}
+  .product-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start;}
+  .product-gallery{position:sticky;top:58px;}
+  .main-photo{aspect-ratio:4/5;border-radius:14px;}
+  .thumbs{gap:5px;margin-top:6px;}
+  .thumbs button{width:48px;height:58px;border-radius:8px;}
+  .product-info{padding:2px 0;}
+  .product-category{font-size:9px;letter-spacing:.08em;margin-bottom:4px;}
+  .product-title{font-size:22px;line-height:1.12;margin-bottom:7px;}
+  .product-price{font-size:18px;margin-bottom:10px;}
+  .product-desc{font-size:11px;line-height:1.45;margin-bottom:10px;}
+  .option-label{font-size:10px;margin-bottom:5px;}
+  .size-grid{gap:4px;}
+  .size-btn{min-width:31px;padding:7px 6px;font-size:10px;}
+  .color-grid{gap:5px;}
+  .color-btn{width:25px;height:25px;}
+  .qty-control{height:32px;}
+  .qty-control button{width:30px;}
+  .qty-control input{width:34px;font-size:11px;}
+  .order-main-btn{padding:10px 12px;font-size:11px;border-radius:10px;}
+  .delivery-note,.stock-note{font-size:9px;line-height:1.35;margin-top:6px;}
+  .details-section{padding:28px 12px;}
+  .details-section h2{font-size:22px;}
+  .details-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .detail-card{padding:10px;}
+  .detail-card h3{font-size:11px;}
+  .detail-card p{font-size:9.5px;}
+  .related-section{padding:25px 12px;}
+  .related-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+  .related-card .thumb{aspect-ratio:4/5;}
+  .related-card .body{padding:8px;}
+  .related-card .name{font-size:11px;}
+  .related-card .price{font-size:11px;}
+  .modal-card{width:calc(100% - 24px);padding:16px;border-radius:16px;}
+  .modal-card h2{font-size:19px;}
+  .form-grid{grid-template-columns:1fr;gap:9px;}
+  .form-group label{font-size:10px;}
+  .form-group input,.form-group select,.form-group textarea{padding:9px 10px;font-size:11px;}
+}
+@media (max-width:420px){
+  .product-layout{gap:9px;}
+  .product-title{font-size:19px;}
+  .product-desc{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+  .main-photo{border-radius:12px;}
+  .thumbs button{width:40px;height:49px;}
+}
+</style>
 </head>
 
 <body>
