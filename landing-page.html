@@ -765,6 +765,35 @@
   .thumbs button{width:40px;height:49px;}
 }
 </style>
+
+<style id="desktop-compact-landing">
+/* Desktop: keep the product page compact and close to the store scale */
+@media (min-width: 901px){
+  .page{max-width:1080px;padding:0 18px 45px;}
+  .top-bar{height:64px;margin-bottom:28px;padding:0 6px;}
+  .product-section{grid-template-columns:minmax(0,455px) minmax(0,455px);gap:32px;justify-content:center;}
+  .gallery{top:82px;}
+  .main-image-wrap{width:455px;height:555px;aspect-ratio:auto;max-height:555px;border-radius:18px;}
+  .thumbnails{gap:8px;margin-top:10px;}
+  .thumbnail{width:62px;height:75px;flex-basis:62px;border-radius:10px;}
+  .product-info{padding-top:2px;}
+  .category{font-size:10px;padding:5px 9px;margin-bottom:9px;}
+  .product-name{font-size:32px;margin-bottom:9px;}
+  .price-row{gap:9px;margin-bottom:12px;}
+  .price{font-size:23px;}
+  .old-price{font-size:14px;}
+  .product-description{font-size:12px;line-height:1.55;margin-bottom:13px;}
+  .order-box{padding:16px;border-radius:16px;}
+  .order-title{font-size:19px;}
+  .order-subtitle{font-size:11px;margin-bottom:12px;}
+  .field{margin-bottom:9px;}
+  .field label{font-size:11px;margin-bottom:5px;}
+  .field input,.field select,.field textarea{padding:9px 10px;border-radius:9px;font-size:11px;}
+  .field textarea{min-height:58px;}
+  .summary{padding:9px 10px;}
+  .submit-btn{padding:11px;font-size:12px;}
+}
+</style>
 </head>
 
 <body>
@@ -2508,7 +2537,6 @@ trackMetaEvent('Purchase', {
   </script>
 </body>
 </html>
-
 
 
 
