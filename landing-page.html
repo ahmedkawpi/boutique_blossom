@@ -44,26 +44,44 @@
       padding: 24px 18px 60px;
     }
 
-    /* ================= HEADER ================= */
+   /* ================= HEADER ================= */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 22px;
+}
 
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 28px;
-    }
+.brand {
+  font-size: 24px;
+  font-weight: 800;
+  color: #9b5575;
+  white-space: nowrap;
+}
 
-    .brand {
-      font-size: 24px;
-      font-weight: 800;
-      color: #9b5575;
-    }
+.brand-small {
+  font-size: 12px;
+  color: #a98b98;
+  margin-top: 3px;
+}
 
-    .brand-small {
-      font-size: 12px;
-      color: #a98b98;
-      margin-top: 3px;
-    }
+/* Mobile */
+@media (max-width: 700px) {
+  .top-bar {
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 0 4px;
+  }
+
+  .brand {
+    font-size: 20px;
+  }
+
+  .brand-small {
+    font-size: 10px;
+  }
+}
 
     /* ================= PRODUCT ================= */
 
