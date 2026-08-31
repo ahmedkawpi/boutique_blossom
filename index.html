@@ -2763,33 +2763,69 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
   if(addBtn) addBtn.onclick = ()=>{ state.editingProduct='new'; state.draftProductId='p_'+crypto.randomUUID(); state.productSourceLang=state.lang; render(); };
   document.querySelectorAll('[data-edit]').forEach(b=> b.onclick = ()=>{ state.editingProduct=b.dataset.edit; const p=state.products.find(x=>x.id===b.dataset.edit); state.productSourceLang=(p&&p.sourceLang)||state.lang; render(); });
   async function deleteProductStorageFiles(productId){
-    const basePath = `products/${productId}`;
-    const paths = [];
+  const imagePaths = [];
+  const storageMarker = '/storage/v1/object/public/product-images/';
 
-    for(const folder of ['gallery', 'colors']){
-      const { data, error } = await supabaseClient
-        .storage
-        .from('product-images')
-        .list(`${basePath}/${folder}`, { limit: 1000, offset: 0 });
+  const { data: galleryRows, error: galleryError } = await supabaseClient
+    .from('product_images')
+    .select('image_url')
+    .eq('product_id', productId);
 
-      if(error) throw error;
+  if(galleryError) throw galleryError;
 
-      (data || []).forEach(file => {
-        if(file && file.name){
-          paths.push(`${basePath}/${folder}/${file.name}`);
-        }
-      });
+  (galleryRows || []).forEach(row=>{
+    const url = String(row?.image_url || '').trim();
+
+    if(url.includes(storageMarker)){
+      const path = url.substring(
+        url.indexOf(storageMarker) + storageMarker.length
+      );
+
+      if(path) imagePaths.push(decodeURIComponent(path));
     }
+  });
 
-    if(paths.length){
-      const { error } = await supabaseClient
-        .storage
-        .from('product-images')
-        .remove(paths);
+  const { data: colorRows, error: colorRowsError } = await supabaseClient
+    .from('product_colors')
+    .select('id')
+    .eq('product_id', productId);
 
-      if(error) throw error;
-    }
+  if(colorRowsError) throw colorRowsError;
+
+  const colorIds = (colorRows || []).map(row=>row.id);
+
+  if(colorIds.length){
+    const { data: colorImageRows, error: colorImageError } = await supabaseClient
+      .from('product_color_images')
+      .select('image_url')
+      .in('color_id', colorIds);
+
+    if(colorImageError) throw colorImageError;
+
+    (colorImageRows || []).forEach(row=>{
+      const url = String(row?.image_url || '').trim();
+
+      if(url.includes(storageMarker)){
+        const path = url.substring(
+          url.indexOf(storageMarker) + storageMarker.length
+        );
+
+        if(path) imagePaths.push(decodeURIComponent(path));
+      }
+    });
   }
+
+  const uniquePaths = [...new Set(imagePaths)];
+
+  if(uniquePaths.length){
+    const { error: storageError } = await supabaseClient
+      .storage
+      .from('product-images')
+      .remove(uniquePaths);
+
+    if(storageError) throw storageError;
+  }
+}
 
   document.querySelectorAll('[data-delete]').forEach(b=> b.onclick = async ()=>{
     if(!confirm(t('confirm_delete'))) return;
