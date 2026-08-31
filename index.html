@@ -2754,10 +2754,13 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
     state.orders = state.orders.filter(x => x.id !== id);
     render();
 
-  }catch(e){
-    console.error('deleteOrder error:', e);
-    showToast('Could not delete order — please retry.');
-  }
+ }catch(e){
+  console.error('deleteProduct error:', e);
+  console.error('deleteProduct error message:', e?.message);
+  console.error('deleteProduct error details:', e?.details);
+  console.error('deleteProduct error hint:', e?.hint);
+  alert('DELETE ERROR: ' + (e?.message || e));
+}
 });
   const addBtn = document.getElementById('add-product-btn');
   if(addBtn) addBtn.onclick = ()=>{ state.editingProduct='new'; state.draftProductId='p_'+crypto.randomUUID(); state.productSourceLang=state.lang; render(); };
