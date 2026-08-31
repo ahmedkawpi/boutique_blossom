@@ -1417,6 +1417,7 @@ let state = {
   adminTab: 'orders',
   orderTarget: null,
   editingProduct: null,
+  draftProductId: null,
   showSuccess: false,
   cart: [],
   cartOpen: false,
@@ -2389,6 +2390,44 @@ function processImageFile(file){
   });
 }
 
+async function uploadProductGalleryImage(dataUrl, productId){
+  if(!productId) throw new Error('missing product ID');
+  const response = await fetch(dataUrl);
+  if(!response.ok) throw new Error('could not prepare compressed image');
+  const imageBlob = await response.blob();
+  const storagePath = `products/${productId}/gallery/${crypto.randomUUID()}.jpg`;
+  const { data, error } = await supabaseClient
+    .storage
+    .from('product-images')
+    .upload(storagePath, imageBlob, { contentType:'image/jpeg', cacheControl:'3600', upsert:false });
+  if(error) throw error;
+  const { data: publicUrlData } = supabaseClient
+    .storage
+    .from('product-images')
+    .getPublicUrl(data.path);
+  if(!publicUrlData?.publicUrl) throw new Error('could not create public image URL');
+  return publicUrlData.publicUrl;
+}
+
+async function uploadProductColorImage(dataUrl, productId){
+  if(!productId) throw new Error('missing product ID');
+  const response = await fetch(dataUrl);
+  if(!response.ok) throw new Error('could not prepare compressed image');
+  const imageBlob = await response.blob();
+  const storagePath = `products/${productId}/colors/${crypto.randomUUID()}.jpg`;
+  const { data, error } = await supabaseClient
+    .storage
+    .from('product-images')
+    .upload(storagePath, imageBlob, { contentType:'image/jpeg', cacheControl:'3600', upsert:false });
+  if(error) throw error;
+  const { data: publicUrlData } = supabaseClient
+    .storage
+    .from('product-images')
+    .getPublicUrl(data.path);
+  if(!publicUrlData?.publicUrl) throw new Error('could not create public image URL');
+  return publicUrlData.publicUrl;
+}
+
 async function handleImageFile(file, fieldEl){
   if(!fieldEl) return;
   const progress = fieldEl.querySelector('[data-progress]');
@@ -2455,11 +2494,13 @@ function bindColorImageUpload(row){
     if(!file) return;
     try{
       const dataUrl=await processImageFile(file);
-      if(hidden) hidden.value=dataUrl;
-      if(preview) preview.innerHTML=`<img src="${dataUrl}">`;
+      const productId=state.editingProduct==='new' ? state.draftProductId : state.editingProduct;
+      const publicUrl=await uploadProductColorImage(dataUrl, productId);
+      if(hidden) hidden.value=publicUrl;
+      if(preview) preview.innerHTML=`<img src="${publicUrl}">`;
     }catch(err){
       console.error('color image upload error:',err);
-      showToast(state.lang==='ar' ? 'تعذر تحميل الصورة' : (state.lang==='fr' ? "Impossible de charger l'image" : 'Could not load that image'));
+      showToast(state.lang==='ar' ? 'تعذر رفع الصورة. حاولي مرة أخرى.' : (state.lang==='fr' ? "Impossible d’importer l’image. Réessayez." : 'Could not upload image. Please try again.'));
     }
   };
   if(dropzone){
@@ -2719,7 +2760,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
   }
 });
   const addBtn = document.getElementById('add-product-btn');
-  if(addBtn) addBtn.onclick = ()=>{ state.editingProduct='new'; state.productSourceLang=state.lang; render(); };
+  if(addBtn) addBtn.onclick = ()=>{ state.editingProduct='new'; state.draftProductId='p_'+crypto.randomUUID(); state.productSourceLang=state.lang; render(); };
   document.querySelectorAll('[data-edit]').forEach(b=> b.onclick = ()=>{ state.editingProduct=b.dataset.edit; const p=state.products.find(x=>x.id===b.dataset.edit); state.productSourceLang=(p&&p.sourceLang)||state.lang; render(); });
   document.querySelectorAll('[data-delete]').forEach(b=> b.onclick = async ()=>{
     if(!confirm(t('confirm_delete'))) return;
@@ -2768,11 +2809,13 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
         if(!file) return;
         try{
           const dataUrl = await processImageFile(file);
-          if(hidden) hidden.value = dataUrl;
-          if(preview) preview.innerHTML = `<img src="${dataUrl}">`;
+          const productId = state.editingProduct === 'new' ? state.draftProductId : state.editingProduct;
+          const publicUrl = await uploadProductGalleryImage(dataUrl, productId);
+          if(hidden) hidden.value = publicUrl;
+          if(preview) preview.innerHTML = `<img src="${publicUrl}">`;
         }catch(err){
           console.error('extra image upload error:', err);
-          showToast(state.lang==='ar' ? 'تعذر تحميل الصورة' : (state.lang==='fr' ? "Impossible de charger l'image" : 'Could not load that image'));
+          showToast(state.lang==='ar' ? 'تعذر رفع الصورة. حاولي مرة أخرى.' : (state.lang==='fr' ? "Impossible d’importer l’image. Réessayez." : 'Could not upload image. Please try again.'));
         }
       };
       if(dropzone){
@@ -2931,7 +2974,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
     if(k==='cart') {state.cartOpen=false; state.checkoutOpen=false;}
     if(k==='checkout') state.checkoutOpen=false;
     if(k==='success') state.showSuccess=false;
-    if(k==='product') state.editingProduct=null;
+    if(k==='product') { if(state.editingProduct==='new') state.draftProductId=null; state.editingProduct=null; }
     render();
   });
 
@@ -3040,7 +3083,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       }
     }else{
       const data = {
-        id:'p'+Date.now(),
+        id:state.draftProductId,
         category:document.getElementById('pf-category').value,
         price,
         oldPrice,
@@ -3071,7 +3114,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       if(savedId) state.productColors[savedId] = savedColors.map((c,i)=>({id:'local-'+i,name:c.name,value:c.value,images:c.images}));
     }
     unlockSave();
-    state.editingProduct=null; state.productSourceLang=null; render(); showToast(state.lang==='ar'?'تم الحفظ':(state.lang==='fr'?'Enregistré':'Saved'));
+    state.editingProduct=null; state.draftProductId=null; state.productSourceLang=null; render(); showToast(state.lang==='ar'?'تم الحفظ':(state.lang==='fr'?'Enregistré':'Saved'));
   };
 }
 
