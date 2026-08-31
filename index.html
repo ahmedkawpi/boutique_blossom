@@ -2762,27 +2762,131 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
   const addBtn = document.getElementById('add-product-btn');
   if(addBtn) addBtn.onclick = ()=>{ state.editingProduct='new'; state.draftProductId='p_'+crypto.randomUUID(); state.productSourceLang=state.lang; render(); };
   document.querySelectorAll('[data-edit]').forEach(b=> b.onclick = ()=>{ state.editingProduct=b.dataset.edit; const p=state.products.find(x=>x.id===b.dataset.edit); state.productSourceLang=(p&&p.sourceLang)||state.lang; render(); });
-  document.querySelectorAll('[data-delete]').forEach(b=> b.onclick = async ()=>{
-    if(!confirm(t('confirm_delete'))) return;
+  async function deleteProductStorageFiles(productId){
+  const imagePaths = [];
+  const storageMarker = '/storage/v1/object/public/product-images/';
 
-    const id = b.dataset.delete;
-    try{
-      const { error } = await supabaseClient
-        .from('products')
-        .delete()
-        .eq('id', id);
+  // Normal gallery images
+  const { data: galleryRows, error: galleryError } = await supabaseClient
+    .from('product_images')
+    .select('image_url')
+    .eq('product_id', productId);
 
-      if(error) throw error;
+  if(galleryError) throw galleryError;
 
-      state.products = state.products.filter(p=>p.id!==id);
-      if(state.productImages) delete state.productImages[id];
-      if(state.productColors) delete state.productColors[id];
-      render();
-    }catch(e){
-      console.error('deleteProduct error:', e);
-      showToast('Could not delete product — please retry.');
+  (galleryRows || []).forEach(row=>{
+    const url = row?.image_url || '';
+    if(url.includes(storageMarker)){
+      const path = url.split(storageMarker)[1];
+      if(path) imagePaths.push(path);
     }
   });
+
+  // Color images
+  const { data: colorRows, error: colorRowsError } = await supabaseClient
+    .from('product_colors')
+    .select('id')
+    .eq('product_id', productId);
+
+  if(colorRowsError) throw colorRowsError;
+
+  const colorIds = (colorRows || []).map(row=>row.id);
+
+  if(colorIds.length){
+    const { data: colorImageRows, error: colorImageError } = await supabaseClient
+      .from('product_color_images')
+      .select('image_url')
+      .in('color_id', colorIds);
+
+    if(colorImageError) throw colorImageError;
+
+    (colorImageRows || []).forEach(row=>{
+      const url = row?.image_url || '';
+      if(url.includes(storageMarker)){
+        const path = url.split(storageMarker)[1];
+        if(path) imagePaths.push(path);
+      }
+    });
+  }
+
+  // Delete the actual Storage files
+  const uniquePaths = [...new Set(imagePaths)];
+
+  if(uniquePaths.length){
+    const { error: storageError } = await supabaseClient
+      .storage
+      .from('product-images')
+      .remove(uniquePaths);
+
+    if(storageError) throw storageError;
+  }
+}
+
+
+document.querySelectorAll('[data-delete]').forEach(b=> b.onclick = async ()=>{
+  if(!confirm(t('confirm_delete'))) return;
+
+  const id = b.dataset.delete;
+
+  try{
+    // Delete Storage files first
+    await deleteProductStorageFiles(id);
+
+    // Delete normal gallery records
+    const { error: imagesError } = await supabaseClient
+      .from('product_images')
+      .delete()
+      .eq('product_id', id);
+
+    if(imagesError) throw imagesError;
+
+    // Get color IDs before deleting colors
+    const { data: colorRows, error: colorsFetchError } = await supabaseClient
+      .from('product_colors')
+      .select('id')
+      .eq('product_id', id);
+
+    if(colorsFetchError) throw colorsFetchError;
+
+    const colorIds = (colorRows || []).map(row=>row.id);
+
+    // Delete color-image records
+    if(colorIds.length){
+      const { error: colorImagesError } = await supabaseClient
+        .from('product_color_images')
+        .delete()
+        .in('color_id', colorIds);
+
+      if(colorImagesError) throw colorImagesError;
+    }
+
+    // Delete colors
+    const { error: colorsError } = await supabaseClient
+      .from('product_colors')
+      .delete()
+      .eq('product_id', id);
+
+    if(colorsError) throw colorsError;
+
+    // Finally delete product
+    const { error: productError } = await supabaseClient
+      .from('products')
+      .delete()
+      .eq('id', id);
+
+    if(productError) throw productError;
+
+    state.products = state.products.filter(p=>p.id!==id);
+    if(state.productImages) delete state.productImages[id];
+    if(state.productColors) delete state.productColors[id];
+
+    render();
+
+  }catch(e){
+    console.error('deleteProduct error:', e);
+    showToast('Could not delete product — please retry.');
+  }
+});
 
   const addProductImageBtn = document.getElementById('add-product-image');
   const extraImagesWrap = document.getElementById('product-extra-images');
