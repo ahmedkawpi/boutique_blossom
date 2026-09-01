@@ -997,6 +997,7 @@
     let currentImages = [];
     let currentImageIndex = 0;
     let productColors = [];
+    let productSizes = [];
     let selectedColor = null;
     let deliverySettings = null;
     let trackingSettings = { metaPixelId: '' };
@@ -1005,7 +1006,7 @@
 
     /* Order limit: 1 active order per product on this device.
        Deleted orders do not count.
-       A new cycle starts only after the current order is DONE. */
+       A new cycle starts only after the current 2 orders are both DONE. */
     function getDeviceId() {
       const key = 'blossom_device_id';
       try {
@@ -1284,6 +1285,18 @@
 
         currentProduct = product;
 
+        /* ---------- Product sizes ---------- */
+        productSizes = [];
+        if (product.sizes_enabled !== false) {
+          const { data: sizeRows, error: sizesError } = await supabaseClient
+            .from('product_sizes')
+            .select('size,sort_order')
+            .eq('product_id', productId)
+            .order('sort_order', { ascending: true });
+          if (sizesError) throw sizesError;
+          productSizes = (sizeRows || []).map(row => String(row.size || '').trim()).filter(Boolean);
+        }
+
         /* ---------- Product colors ---------- */
         const { data: colorRows, error: colorsError } = await supabaseClient
           .from('product_colors')
@@ -1531,29 +1544,15 @@
 
                 <div class="field-row">
 
+                  ${productSizes.length ? `
                   <div class="field">
-
-                    <label for="order-size">
-                      المقاس *
-                    </label>
-
-                    <select
-                      id="order-size"
-                      required
-                    >
-                      <option value="">
-                        اختر المقاس
-                      </option>
-
-                      <option value="S">S</option>
-                      <option value="M">M</option>
-                      <option value="L">L</option>
-                      <option value="XL">XL</option>
-                      <option value="Free">Free</option>
-
+                    <label for="order-size">المقاس *</label>
+                    <select id="order-size" required>
+                      <option value="">اختر المقاس</option>
+                      ${productSizes.map(size => `<option value="${escapeHtml(size)}">${escapeHtml(size)}</option>`).join('')}
                     </select>
-
-                  </div>
+                  </div>` : `
+                  <input type="hidden" id="order-size" value="">` }
 
 
                   <div class="field">
@@ -2128,10 +2127,8 @@
       }
 
 
-      if (!size) {
-        alert(
-          'يرجى اختيار المقاس.'
-        );
+      if (productSizes.length && !size) {
+        alert('يرجى اختيار المقاس.');
         return;
       }
 
@@ -2478,19 +2475,19 @@ trackMetaEvent('Purchase', {
             </h2>
 
             <p>
-              شكراً لك ${escapeHtml(order.name)}.
-            </p>
-
-            <p>
-              سوف نقوم بالتواصل معك على الرقم
-              <strong>
-                ${escapeHtml(order.phone)}
-              </strong>
-              لتأكيد طلبك.
+              شكراً لك ${escapeHtml(order.name)} على ثقتك بنا.
             </p>
 
             <p>
               شكراً لثقتك بـ <strong>Blossom</strong> 🌸
+            </p>
+
+            <p>
+              سنتواصل معك على الرقم
+              <strong>
+                ${escapeHtml(order.phone)}
+              </strong>
+              لتأكيد الطلب.
             </p>
 
             <a
