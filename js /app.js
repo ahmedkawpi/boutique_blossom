@@ -1,4 +1,3 @@
-
 /* ============ DATA / I18N ============ */
 const STORAGE_PRODUCTS_KEY = 'blossom07:products';
 const STORAGE_ORDERS_KEY = 'blossom07:orders';
