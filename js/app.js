@@ -572,7 +572,7 @@ async function refreshOrders(){
     console.error('refreshOrders error:', e);
   }
 }
-setInterval(()=>{ if(state.view === 'admin' && state.adminAuthed) refreshOrders(); }, 6000);
+/*setInterval(()=>{ if(state.view === 'admin' && state.adminAuthed) refreshOrders(); }, 6000);
 
 /* ============ TOAST ============ */
 let toastTimer = null;
