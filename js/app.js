@@ -262,11 +262,13 @@ let state = {
   products: [],
   productImages: {},
   productColors: {},
+  productSizes: {},
   orders: [],
   settings: defaultSettings(),
   view: 'shop',
   category: 'all',
   adminAuthed: false,
+  currentAdminEmail: '',
   adminTab: 'orders',
   orderTarget: null,
   editingProduct: null,
@@ -318,7 +320,8 @@ async function loadData(){
       stock: p.stock !== false,
       image: p.image || '',
       name: normalizeProductText(p.name),
-      desc: normalizeProductText(p.description)
+      desc: normalizeProductText(p.description),
+      sizesEnabled: p.sizes_enabled !== false
     }));
   }catch(e){
     console.error('loadProducts error:', e);
@@ -380,6 +383,23 @@ async function loadData(){
     state.productColors = {};
   }
   try{
+    const { data: sizeRows, error: sizeError } = await supabaseClient
+      .from('product_sizes')
+      .select('id, product_id, size, sort_order')
+      .order('sort_order', { ascending: true })
+      .order('id', { ascending: true });
+    if(sizeError) throw sizeError;
+    state.productSizes = {};
+    (sizeRows || []).forEach(row => {
+      if(!row.product_id || !row.size) return;
+      if(!state.productSizes[row.product_id]) state.productSizes[row.product_id] = [];
+      state.productSizes[row.product_id].push({ id: row.id, size: row.size, sort_order: row.sort_order || 0 });
+    });
+  }catch(e){
+    console.error('loadProductSizes error:', e);
+    state.productSizes = {};
+  }
+  try{
     const r2 = await window.storage.get(STORAGE_ORDERS_KEY, true);
     state.orders = r2 && r2.value ? JSON.parse(r2.value) : [];
   }catch(e){
@@ -415,6 +435,7 @@ async function saveProductRecord(product, isNew=false){
     old_price: product.oldPrice ?? null,
     image: product.image || null,
     stock: product.stock !== false,
+    sizes_enabled: product.sizesEnabled !== false,
     description: product.desc,
     updated_at: new Date().toISOString()
   };
@@ -488,6 +509,28 @@ async function saveProductColors(productId, colors){
     throw e;
   }
 }
+async function saveProductSizes(productId, sizes){
+  const cleanSizes = [...new Set((sizes || []).map(x => String(x || '').trim()).filter(Boolean))];
+  try{
+    const { error: deleteError } = await supabaseClient
+      .from('product_sizes')
+      .delete()
+      .eq('product_id', productId);
+    if(deleteError) throw deleteError;
+    if(cleanSizes.length){
+      const { error: insertError } = await supabaseClient
+        .from('product_sizes')
+        .insert(cleanSizes.map((size, index) => ({ product_id: productId, size, sort_order: index })));
+      if(insertError) throw insertError;
+    }
+    state.productSizes[productId] = cleanSizes.map((size,index)=>({id:'local-'+index,size,sort_order:index}));
+  }catch(e){
+    console.error('saveProductSizes error:', e);
+    showToast('Could not save product sizes — please retry.');
+    throw e;
+  }
+}
+
 async function saveProductImages(productId, urls){
   const cleanUrls = [...new Set((urls || []).map(x => String(x || '').trim()).filter(Boolean))];
   try{
@@ -925,12 +968,13 @@ function renderAdmin(){
       <button class="tab-btn ${state.adminTab==='products'?'active':''}" data-tab="products">${t('tab_products')}</button>
       <button class="tab-btn ${state.adminTab==='delivery'?'active':''}" data-tab="delivery">${t('tab_delivery')}</button>
       <button class="tab-btn ${state.adminTab==='tracking'?'active':''}" data-tab="tracking">📊 Tracking</button>
+      <button class="tab-btn ${state.adminTab==='account'?'active':''}" data-tab="account">⚙️ Account</button>
     </div>
     ${state.adminTab==='orders'
       ? renderOrdersTab(newOrders)
       : (state.adminTab==='done'
         ? renderOrdersTab(doneOrders)
-        : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : renderTrackingTab())))}
+        : (state.adminTab==='products' ? renderProductsTab() : (state.adminTab==='delivery' ? renderDeliveryTab() : (state.adminTab==='tracking' ? renderTrackingTab() : renderAccountTab()))))}
   </div>`;
 }
 
@@ -944,6 +988,26 @@ function renderDeliveryTab(){
     <button type="submit" class="btn btn-primary" style="margin-top:16px;">${t('delivery_save')}</button>
   </form>`;
 }
+function renderAccountTab(){
+  const currentEmail = state.currentAdminEmail || '';
+  return `
+  <div class="design-card">
+    <h4>⚙️ Admin account</h4>
+    <p class="hint">Change the email address or password used to access the admin panel.</p>
+    <form id="admin-email-form" style="margin-top:16px;">
+      <div class="field"><label>Current email</label><input type="email" value="${escapeHtml(currentEmail)}" disabled></div>
+      <div class="field"><label>New email</label><input id="admin-new-email" type="email" autocomplete="email" placeholder="new@email.com"></div>
+      <button type="submit" class="btn btn-primary">Change email</button>
+    </form>
+    <hr style="border:0;border-top:1px solid var(--line);margin:22px 0;">
+    <form id="admin-password-form">
+      <div class="field"><label>New password</label><input id="admin-new-password" type="password" minlength="6" autocomplete="new-password" placeholder="At least 6 characters"></div>
+      <div class="field"><label>Confirm new password</label><input id="admin-confirm-password" type="password" minlength="6" autocomplete="new-password" placeholder="Repeat the password"></div>
+      <button type="submit" class="btn btn-primary">Change password</button>
+    </form>
+  </div>`;
+}
+
 function renderTrackingTab(){
   const tracking = (state.settings && state.settings.tracking) || {};
   return `
@@ -1150,7 +1214,7 @@ function renderSuccessModal(){
 function renderProductForm(){
   const editing = state.editingProduct;
   const isNew = editing === 'new';
-  const p = isNew ? {id:null,category:'dresses',price:'',oldPrice:null,stock:true,image:'',name:{en:'',ar:'',fr:''},desc:{en:'',ar:'',fr:''}} : state.products.find(x=>x.id===editing);
+  const p = isNew ? {id:null,category:'dresses',price:'',oldPrice:null,stock:true,sizesEnabled:true,image:'',name:{en:'',ar:'',fr:''},desc:{en:'',ar:'',fr:''}} : state.products.find(x=>x.id===editing);
   if(!p) return '';
   const sourceLang = state.productSourceLang || state.lang;
   const sourceName = p.name[sourceLang] || p.name.en || p.name.fr || p.name.ar || '';
@@ -1158,6 +1222,8 @@ function renderProductForm(){
   const extraImages = p.id ? (state.productImages[p.id] || []) : [];
   const galleryImages = [...new Set([p.image, ...extraImages].filter(Boolean))];
   const productColors = p.id ? (state.productColors[p.id] || []) : [];
+  const productSizes = p.id ? (state.productSizes[p.id] || []).map(x=>x.size) : [];
+  const sizesEnabled = p.sizesEnabled !== false;
   const colorRows = productColors.map((color, i) => `
     <div data-color-row style="border:1px solid rgba(90,48,72,.14);border-radius:12px;padding:10px;margin-top:10px;background:rgba(255,255,255,.55);">
       <div style="display:flex;gap:8px;align-items:center;">
@@ -1202,6 +1268,20 @@ function renderProductForm(){
           ${galleryImages.map((url,i)=>`<div data-image-row style="display:flex;gap:8px;align-items:center;"><label class="photo-upload" data-extra-dropzone style="flex:1;min-height:72px;cursor:pointer;"><div class="photo-preview" data-extra-preview>${url ? `<img src="${escapeHtml(url)}">` : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 16l4.5-6 3.5 4.5L15 11l5 7H4z"/><circle cx="8" cy="8" r="1.6"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>`}</div><div class="photo-upload-text"><b>${i===0 ? 'Main image — Upload image' : 'Upload image'}</b><br>JPG or PNG</div><input type="file" data-extra-file accept="image/*"></label><input type="hidden" data-extra-image value="${escapeHtml(url)}"><button type="button" data-remove-image class="small-btn danger-btn" style="padding:7px 10px;">×</button></div>`).join('')}
         </div>
         <div style="font-size:11px;color:var(--plum-soft);margin-top:6px;">The first image is the main product image. Add as many images as you want for the product page and Landing Page.</div>
+      </div>
+
+      <div class="field">
+        <label class="stock-toggle"><input type="checkbox" id="pf-sizes-enabled" ${sizesEnabled?'checked':''} style="width:auto;"> 📏 Enable sizes for this product</label>
+        <div id="pf-sizes-wrap" style="margin-top:10px;${sizesEnabled?'':'display:none;'}">
+          <label style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+            <span>Available sizes</span>
+            <button type="button" class="small-btn" id="add-product-size" style="padding:6px 10px;">+ Add size</button>
+          </label>
+          <div id="product-sizes-wrap" style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+            ${(productSizes.length ? productSizes : (sizesEnabled ? ['S','M','L','XL'] : [])).map(size=>`<div data-size-row style="display:flex;gap:8px;align-items:center;"><input type="text" data-size-value value="${escapeHtml(size)}" placeholder="S, M, L..." style="flex:1;"><button type="button" data-remove-size class="small-btn danger-btn" style="padding:7px 10px;">×</button></div>`).join('')}
+          </div>
+          <div style="font-size:11px;color:var(--plum-soft);margin-top:6px;">If disabled, no size field will appear on the Landing Page.</div>
+        </div>
       </div>
 
       <div class="field">
@@ -1333,6 +1413,9 @@ async function translateText(text, from, to){
 }
 
 /* ============ EVENTS ============ */
+function collectProductSizes(){
+  return [...document.querySelectorAll('[data-size-value]')].map(x=>x.value.trim()).filter(Boolean);
+}
 function collectProductColors(){
   return [...document.querySelectorAll('[data-color-row]')].map(row=>({
     name: row.querySelector('[data-color-name]')?.value.trim() || '',
@@ -1804,6 +1887,25 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
     productColorsWrap.querySelectorAll('[data-color-row]').forEach(bindProductColorRow);
   }
 
+  const sizeToggle=document.getElementById('pf-sizes-enabled');
+  const sizesWrap=document.getElementById('pf-sizes-wrap');
+  const sizesList=document.getElementById('product-sizes-wrap');
+  if(sizeToggle && sizesWrap){
+    sizeToggle.onchange=()=>{ sizesWrap.style.display=sizeToggle.checked?'':'none'; };
+  }
+  const addSizeBtn=document.getElementById('add-product-size');
+  if(addSizeBtn && sizesList){
+    addSizeBtn.onclick=()=>{
+      const row=document.createElement('div');
+      row.setAttribute('data-size-row','');
+      row.style.cssText='display:flex;gap:8px;align-items:center;';
+      row.innerHTML='<input type="text" data-size-value placeholder="S, M, L..." style="flex:1;"><button type="button" data-remove-size class="small-btn danger-btn" style="padding:7px 10px;">×</button>';
+      sizesList.appendChild(row);
+      row.querySelector('[data-remove-size]').onclick=()=>row.remove();
+    };
+    sizesList.querySelectorAll('[data-remove-size]').forEach(b=>b.onclick=()=>b.closest('[data-size-row]')?.remove());
+  }
+
   document.querySelectorAll('[data-landing]').forEach(b=> b.onclick = async ()=>{
     const id = b.dataset.landing;
     const url = `${window.location.origin}/landing-page.html?product=${encodeURIComponent(id)}`;
@@ -1838,6 +1940,34 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
       removeBtn.classList.add('hidden');
     };
   });
+  const emailForm=document.getElementById('admin-email-form');
+  if(emailForm) emailForm.onsubmit=async(e)=>{
+    e.preventDefault();
+    const newEmail=document.getElementById('admin-new-email').value.trim();
+    if(!newEmail) return;
+    try{
+      const { data, error } = await supabaseClient.auth.updateUser({ email:newEmail });
+      if(error) throw error;
+      state.currentAdminEmail = data?.user?.email || newEmail;
+      render();
+      showToast('Email update requested. Check the new email to confirm it.');
+    }catch(err){ console.error('update admin email error:',err); showToast(err.message || 'Could not change email.'); }
+  };
+  const passwordForm=document.getElementById('admin-password-form');
+  if(passwordForm) passwordForm.onsubmit=async(e)=>{
+    e.preventDefault();
+    const password=document.getElementById('admin-new-password').value;
+    const confirmPassword=document.getElementById('admin-confirm-password').value;
+    if(password.length < 6){ showToast('Password must be at least 6 characters.'); return; }
+    if(password !== confirmPassword){ showToast('Passwords do not match.'); return; }
+    try{
+      const { error } = await supabaseClient.auth.updateUser({ password });
+      if(error) throw error;
+      passwordForm.reset();
+      showToast('Password changed successfully.');
+    }catch(err){ console.error('update admin password error:',err); showToast(err.message || 'Could not change password.'); }
+  };
+
   const trackingForm=document.getElementById('tracking-form');
   if(trackingForm) trackingForm.onsubmit=async(e)=>{
     e.preventDefault();
@@ -2020,6 +2150,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
         oldPrice,
         image: extraImageUrls[0] || existing.image || '', 
         stock: document.getElementById('pf-stock').checked,
+        sizesEnabled: !!document.getElementById('pf-sizes-enabled')?.checked,
         name: updatedName,
         desc: updatedDesc,
         sourceLang: source
@@ -2031,6 +2162,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
         await saveProductRecord(data, false);
         await saveProductImages(data.id, extraImageUrls);
         await saveProductColors(data.id, collectProductColors());
+        await saveProductSizes(data.id, data.sizesEnabled ? collectProductSizes() : []);
       }catch(err){
         console.error('save product/images error:', err);
         showToast('Could not save product — please retry.');
@@ -2045,6 +2177,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
         oldPrice,
         image:extraImageUrls[0]||'',
         stock:document.getElementById('pf-stock').checked,
+        sizesEnabled: !!document.getElementById('pf-sizes-enabled')?.checked,
         name,
         desc,
         sourceLang:source
@@ -2056,6 +2189,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
         await saveProductRecord(data, true);
         await saveProductImages(data.id, extraImageUrls);
         await saveProductColors(data.id, collectProductColors());
+        await saveProductSizes(data.id, data.sizesEnabled ? collectProductSizes() : []);
       }catch(err){
         console.error('save product/images error:', err);
         showToast('Could not save product — please retry.');
@@ -2093,6 +2227,7 @@ async function restoreRememberedAdmin(){
     }
 
     state.adminAuthed=true;
+    state.currentAdminEmail = user.email || '';
     state.view='admin';
     refreshOrders();
     render();
@@ -2102,3 +2237,4 @@ async function restoreRememberedAdmin(){
 }
 
 loadData().then(restoreRememberedAdmin);
+
