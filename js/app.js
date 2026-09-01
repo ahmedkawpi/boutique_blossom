@@ -552,9 +552,11 @@ async function refreshOrders(){
   try{
     const { data, error } = await supabaseClient
       .from('orders')
-      .select('id, data, created_at, updated_at')
-      .order('created_at', { ascending: false });
-
+      
+.select('id, data, created_at, updated_at')
+.order('created_at', { ascending: false })
+.limit(30);
+    
     if(error) throw error;
 
     const fresh = (data || [])
