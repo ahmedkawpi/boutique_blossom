@@ -552,10 +552,11 @@ async function refreshOrders(){
   try{
     const { data, error } = await supabaseClient
       .from('orders')
-      
-.select('id, data, created_at, updated_at')
-.order('created_at', { ascending: false })
-.limit(30);
+      .select('id, data, created_at, updated_at')
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    // باقي الكود خليه كما هو
     
     if(error) throw error;
 
