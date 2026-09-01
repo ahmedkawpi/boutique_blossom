@@ -549,11 +549,12 @@ async function saveSettings(){
   }
 }
 async function refreshOrders(){
-  try{
-    const { data, error } = await supabaseClient
-      .from('orders')
-      .select('id, data, created_at, updated_at')
-      .order('created_at', { ascending: false });
+ const { data, error } = await supabaseClient
+  .from('orders')
+  .select('id, data, created_at, updated_at')
+  .neq('data->>status', 'deleted')
+  .order('created_at', { ascending: false })
+  .limit(30);
 
     if(error) throw error;
 
