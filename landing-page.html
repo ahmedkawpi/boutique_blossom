@@ -1003,9 +1003,9 @@
     let metaPixelInitialized = false;
 
 
-    /* Order limit: 2 active orders per product on this device.
+    /* Order limit: 1 active order per product on this device.
        Deleted orders do not count.
-       A new cycle starts only after the current 2 orders are both DONE. */
+       A new cycle starts only after the current order is DONE. */
     function getDeviceId() {
       const key = 'blossom_device_id';
       try {
@@ -1031,9 +1031,9 @@
         <div class="order-limit-backdrop"></div>
         <div class="order-limit-card" role="dialog" aria-modal="true" aria-live="polite">
           <div class="success-icon">✓</div>
-          <h2>لديك طلبان قيد المعالجة ❤️</h2>
-          <p>لقد وصلت إلى الحد الأقصى وهو طلبان لهذا المنتج.</p>
-          <p>بعد أن يصبح الطلبان <strong>DONE</strong> يمكنك الطلب من جديد.</p>
+          <h2>لديك طلب قيد المراجعة ❤️</h2>
+          <p>لقد قمت بطلب هذا المنتج مسبقًا.</p>
+          <p>سوف نقوم بالتواصل معك قريبًا لتأكيد طلبك.</p>
           <button type="button" class="back-btn" id="order-limit-close">حسنًا</button>
         </div>
       `;
@@ -1058,7 +1058,7 @@
 
         if (error) throw error;
 
-        return Math.min(Number(data) || 0, 2);
+        return Math.min(Number(data) || 0, 1);
       } catch (e) {
         console.error('ORDER LIMIT CHECK ERROR:', e);
         return 0;
@@ -1067,7 +1067,7 @@
 
     async function refreshOrderAvailability() {
       activeOrderCount = await getActiveOrderCount();
-      if (activeOrderCount >= 2) {
+      if (activeOrderCount >= 1) {
         showOrderLimitReached();
       } else {
         hideOrderLimitReached();
@@ -2045,7 +2045,7 @@
       }
 
       activeOrderCount = await getActiveOrderCount();
-      if (activeOrderCount >= 2) {
+      if (activeOrderCount >= 1) {
         showOrderLimitReached();
         return;
       }
@@ -2482,11 +2482,15 @@ trackMetaEvent('Purchase', {
             </p>
 
             <p>
-              سنتواصل معك على الرقم
+              سوف نقوم بالتواصل معك على الرقم
               <strong>
                 ${escapeHtml(order.phone)}
               </strong>
-              لتأكيد الطلب.
+              لتأكيد طلبك.
+            </p>
+
+            <p>
+              شكراً لثقتك بـ <strong>Blossom</strong> 🌸
             </p>
 
             <a
