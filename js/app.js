@@ -1908,7 +1908,7 @@ document.querySelectorAll('[data-delete-order]').forEach(b=> b.onclick = async (
     const subtotal=cartSubtotal(); const delivery=deliveryPrice(deliveryType,wilaya); const total=subtotal+delivery;
     const order={
       id:'o'+Date.now()+Math.random().toString(36).slice(2,7),
-      items:state.cart.map(x=>({productId:x.productId,productName:x.name,price:x.price,size:x.size,qty:x.qty,image:x.image})),
+     items:state.cart.map(x=>({productId:x.productId,productName:x.name,price:x.price,size:x.size,qty:x.qty})),
       productName:state.cart.length===1?(state.cart[0].name[state.lang]||state.cart[0].name.en):`${state.cart.length} ${t('cart_items')}`,
       price:subtotal, qty:1, subtotal, deliveryType, deliveryFee:delivery, total,
       wilayaCode:wilaya, wilayaName:(WILAYAS.find(x=>x[0]===wilaya)||[])[1]||'',
