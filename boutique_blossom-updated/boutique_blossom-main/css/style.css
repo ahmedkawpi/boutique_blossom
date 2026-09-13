@@ -998,3 +998,8 @@ a{color:inherit;text-decoration:none;}
     min-width: 44px !important;
     min-height: 44px !important;
 }
+
+.product-colors .color-option {
+    width: 44px !important;
+    height: 44px !important;
+}
