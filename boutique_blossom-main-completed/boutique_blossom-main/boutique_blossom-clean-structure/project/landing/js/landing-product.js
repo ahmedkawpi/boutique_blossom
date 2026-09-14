@@ -444,12 +444,12 @@ function renderProduct() {
 
         <div class="scroll-to-order">
 
-          <button
-            type="button"
-            onclick="document.getElementById('order-form').scrollIntoView({ behavior: 'smooth' })"
-          >
-            اطلب الآن ↓
-          </button>
+<button
+  type="button"
+  id="floating-order-btn"
+>
+  اطلب الآن ↓
+</button>
 
         </div>
 
