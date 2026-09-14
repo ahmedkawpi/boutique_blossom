@@ -1616,3 +1616,249 @@ button {
     color: #e6a0bf;
   }
 }
+
+/* =========================================================
+   ORDER FORM — CLEAN TABLE STYLE
+========================================================= */
+
+#order-form {
+  width: 100%;
+}
+
+/* كل قسم */
+#order-form .form-section {
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid rgba(170, 145, 158, 0.22);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* عنوان القسم */
+#order-form .form-section-title {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  margin-bottom: 10px;
+  padding: 0 10px;
+  border-right: 3px solid #d9a8bd;
+  font-size: 14px;
+  font-weight: 800;
+  color: #5f4d57;
+}
+
+/* الصف */
+#order-form .field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+/* كل خانة */
+#order-form .field {
+  margin: 0 0 8px;
+  padding: 10px 11px;
+  border: 1px solid rgba(170, 145, 158, 0.18);
+  border-radius: 9px;
+  background: rgba(250, 247, 248, 0.85);
+}
+
+/* آخر خانة داخل القسم */
+#order-form .form-section > .field:last-child,
+#order-form .field-row .field:last-child {
+  margin-bottom: 0;
+}
+
+/* عناوين الخانات */
+#order-form .field label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #79666f;
+}
+
+/* الحقول */
+#order-form .field input,
+#order-form .field select,
+#order-form .field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid rgba(150, 130, 140, 0.2);
+  border-radius: 7px;
+  background: #fff;
+  color: #292329;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+/* textarea */
+#order-form .field textarea {
+  min-height: 75px;
+  resize: vertical;
+}
+
+/* focus */
+#order-form .field input:focus,
+#order-form .field select:focus,
+#order-form .field textarea:focus {
+  border-color: #d5a3b9;
+  box-shadow: 0 0 0 2px rgba(213, 163, 185, 0.12);
+}
+
+/* الملاحظة خارج الأقسام */
+#order-form > .field {
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid rgba(170, 145, 158, 0.22);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* ملخص الطلب */
+#order-form .delivery-summary {
+  overflow: hidden;
+  margin-top: 14px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(170, 145, 158, 0.22);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* كل سطر في الملخص */
+#order-form .summary-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  min-height: 42px;
+  padding: 0 14px;
+  border-bottom: 1px solid rgba(170, 145, 158, 0.16);
+  font-size: 13px;
+}
+
+/* آخر سطر */
+#order-form .summary-line:last-child {
+  border-bottom: 0;
+}
+
+/* المجموع */
+#order-form .summary-total {
+  background: rgba(217, 168, 189, 0.12);
+  font-size: 15px;
+  font-weight: 900;
+}
+
+#order-form .summary-total strong {
+  color: #b05c7d;
+}
+
+/* زر التأكيد */
+#order-form .submit-btn {
+  width: 100%;
+  min-height: 50px;
+  border: 0;
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* Dark mode */
+[data-theme="dark"] #order-form .form-section,
+[data-theme="dark"] #order-form > .field {
+  background: rgba(30, 24, 29, 0.72);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] #order-form .form-section-title {
+  color: #decbd3;
+}
+
+[data-theme="dark"] #order-form .field {
+  background: rgba(42, 34, 40, 0.85);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+[data-theme="dark"] #order-form .field label {
+  color: #cbb8c2;
+}
+
+[data-theme="dark"] #order-form .field input,
+[data-theme="dark"] #order-form .field select,
+[data-theme="dark"] #order-form .field textarea {
+  background: #211b20;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] #order-form .delivery-summary {
+  background: rgba(30, 24, 29, 0.8);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] #order-form .summary-line {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+/* الهاتف */
+@media (max-width: 700px) {
+
+  #order-form .form-section {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+  }
+
+  #order-form .form-section-title {
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+
+  #order-form .field-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
+
+  #order-form .field {
+    padding: 8px;
+    margin-bottom: 7px;
+  }
+
+  #order-form .field label {
+    font-size: 10px;
+  }
+
+  #order-form .field input,
+  #order-form .field select,
+  #order-form .field textarea {
+    min-height: 38px;
+    padding: 7px 8px;
+    font-size: 12px;
+  }
+
+  #order-form .field textarea {
+    min-height: 65px;
+  }
+
+  #order-form > .field {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  #order-form .summary-line {
+    min-height: 40px;
+    padding: 0 11px;
+    font-size: 12px;
+  }
+
+  #order-form .summary-total {
+    font-size: 14px;
+  }
+}
