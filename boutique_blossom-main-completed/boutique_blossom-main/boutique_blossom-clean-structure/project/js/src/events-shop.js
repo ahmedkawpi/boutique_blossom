@@ -23,7 +23,7 @@ function bindShopEvents(){
     if(!productId) return;
     const product = state.products.find(p=>p.id===productId);
     if(product && product.stock === false) return;
-    window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
+  window.location.href = `/landing/landing-page.html?product=${encodeURIComponent(productId)}`;
   });
 
   document.querySelectorAll('[data-order]').forEach(b=> b.onclick = (e)=>{
@@ -33,6 +33,6 @@ function bindShopEvents(){
     if(!productId) return;
     const product = state.products.find(p=>p.id===productId);
     if(product && product.stock === false) return;
-    window.location.href = `landing-page.html?product=${encodeURIComponent(productId)}`;
+   window.location.href = `/landing/landing-page.html?product=${encodeURIComponent(productId)}`;
   });
 }
