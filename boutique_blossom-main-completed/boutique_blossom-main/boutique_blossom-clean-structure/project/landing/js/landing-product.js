@@ -552,25 +552,76 @@ if (scrollBar && submitButton) {
     }
 
 
-    function renderColorOptions() {
-      const container = document.getElementById('product-colors');
-      if (!container) return;
-      container.innerHTML = `<span class="product-colors-label">اللون:</span>${productColors.map(color => `<button type="button" class="color-option ${selectedColor && selectedColor.id === color.id ? 'active' : ''}" style="background:${escapeHtml(color.value)}" title="${escapeHtml(color.name)}" aria-label="${escapeHtml(color.name)}" data-color-id="${color.id}"></button>`).join('')}`;
-      container.querySelectorAll('.color-option').forEach(button => {
-        button.addEventListener('click', () => {
-          const color = productColors.find(item => item.id === Number(button.dataset.colorId));
-          if (!color) return;
-          selectedColor = color;
-          currentImages = color.images.length ? [...color.images] : (currentProduct.image ? [currentProduct.image] : []);
-          if (!currentImages.length) currentImages.push('https://via.placeholder.com/800x1000?text=Boutique+Blossom');
-          currentImageIndex = 0;
-          const mainImage = document.getElementById('main-product-image');
-          if (mainImage) mainImage.src = currentImages[0];
-          renderThumbnails();
-          renderColorOptions();
-        });
-      });
-    }
+function renderColorOptions() {
+  const container = document.getElementById('product-colors');
+  if (!container) return;
+
+  container.innerHTML = `
+    <span class="product-colors-label">اللون:</span>
+    ${productColors.map(color => `
+      <button
+        type="button"
+        class="color-option ${
+          selectedColor && selectedColor.id === color.id ? 'active' : ''
+        }"
+        style="background:${escapeHtml(color.value)}"
+        title="${escapeHtml(color.name)}"
+        aria-label="${escapeHtml(color.name)}"
+        data-color-id="${color.id}"
+      ></button>
+    `).join('')}
+  `;
+
+  container.querySelectorAll('.color-option').forEach(button => {
+
+    button.addEventListener('click', () => {
+
+      const color = productColors.find(
+        item => item.id === Number(button.dataset.colorId)
+      );
+
+      if (!color) return;
+
+      selectedColor = color;
+
+      // تحديث لون التأكيد داخل نموذج الطلب
+      const orderColor =
+        document.getElementById('order-color');
+
+      if (orderColor) {
+        orderColor.value = String(color.id);
+      }
+
+      currentImages = color.images.length
+        ? [...color.images]
+        : (
+            currentProduct.image
+              ? [currentProduct.image]
+              : []
+          );
+
+      if (!currentImages.length) {
+        currentImages.push(
+          'https://via.placeholder.com/800x1000?text=Boutique+Blossom'
+        );
+      }
+
+      currentImageIndex = 0;
+
+      const mainImage =
+        document.getElementById('main-product-image');
+
+      if (mainImage) {
+        mainImage.src = currentImages[0];
+      }
+
+      renderThumbnails();
+      renderColorOptions();
+
+    });
+
+  });
+}
 
 
 
