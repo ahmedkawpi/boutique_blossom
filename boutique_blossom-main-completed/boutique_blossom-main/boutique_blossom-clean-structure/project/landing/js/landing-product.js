@@ -269,263 +269,298 @@
             <div class="divider"></div>
 
 
-            <!-- ================= ORDER BOX ================= -->
+         
+<!-- ================= ORDER BOX ================= -->
 
-            <div class="order-box">
+<form id="order-form">
 
-              <h2 class="order-title">
-                اطلب الآن
-              </h2>
+  <!-- معلومات العميل -->
+  <div class="form-section">
 
-              <p class="order-subtitle">
-                املأ المعلومات وسنتواصل معك لتأكيد الطلب.
-              </p>
+    <div class="form-section-title">
+      معلومات العميل
+    </div>
 
+    <div class="field-row">
 
-              <form id="order-form">
+      <div class="field">
 
-                <div class="field">
+        <label for="order-name">
+          الاسم الكامل *
+        </label>
 
-                  <label for="order-name">
-                    الاسم الكامل *
-                  </label>
+        <input
+          id="order-name"
+          type="text"
+          placeholder="أدخل اسمك"
+          required
+        >
 
-                  <input
-                    id="order-name"
-                    type="text"
-                    placeholder="أدخل اسمك"
-                    required
-                  >
-
-                </div>
-
-
-                <div class="field">
-
-                  <label for="order-phone">
-                    رقم الهاتف *
-                  </label>
-
-                  <input
-                    id="order-phone"
-                    type="tel"
-                    inputmode="tel"
-                    placeholder="05 / 06 / 07 ..."
-                    required
-                  >
-
-                </div>
+      </div>
 
 
+      <div class="field">
 
+        <label for="order-phone">
+          رقم الهاتف *
+        </label>
 
-<div class="field-row">
+        <input
+          id="order-phone"
+          type="tel"
+          inputmode="tel"
+          placeholder="05 / 06 / 07 ..."
+          required
+        >
 
-  <div class="field">
+      </div>
 
-    <label for="order-size">
-      المقاس *
-    </label>
-
-    <select
-      id="order-size"
-      required
-    >
-      <option value="">
-        اختر المقاس
-      </option>
-
-      <option value="S">S</option>
-      <option value="M">M</option>
-      <option value="L">L</option>
-      <option value="XL">XL</option>
-      <option value="Free">Free</option>
-
-    </select>
+    </div>
 
   </div>
 
 
-  <div class="field">
+  <!-- تفاصيل المنتج -->
+  <div class="form-section">
 
-    <label for="order-qty">
-      الكمية *
-    </label>
+    <div class="form-section-title">
+      تفاصيل المنتج
+    </div>
 
-    <input
-      id="order-qty"
-      type="number"
-      min="1"
-      value="1"
-      required
-    >
+    <div class="field-row">
 
-  </div>
+      <div class="field">
 
-</div>
+        <label for="order-size">
+          المقاس *
+        </label>
 
+        <select
+          id="order-size"
+          required
+        >
 
-<div class="field">
-
-  <label for="order-color">
-    تأكيد اللون *
-  </label>
-
-  <select id="order-color" required>
-
-    <option value="">
-      اختر اللون
-    </option>
-
-    ${
-      productColors.map(
-        color => `
-          <option value="${color.id}">
-            ${escapeHtml(color.name)}
+          <option value="">
+            اختر المقاس
           </option>
-        `
-      ).join('')
-    }
 
-  </select>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+          <option value="Free">Free</option>
 
-</div>
+        </select>
 
-                <div class="field">
-
-                  <label for="order-delivery">
-                    طريقة التوصيل *
-                  </label>
-
-                  <select
-                    id="order-delivery"
-                    required
-                  >
-
-                    <option value="home">
-                      التوصيل للمنزل
-                    </option>
-
-                    <option value="office">
-                      التوصيل للمكتب
-                    </option>
-
-                  </select>
-
-                </div>
+      </div>
 
 
-                <div class="field">
+      <div class="field">
 
-                  <label for="order-wilaya">
-                    الولاية *
-                  </label>
+        <label for="order-qty">
+          الكمية *
+        </label>
 
-                  <select
-                    id="order-wilaya"
-                    required
-                  >
+        <input
+          id="order-qty"
+          type="number"
+          min="1"
+          value="1"
+          required
+        >
 
-                    <option value="">
-                      اختر الولاية
-                    </option>
+      </div>
 
-                    ${
-                      WILAYAS.map(
-                        ([code, name]) => `
-                          <option value="${code}">
-                            ${code} - ${name}
-                          </option>
-                        `
-                      ).join('')
-                    }
-
-                  </select>
-
-                </div>
+    </div>
 
 
-                <div class="field">
+    <div class="field">
 
-                  <label id="address-label" for="order-address">
-                    العنوان *
-                  </label>
+      <label for="order-color">
+        تأكيد اللون *
+      </label>
 
-                  <textarea
-                    id="order-address"
-                    placeholder="البلدية، الحي، رقم المنزل..."
-                    required
-                  ></textarea>
+      <select
+        id="order-color"
+        required
+      >
 
-                </div>
+        <option value="">
+          اختر اللون
+        </option>
 
+        ${
+          productColors.map(
+            color => `
+              <option value="${color.id}">
+                ${escapeHtml(color.name)}
+              </option>
+            `
+          ).join('')
+        }
 
-                <div class="field">
+      </select>
 
-                  <label for="order-note">
-                    ملاحظة
-                  </label>
+    </div>
 
-                  <textarea
-                    id="order-note"
-                    placeholder="أي ملاحظة إضافية (اختياري)"
-                  ></textarea>
-
-                </div>
-
-
-                <div class="delivery-summary">
-
-                  <div class="summary-line">
-
-                    <span>
-                      سعر المنتج
-                    </span>
-
-                    <strong id="summary-product">
-                      ${formatPrice(price)} DA
-                    </strong>
-
-                  </div>
+  </div>
 
 
-                  <div class="summary-line">
+  <!-- معلومات التوصيل -->
+  <div class="form-section">
 
-                    <span>
-                      التوصيل
-                    </span>
+    <div class="form-section-title">
+      معلومات التوصيل
+    </div>
 
-                    <strong id="summary-delivery">
-                      — 
-                    </strong>
+    <div class="field-row">
 
-                  </div>
+      <div class="field">
+
+        <label for="order-delivery">
+          طريقة التوصيل *
+        </label>
+
+        <select
+          id="order-delivery"
+          required
+        >
+
+          <option value="home">
+            التوصيل للمنزل
+          </option>
+
+          <option value="office">
+            التوصيل للمكتب
+          </option>
+
+        </select>
+
+      </div>
 
 
-                  <div class="summary-line summary-total">
+      <div class="field">
 
-                    <span>
-                      المجموع
-                    </span>
+        <label for="order-wilaya">
+          الولاية *
+        </label>
 
-                    <strong id="summary-total">
-                      ${formatPrice(price)} DA
-                    </strong>
+        <select
+          id="order-wilaya"
+          required
+        >
 
-                  </div>
+          <option value="">
+            اختر الولاية
+          </option>
 
-                </div>
+          ${
+            WILAYAS.map(
+              ([code, name]) => `
+                <option value="${code}">
+                  ${code} - ${name}
+                </option>
+              `
+            ).join('')
+          }
+
+        </select>
+
+      </div>
+
+    </div>
 
 
-                <button
-                  type="submit"
-                  class="submit-btn"
-                  id="submit-order-btn"
-                >
-                  تأكيد الطلب
-                </button>
+    <div class="field">
 
-              </form>
+      <label
+        id="address-label"
+        for="order-address"
+      >
+        العنوان *
+      </label>
+
+      <textarea
+        id="order-address"
+        placeholder="البلدية، الحي، رقم المنزل..."
+        required
+      ></textarea>
+
+    </div>
+
+  </div>
+
+
+  <!-- ملاحظة -->
+  <div class="field">
+
+    <label for="order-note">
+      ملاحظة
+    </label>
+
+    <textarea
+      id="order-note"
+      placeholder="أي ملاحظة إضافية (اختياري)"
+    ></textarea>
+
+  </div>
+
+
+  <!-- ملخص الطلب -->
+  <div class="delivery-summary">
+
+    <div class="summary-line">
+
+      <span>
+        سعر المنتج
+      </span>
+
+      <strong id="summary-product">
+        ${formatPrice(price)} DA
+      </strong>
+
+    </div>
+
+
+    <div class="summary-line">
+
+      <span>
+        التوصيل
+      </span>
+
+      <strong id="summary-delivery">
+        —
+      </strong>
+
+    </div>
+
+
+    <div class="summary-line summary-total">
+
+      <span>
+        المجموع
+      </span>
+
+      <strong id="summary-total">
+        ${formatPrice(price)} DA
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <!-- زر تأكيد الطلب -->
+  <button
+    type="submit"
+    class="submit-btn"
+    id="submit-order-btn"
+  >
+    تأكيد الطلب
+  </button>
+
+</form>
+
 
             </div>
 
