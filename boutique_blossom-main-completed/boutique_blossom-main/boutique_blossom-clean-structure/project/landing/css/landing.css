@@ -212,16 +212,19 @@ button {
 }
 
 .description {
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: 600;
   line-height: 2;
+  letter-spacing: 0.2px;
   color: #75646d;
   margin-bottom: 24px;
   white-space: pre-line;
   background: rgba(255,255,255,.58);
   border-right: 3px solid #f2c9da;
-  padding: 12px 16px;
+  padding: 14px 18px;
   border-radius: 10px;
 }
+
 
 .divider {
   height: 1px;
