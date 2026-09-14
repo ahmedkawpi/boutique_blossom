@@ -66,7 +66,26 @@ let productSizes = [];
           throw productError;
         }
 
-        currentProduct = product;
+      currentProduct = product;
+
+/* ---------- Product sizes ---------- */
+productSizes = [];
+
+if (product.sizes_enabled === true) {
+  const { data: sizeRows, error: sizesError } =
+    await supabaseClient
+      .from('product_sizes')
+      .select('id,size,sort_order')
+      .eq('product_id', productId)
+      .order('sort_order', { ascending: true })
+      .order('id', { ascending: true });
+
+  if (sizesError) throw sizesError;
+
+  productSizes = (sizeRows || [])
+    .map(row => String(row.size || '').trim())
+    .filter(Boolean);
+}
 
         /* ---------- Product colors ---------- */
         const { data: colorRows, error: colorsError } = await supabaseClient
