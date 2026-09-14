@@ -317,51 +317,79 @@
                 </div>
 
 
-                <div class="field-row">
-
-                  <div class="field">
-
-                    <label for="order-size">
-                      المقاس *
-                    </label>
-
-                    <select
-                      id="order-size"
-                      required
-                    >
-                      <option value="">
-                        اختر المقاس
-                      </option>
-
-                      <option value="S">S</option>
-                      <option value="M">M</option>
-                      <option value="L">L</option>
-                      <option value="XL">XL</option>
-                      <option value="Free">Free</option>
-
-                    </select>
-
-                  </div>
 
 
-                  <div class="field">
+<div class="field-row">
 
-                    <label for="order-qty">
-                      الكمية *
-                    </label>
+  <div class="field">
 
-                    <input
-                      id="order-qty"
-                      type="number"
-                      min="1"
-                      value="1"
-                      required
-                    >
+    <label for="order-size">
+      المقاس *
+    </label>
 
-                  </div>
+    <select
+      id="order-size"
+      required
+    >
+      <option value="">
+        اختر المقاس
+      </option>
 
-                </div>
+      <option value="S">S</option>
+      <option value="M">M</option>
+      <option value="L">L</option>
+      <option value="XL">XL</option>
+      <option value="Free">Free</option>
 
+    </select>
+
+  </div>
+
+
+  <div class="field">
+
+    <label for="order-qty">
+      الكمية *
+    </label>
+
+    <input
+      id="order-qty"
+      type="number"
+      min="1"
+      value="1"
+      required
+    >
+
+  </div>
+
+</div>
+
+
+<div class="field">
+
+  <label for="order-color">
+    تأكيد اللون *
+  </label>
+
+  <select id="order-color" required>
+
+    <option value="">
+      اختر اللون
+    </option>
+
+    ${
+      productColors.map(
+        color => `
+          <option value="${color.id}">
+            ${escapeHtml(color.name)}
+          </option>
+        `
+      ).join('')
+    }
+
+  </select>
+
+</div>
 
                 <div class="field">
 
