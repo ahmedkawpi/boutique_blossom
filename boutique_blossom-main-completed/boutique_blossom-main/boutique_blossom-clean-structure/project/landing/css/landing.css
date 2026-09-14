@@ -657,10 +657,10 @@ textarea {
     position: sticky;
     top: 58px;
   }
-  .main-photo {
-    aspect-ratio: 4/5;
-    border-radius: 14px;
-  }
+ .main-photo {
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+}
   .thumbs {
     gap: 5px;
     margin-top: 6px;
