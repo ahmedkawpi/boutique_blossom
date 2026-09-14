@@ -1314,17 +1314,23 @@ textarea {
 }
 
 .scroll-to-order {
-  width: 100%;
-  margin: 20px 0;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90%, 500px);
+  z-index: 9999;
 }
 
 .scroll-to-order button {
-  padding: 12px 28px;
+  width: 100%;
+  padding: 15px 20px;
   border: none;
-  border-radius: 10px;
+  border-radius: 14px;
   background: #e0117a;
   color: #fff;
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 800;
   cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,.18);
 }
