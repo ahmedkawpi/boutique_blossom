@@ -34,7 +34,6 @@ function getLandingLang() {
 
 
 function parseTranslation(value, fallback = '') {
-
   if (!value) return fallback;
 
   if (typeof value === 'object') {
@@ -48,7 +47,6 @@ function parseTranslation(value, fallback = '') {
   }
 
   try {
-
     const parsed = JSON.parse(value);
 
     if (typeof parsed === 'object') {
@@ -62,7 +60,6 @@ function parseTranslation(value, fallback = '') {
     }
 
     return parsed;
-
   } catch {
     return value;
   }
@@ -75,7 +72,6 @@ function formatPrice(value) {
 
 
 function getDiscountPercentage(price, oldPrice) {
-
   if (!oldPrice || oldPrice <= price || price <= 0) {
     return 0;
   }
@@ -146,9 +142,7 @@ async function loadProduct() {
     if (colorRows && colorRows.length) {
 
       const colorIds =
-        colorRows.map(
-          color => color.id
-        );
+        colorRows.map(color => color.id);
 
 
       const {
@@ -159,10 +153,7 @@ async function loadProduct() {
         .select(
           'color_id,image_url,sort_order'
         )
-        .in(
-          'color_id',
-          colorIds
-        )
+        .in('color_id', colorIds)
         .order('sort_order', {
           ascending: true
         })
@@ -242,7 +233,7 @@ async function loadProduct() {
     currentImageIndex = 0;
 
 
-    /* ---------- Render immediately ---------- */
+    /* ---------- Render ---------- */
 
     renderProduct();
 
@@ -275,9 +266,7 @@ async function loadProduct() {
 
     /* =====================================================
        EXTRA PRODUCT IMAGES
-
-       Only used when the product has NO colors.
-       This avoids mixing generic images with color images.
+       Only when product has NO colors
     ===================================================== */
 
     if (!productColors.length) {
@@ -288,10 +277,7 @@ async function loadProduct() {
       } = await supabaseClient
         .from('product_images')
         .select('image_url')
-        .eq(
-          'product_id',
-          productId
-        )
+        .eq('product_id', productId)
         .order('id', {
           ascending: true
         });
@@ -304,11 +290,7 @@ async function loadProduct() {
           imagesError
         );
 
-        return;
-      }
-
-
-      if (
+      } else if (
         extraImages &&
         extraImages.length
       ) {
@@ -337,7 +319,6 @@ async function loadProduct() {
 
     renderThumbnails();
     renderColorOptions();
-
 
   } catch (error) {
 
@@ -441,18 +422,6 @@ function renderProduct() {
             : ''
         }
 
-
-        <div class="scroll-to-order">
-
-<button
-  type="button"
-  id="floating-order-btn"
->
-  اطلب الآن ↓
-</button>
-
-        </div>
-
       </div>
 
 
@@ -487,11 +456,9 @@ function renderProduct() {
               : ''
           }
 
-
           <div class="price">
             ${formatPrice(price)} DA
           </div>
-
 
           ${
             oldPrice &&
@@ -543,7 +510,7 @@ function renderProduct() {
         <div class="divider"></div>
 
 
-        <!-- ================= ORDER BOX ================= -->
+        <!-- ================= ORDER FORM ================= -->
 
         <form id="order-form">
 
@@ -554,7 +521,6 @@ function renderProduct() {
             <div class="form-section-title">
               معلومات العميل
             </div>
-
 
             <div class="field-row">
 
@@ -861,10 +827,29 @@ function renderProduct() {
 
         </form>
 
-
       </div>
 
     </section>
+
+
+    <!-- =================================================
+         FLOATING ORDER BUTTON
+    ================================================= -->
+
+    <div
+      class="scroll-to-order"
+      id="floating-order-bar"
+    >
+
+      <button
+        type="button"
+        id="floating-order-btn"
+      >
+        اطلب الآن ↓
+      </button>
+
+    </div>
+
   `;
 
 
@@ -879,157 +864,189 @@ function renderProduct() {
   updateOrderSummary();
 
 
- /* =====================================================
-   FLOATING ORDER BUTTON
-   Step 1 → order information
-   Step 2 → summary + confirmation
-===================================================== */
+  /* =====================================================
+     FLOATING ORDER BUTTON
+     
+     STEP 1:
+     → معلومات العميل
 
-const scrollBar =
-  document.querySelector('.scroll-to-order');
+     STEP 2:
+     → ملخص الطلب + تأكيد الطلب
 
-const floatingButton =
-  document.getElementById('floating-order-btn');
+     FINAL:
+     → يختفي عندما يصل المستخدم لمنطقة التأكيد
+  ===================================================== */
 
-const orderForm =
-  document.getElementById('order-form');
+  const floatingBar =
+    document.getElementById(
+      'floating-order-bar'
+    );
 
-const deliverySummary =
-  document.querySelector('.delivery-summary');
+  const floatingButton =
+    document.getElementById(
+      'floating-order-btn'
+    );
 
-const submitButton =
-  document.getElementById('submit-order-btn');
+  const orderForm =
+    document.getElementById(
+      'order-form'
+    );
 
-let floatingOrderStep = 0;
+  const deliverySummary =
+    document.querySelector(
+      '.delivery-summary'
+    );
+
+  const submitButton =
+    document.getElementById(
+      'submit-order-btn'
+    );
 
 
-/* ---------- Button click ---------- */
+  let floatingOrderStep = 0;
 
-if (
-  scrollBar &&
-  floatingButton &&
-  orderForm
-) {
 
-  floatingButton.addEventListener(
-    'click',
-    () => {
+  if (
+    floatingBar &&
+    floatingButton &&
+    orderForm
+  ) {
 
-      /* STEP 1 */
-      if (floatingOrderStep === 0) {
+    /* ---------- CLICK ---------- */
 
-        orderForm.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
-        });
+    floatingButton.addEventListener(
+      'click',
+      () => {
 
-        floatingOrderStep = 1;
+        /* =========================
+           STEP 1
+        ========================= */
 
-        floatingButton.textContent =
-          'تأكيد الطلب ↓';
+        if (
+          floatingOrderStep === 0
+        ) {
 
+          const firstSection =
+            orderForm.querySelector(
+              '.form-section'
+            );
+
+
+          if (firstSection) {
+
+            firstSection.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+
+          } else {
+
+            orderForm.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+
+          }
+
+
+          floatingOrderStep = 1;
+
+
+          floatingButton.textContent =
+            'تأكيد الطلب ↓';
+
+
+          return;
+        }
+
+
+        /* =========================
+           STEP 2
+        ========================= */
+
+        const target =
+          deliverySummary ||
+          submitButton;
+
+
+        if (target) {
+
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+
+        }
+
+      }
+    );
+
+
+    /* ---------- SHOW / HIDE ---------- */
+
+    function updateFloatingOrderButton() {
+
+      if (!deliverySummary && !submitButton) {
+        floatingBar.style.display = 'flex';
         return;
       }
 
 
-      /* STEP 2 */
-      const target =
-        deliverySummary ||
-        submitButton;
+      const finalTarget =
+        submitButton ||
+        deliverySummary;
 
-      if (target) {
 
-        target.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
+      const rect =
+        finalTarget.getBoundingClientRect();
+
+
+      /*
+        Hide only when the final
+        confirmation area becomes visible.
+      */
+
+      const finalAreaVisible =
+        rect.top <
+        window.innerHeight * 0.88;
+
+
+      if (finalAreaVisible) {
+
+        floatingBar.style.display =
+          'none';
+
+      } else {
+
+        floatingBar.style.display =
+          'flex';
 
       }
 
     }
-  );
 
 
-  /* ---------- Show / hide ---------- */
-
-  function updateFloatingOrderButton() {
-
-    if (
-      !deliverySummary &&
-      !submitButton
-    ) {
-
-      scrollBar.style.display =
-        'flex';
-
-      return;
-    }
+    updateFloatingOrderButton();
 
 
-    const summaryRect =
-      deliverySummary
-        ? deliverySummary.getBoundingClientRect()
-        : null;
+    window.addEventListener(
+      'scroll',
+      updateFloatingOrderButton,
+      {
+        passive: true
+      }
+    );
 
 
-    const submitRect =
-      submitButton
-        ? submitButton.getBoundingClientRect()
-        : null;
-
-
-    /*
-      Hide the floating button only
-      when the final order area
-      reaches the screen.
-    */
-
-    const summaryReached =
-      summaryRect &&
-      summaryRect.top <=
-        window.innerHeight * 0.85;
-
-
-    const submitReached =
-      submitRect &&
-      submitRect.top <=
-        window.innerHeight * 0.95;
-
-
-    if (
-      summaryReached ||
-      submitReached
-    ) {
-
-      scrollBar.style.display =
-        'none';
-
-    } else {
-
-      scrollBar.style.display =
-        'flex';
-
-    }
+    window.addEventListener(
+      'resize',
+      updateFloatingOrderButton
+    );
 
   }
 
-
-  updateFloatingOrderButton();
-
-
-  window.addEventListener(
-    'scroll',
-    updateFloatingOrderButton,
-    { passive: true }
-  );
-
-
-  window.addEventListener(
-    'resize',
-    updateFloatingOrderButton
-  );
-
 }
+
 
 /* =========================================================
    COLORS
@@ -1108,7 +1125,7 @@ function renderColorOptions() {
             color;
 
 
-          /* ---------- Sync order color ---------- */
+          /* ---------- Sync confirmation color ---------- */
 
           const orderColor =
             document.getElementById(
@@ -1138,9 +1155,7 @@ function renderColorOptions() {
                 );
 
 
-          if (
-            !currentImages.length
-          ) {
+          if (!currentImages.length) {
 
             currentImages.push(
               'https://via.placeholder.com/800x1000?text=Boutique+Blossom'
@@ -1164,12 +1179,10 @@ function renderColorOptions() {
               currentImages[0];
 
             mainImage.alt =
-              escapeHtml(
-                `${parseTranslation(
-                  currentProduct.name,
-                  'منتج'
-                )} - ${color.name}`
-              );
+              `${parseTranslation(
+                currentProduct.name,
+                'منتج'
+              )} - ${color.name}`;
 
           }
 
@@ -1265,9 +1278,7 @@ function renderThumbnails() {
 
 function changeMainImage(index) {
 
-  if (
-    !currentImages[index]
-  ) {
+  if (!currentImages[index]) {
     return;
   }
 
