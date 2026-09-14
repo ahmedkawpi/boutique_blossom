@@ -2463,3 +2463,205 @@ button {
   }
 
 }
+
+/* =========================================================
+   BLOSSOM — FIX SIZE + FLOATING ORDER BUTTON
+========================================================= */
+
+/* ---------- Restore readable text ---------- */
+
+.product-name {
+  font-size: 28px !important;
+  line-height: 1.25 !important;
+}
+
+.description {
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+}
+
+.field label {
+  font-size: 14px !important;
+}
+
+.form-section-title {
+  font-size: 14px !important;
+}
+
+.field input,
+.field select,
+.field textarea {
+  font-size: 14px !important;
+}
+
+.submit-btn {
+  font-size: 14px !important;
+}
+
+
+/* ---------- Restore larger color circles ---------- */
+
+.product-colors {
+  gap: 11px !important;
+}
+
+.product-colors-label {
+  font-size: 15px !important;
+}
+
+.color-option {
+  width: 36px !important;
+  height: 36px !important;
+
+  min-width: 36px !important;
+  min-height: 36px !important;
+}
+
+
+/* ---------- Floating "اطلب الآن" ---------- */
+
+.scroll-to-order {
+  position: fixed !important;
+
+  right: 18px !important;
+  bottom: 18px !important;
+
+  left: auto !important;
+  top: auto !important;
+
+  z-index: 9999 !important;
+
+  display: flex !important;
+
+  margin: 0 !important;
+
+  pointer-events: none !important;
+}
+
+.scroll-to-order button {
+  pointer-events: auto !important;
+
+  min-height: 46px !important;
+
+  padding: 11px 20px !important;
+
+  border: 0 !important;
+  border-radius: 999px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #171717,
+      #b85c86
+    ) !important;
+
+  color: #fff !important;
+
+  font-size: 13px !important;
+  font-weight: 900 !important;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, .22) !important;
+
+  cursor: pointer !important;
+}
+
+
+/* ---------- Desktop ---------- */
+
+@media (min-width: 601px) {
+
+  .product-name {
+    font-size: 32px !important;
+  }
+
+  .price {
+    font-size: 32px !important;
+  }
+
+  .description {
+    font-size: 15px !important;
+  }
+
+  .color-option {
+    width: 38px !important;
+    height: 38px !important;
+
+    min-width: 38px !important;
+    min-height: 38px !important;
+  }
+
+}
+
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 600px) {
+
+  .product-name {
+    font-size: 24px !important;
+  }
+
+  .description {
+    font-size: 14px !important;
+  }
+
+  .field label {
+    font-size: 13px !important;
+  }
+
+  .form-section-title {
+    font-size: 14px !important;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    font-size: 13px !important;
+  }
+
+  .color-option {
+    width: 34px !important;
+    height: 34px !important;
+
+    min-width: 34px !important;
+    min-height: 34px !important;
+  }
+
+  .scroll-to-order {
+    right: 14px !important;
+    bottom: 14px !important;
+  }
+
+  .scroll-to-order button {
+    min-height: 45px !important;
+
+    padding: 10px 17px !important;
+
+    font-size: 13px !important;
+  }
+
+}
+
+
+/* ---------- Very small phones ---------- */
+
+@media (max-width: 390px) {
+
+  .product-name {
+    font-size: 22px !important;
+  }
+
+  .description {
+    font-size: 13px !important;
+  }
+
+  .color-option {
+    width: 33px !important;
+    height: 33px !important;
+
+    min-width: 33px !important;
+    min-height: 33px !important;
+  }
+
+}
