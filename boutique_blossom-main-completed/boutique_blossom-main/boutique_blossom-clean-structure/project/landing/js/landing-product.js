@@ -6,8 +6,9 @@
     let currentProduct = null;
     let currentImages = [];
     let currentImageIndex = 0;
-    let productColors = [];
-    let selectedColor = null;
+let productColors = [];
+let selectedColor = null;
+let productSizes = [];
 
     function escapeHtml(value) {
       return String(value ?? '')
