@@ -349,49 +349,56 @@ if (product.sizes_enabled === true) {
 
     <div class="field-row">
 
-      <div class="field">
+  ${
+    currentProduct.sizes_enabled === true
+      ? `
+        <div class="field">
 
-        <label for="order-size">
-          المقاس *
-        </label>
+          <label for="order-size">
+            المقاس *
+          </label>
 
-        <select
-          id="order-size"
-          required
-        >
+          <select
+            id="order-size"
+            required
+          >
 
-          <option value="">
-            اختر المقاس
-          </option>
+            <option value="">
+              اختر المقاس
+            </option>
 
-          <option value="S">S</option>
-          <option value="M">M</option>
-          <option value="L">L</option>
-          <option value="XL">XL</option>
-          <option value="Free">Free</option>
+            ${
+              productSizes.map(size => `
+                <option value="${escapeHtml(size)}">
+                  ${escapeHtml(size)}
+                </option>
+              `).join('')
+            }
 
-        </select>
+          </select>
 
-      </div>
+        </div>
+      `
+      : ''
+  }
 
+  <div class="field">
 
-      <div class="field">
+    <label for="order-qty">
+      الكمية *
+    </label>
 
-        <label for="order-qty">
-          الكمية *
-        </label>
+    <input
+      id="order-qty"
+      type="number"
+      min="1"
+      value="1"
+      required
+    >
 
-        <input
-          id="order-qty"
-          type="number"
-          min="1"
-          value="1"
-          required
-        >
+  </div>
 
-      </div>
-
-    </div>
+</div>
 
 
     <div class="field">
