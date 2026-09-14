@@ -1058,7 +1058,7 @@ textarea {
   }
  .main-image-wrap {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 5 / 6;
   max-height: none;
   border-radius: 17px;
   box-shadow: 0 9px 25px rgba(100,50,75,.08);
