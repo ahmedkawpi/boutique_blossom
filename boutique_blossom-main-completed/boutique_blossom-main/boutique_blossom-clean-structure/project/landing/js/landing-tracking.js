@@ -36,7 +36,7 @@ function showOrderLimitReached() {
       <div class="success-icon">✓</div>
       <h2>لديك طلب قيد المعالجة ❤️</h2>
       <p>لقد وصلت إلى الحد الأقصى وهو طلب واحد لهذا المنتج.</p>
-      <p>بعد أن يصبح الطلب <strong>DONE</strong> يمكنك الطلب من جديد.</p>
+      <p>  يمكنك الطلب من جديد عند التحقق من طلبك الاول وشكرا.</p>
       <button type="button" class="back-btn" id="order-limit-close">حسنًا</button>
     </div>
   `;
