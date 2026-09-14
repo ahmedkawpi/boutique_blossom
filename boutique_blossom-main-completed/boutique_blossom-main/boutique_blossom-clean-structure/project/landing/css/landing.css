@@ -1355,12 +1355,12 @@ textarea {
     margin: 14px 0;
   }
 
-  .order-box {
-    width: 100%;
-    padding: 12px !important;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(100,50,75,.045);
-  }
+.order-box {
+  width: 100%;
+  padding: 16px !important;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(100,50,75,.045);
+}
 
   .order-title {
     font-size: 19px;
