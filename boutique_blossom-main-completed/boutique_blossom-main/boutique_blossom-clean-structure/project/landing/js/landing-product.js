@@ -1,175 +1,103 @@
-/* ===== landing-order.js — delivery pricing, validation, submit, success/error, page init ===== */
+/* ===== landing-product.js — load and render the single product (gallery, colors, thumbnails) ===== */
 
-    let deliverySettings = null;
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('product');
 
-    function phoneIsValid(value) {
-      return /^0[567]\d{8}$/.test(
-        String(value || '').replace(/\s+/g, '')
-      );
-    }
+    let currentProduct = null;
+    let currentImages = [];
+    let currentImageIndex = 0;
+    let productColors = [];
+    let selectedColor = null;
 
-    function defaultDelivery() {
-      const home = {};
-      const office = {};
-
-      WILAYAS.forEach(([code]) => {
-        home[code] = 0;
-        office[code] = 0;
-      });
-
-      return {
-        home,
-        office,
-        defaultHome: 0,
-        defaultOffice: 0
-      };
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
 
-    function normalizeDelivery(data) {
-      const base = defaultDelivery();
+    function getLandingLang(){ return localStorage.getItem('blossom07:lang') || localStorage.getItem('blossom:lang') || 'ar'; }
+    function parseTranslation(value, fallback = '') {
+      if (!value) return fallback;
 
-      if (data) {
-        Object.assign(base.home, data.home || {});
-        Object.assign(base.office, data.office || {});
-
-        if (Number.isFinite(Number(data.defaultHome))) {
-          base.defaultHome = Number(data.defaultHome);
-        }
-
-        if (Number.isFinite(Number(data.defaultOffice))) {
-          base.defaultOffice = Number(data.defaultOffice);
-        }
+      if (typeof value === 'object') {
+        return value[getLandingLang()] || value.ar || value.fr || value.en || fallback;
       }
 
-      return base;
-    }
-
-
-    function deliveryPrice(type, code) {
-      const d = normalizeDelivery(deliverySettings);
-
-      const table = type === 'home'
-        ? d.home
-        : d.office;
-
-      const specific = code ? Number(table[code]) : 0;
-
-      if (
-        code &&
-        Number.isFinite(specific) &&
-        specific > 0
-      ) {
-        return specific;
-      }
-
-      return type === 'home'
-        ? Number(d.defaultHome || 0)
-        : Number(d.defaultOffice || 0);
-    }
-
-    async function loadDeliverySettings() {
       try {
-        const { data, error } = await supabaseClient
-          .from('store_settings')
-          .select('data')
-          .eq('id', 1)
-          .maybeSingle();
+        const parsed = JSON.parse(value);
 
-        if (error) throw error;
+        if (typeof parsed === 'object') {
+          return parsed[getLandingLang()] || parsed.ar || parsed.fr || parsed.en || fallback;
+        }
 
-        const settings = data && data.data ? data.data : {};
-        deliverySettings = settings.delivery || defaultDelivery();
-        trackingSettings = {
-          metaPixelId: String(settings.tracking?.metaPixelId || '').trim()
-        };
-        initMetaPixel();
-
-      } catch (error) {
-        console.error('DELIVERY SETTINGS ERROR:', error);
-        deliverySettings = defaultDelivery();
-      } finally {
-        updateOrderSummary();
+        return parsed;
+      } catch {
+        return value;
       }
     }
 
-   function bindProductEvents() {
 
-  const deliverySelect =
-    document.getElementById(
-      'order-delivery'
-    );
+    function formatPrice(value) {
+      return Number(value || 0).toLocaleString('fr-FR');
+    }
 
-  const wilayaSelect =
-    document.getElementById(
-      'order-wilaya'
-    );
+    async function loadProduct() {
 
-  const quantityInput =
-    document.getElementById(
-      'order-qty'
-    );
-
-  const orderColor =
-    document.getElementById(
-      'order-color'
-    );
-
-  const form =
-    document.getElementById(
-      'order-form'
-    );
-
-
-  if (deliverySelect) {
-    deliverySelect.addEventListener(
-      'change',
-      () => {
-
-        updateAddressRequirement();
-        updateOrderSummary();
-
+      if (!productId) {
+        showError('لم يتم تحديد المنتج.');
+        return;
       }
-    );
-  }
 
+      try {
 
-  if (wilayaSelect) {
-    wilayaSelect.addEventListener(
-      'change',
-      updateOrderSummary
-    );
-  }
+        const { data: product, error: productError } =
+          await supabaseClient
+            .from('products')
+            .select('*')
+            .eq('id', productId)
+            .single();
 
+        if (productError) {
+          throw productError;
+        }
 
-  if (quantityInput) {
-    quantityInput.addEventListener(
-      'input',
-      updateOrderSummary
-    );
-  }
+        currentProduct = product;
 
+        /* ---------- Product colors ---------- */
+        const { data: colorRows, error: colorsError } = await supabaseClient
+          .from('product_colors')
+          .select('id,name,color_value,sort_order')
+          .eq('product_id', productId)
+          .order('sort_order', { ascending: true })
+          .order('id', { ascending: true });
+        if (colorsError) throw colorsError;
 
-  if (orderColor) {
-    orderColor.addEventListener(
-      'change',
-      () => {
+        productColors = [];
+        if (colorRows && colorRows.length) {
+          const colorIds = colorRows.map(c => c.id);
+          const { data: colorImageRows, error: colorImagesError } = await supabaseClient
+            .from('product_color_images')
+            .select('color_id,image_url,sort_order')
+            .in('color_id', colorIds)
+            .order('sort_order', { ascending: true })
+            .order('id', { ascending: true });
+          if (colorImagesError) throw colorImagesError;
+          productColors = colorRows.map(color => ({
+            id: color.id, name: color.name, value: color.color_value,
+            images: (colorImageRows || []).filter(image => image.color_id === color.id).map(image => image.image_url).filter(Boolean)
+          }));
+        }
+        selectedColor = productColors[0] || null;
 
-        const color = productColors.find(
-          item => item.id === Number(orderColor.value)
-        );
+        /* ---------- Main product image ---------- */
+        currentImages = [];
+        if (selectedColor && selectedColor.images.length) currentImages = [...selectedColor.images];
+        else if (product.image) currentImages.push(product.image);
 
-        if (!color) return;
-
-        selectedColor = color;
-
-        currentImages = color.images.length
-          ? [...color.images]
-          : (
-              currentProduct.image
-                ? [currentProduct.image]
-                : []
-            );
 
         if (!currentImages.length) {
           currentImages.push(
@@ -179,714 +107,640 @@
 
         currentImageIndex = 0;
 
-        const mainImage =
-          document.getElementById(
-            'main-product-image'
-          );
+        // Render the main product immediately. Extra gallery images load after.
+        renderProduct();
+        trackMetaEvent('ViewContent', {
+          content_ids: [String(currentProduct.id)],
+          content_name: productNameForTracking(),
+          content_type: 'product',
+          value: Number(currentProduct.price || 0),
+          currency: 'DZD'
+        });
 
-        if (mainImage) {
-          mainImage.src = currentImages[0];
+        /* ---------- Additional images (background) ---------- */
+        const { data: extraImages, error: imagesError } =
+          await supabaseClient
+            .from('product_images')
+            .select('image_url')
+            .eq('product_id', productId)
+            .order('id', { ascending: true });
+
+        if (imagesError) {
+          console.error(
+            'PRODUCT IMAGES ERROR:',
+            imagesError
+          );
+          return;
+        }
+
+        if (!selectedColor && extraImages && extraImages.length) {
+          extraImages.forEach(item => {
+            if (item.image_url && !currentImages.includes(item.image_url)) currentImages.push(item.image_url);
+          });
         }
 
         renderThumbnails();
         renderColorOptions();
 
+      } catch (error) {
+
+        console.error('PRODUCT ERROR:', error);
+
+        showError('تعذر تحميل المنتج.');
+
       }
-    );
-  }
+    }
 
 
-  if (form) {
-    form.addEventListener(
-      'submit',
-      submitOrder
-    );
-  }
+    function renderProduct() {
+
+      const name = parseTranslation(
+        currentProduct.name,
+        'منتج'
+      );
+
+      const description = parseTranslation(
+        currentProduct.description,
+        ''
+      );
+
+      const price = Number(
+        currentProduct.price || 0
+      );
+
+      const oldPrice =
+        currentProduct.old_price
+          ? Number(currentProduct.old_price)
+          : null;
 
 
-  updateAddressRequirement();
+      document.title =
+        `${name} | Boutique Blossom`;
 
+
+      document.getElementById('app').innerHTML = `
+
+        <section class="product-section">
+
+          <!-- ================= GALLERY ================= -->
+
+          <div class="gallery">
+
+            <div class="main-image-wrap">
+
+              <img
+                id="main-product-image"
+                class="main-image"
+                src="${escapeHtml(currentImages[0])}"
+                alt="${escapeHtml(name)}"
+              >
+
+            </div>
+
+
+            <div
+              class="thumbnails"
+              id="thumbnails"
+            ></div>
+
+           ${productColors.length ? `<div class="product-colors" id="product-colors"></div>` : ''}
+
+<div class="scroll-to-order">
+  <button
+    type="button"
+    onclick="document.getElementById('order-form').scrollIntoView({ behavior: 'smooth' })"
+  >
+    اطلب الآن ↓
+  </button>
+</div>
+
+          </div>
+
+
+          <!-- ================= PRODUCT INFO ================= -->
+
+          <div class="product-info">
+
+            <div class="category">
+              ${escapeHtml(currentProduct.category || 'Boutique')}
+            </div>
+
+            <h1 class="product-name">
+              ${escapeHtml(name)}
+            </h1>
+
+
+            <div class="price-row">
+
+              ${
+                (oldPrice && oldPrice > price)
+                  ? `<div style="background:#9b5575;color:#fff;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;">SOLDE</div>`
+                  : ''
+              }
+
+              <div class="price">
+                ${formatPrice(price)} DA
+              </div>
+
+              ${
+                (oldPrice && oldPrice > price)
+                  ? `
+                    <div class="old-price">
+                      ${formatPrice(oldPrice)} DA
+                    </div>
+                  `
+                  : ''
+              }
+
+            </div>
+
+
+            ${
+              description
+                ? `
+                  <div class="description">
+                    ${escapeHtml(description)}
+                  </div>
+                `
+                : ''
+            }
+
+
+            <div class="divider"></div>
+
+
+         
+<!-- ================= ORDER BOX ================= -->
+
+<form id="order-form">
+
+  <!-- معلومات العميل -->
+  <div class="form-section">
+
+    <div class="form-section-title">
+      معلومات العميل
+    </div>
+
+    <div class="field-row">
+
+      <div class="field">
+
+        <label for="order-name">
+          الاسم الكامل *
+        </label>
+
+        <input
+          id="order-name"
+          type="text"
+          placeholder="أدخل اسمك"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="order-phone">
+          رقم الهاتف *
+        </label>
+
+        <input
+          id="order-phone"
+          type="tel"
+          inputmode="tel"
+          placeholder="05 / 06 / 07 ..."
+          required
+        >
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- تفاصيل المنتج -->
+  <div class="form-section">
+
+    <div class="form-section-title">
+      تفاصيل المنتج
+    </div>
+
+    <div class="field-row">
+
+      <div class="field">
+
+        <label for="order-size">
+          المقاس *
+        </label>
+
+        <select
+          id="order-size"
+          required
+        >
+
+          <option value="">
+            اختر المقاس
+          </option>
+
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+          <option value="Free">Free</option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="order-qty">
+          الكمية *
+        </label>
+
+        <input
+          id="order-qty"
+          type="number"
+          min="1"
+          value="1"
+          required
+        >
+
+      </div>
+
+    </div>
+
+
+    <div class="field">
+
+      <label for="order-color">
+        تأكيد اللون *
+      </label>
+
+      <select
+        id="order-color"
+        required
+      >
+
+        <option value="">
+          اختر اللون
+        </option>
+
+        ${
+          productColors.map(
+            color => `
+              <option value="${color.id}">
+                ${escapeHtml(color.name)}
+              </option>
+            `
+          ).join('')
+        }
+
+      </select>
+
+    </div>
+
+  </div>
+
+
+  <!-- معلومات التوصيل -->
+  <div class="form-section">
+
+    <div class="form-section-title">
+      معلومات التوصيل
+    </div>
+
+    <div class="field-row">
+
+      <div class="field">
+
+        <label for="order-delivery">
+          طريقة التوصيل *
+        </label>
+
+        <select
+          id="order-delivery"
+          required
+        >
+
+          <option value="home">
+            التوصيل للمنزل
+          </option>
+
+          <option value="office">
+            التوصيل للمكتب
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="order-wilaya">
+          الولاية *
+        </label>
+
+        <select
+          id="order-wilaya"
+          required
+        >
+
+          <option value="">
+            اختر الولاية
+          </option>
+
+          ${
+            WILAYAS.map(
+              ([code, name]) => `
+                <option value="${code}">
+                  ${code} - ${name}
+                </option>
+              `
+            ).join('')
+          }
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <div class="field">
+
+      <label
+        id="address-label"
+        for="order-address"
+      >
+        العنوان *
+      </label>
+
+      <textarea
+        id="order-address"
+        placeholder="البلدية، الحي، رقم المنزل..."
+        required
+      ></textarea>
+
+    </div>
+
+  </div>
+
+
+  <!-- ملاحظة -->
+  <div class="field">
+
+    <label for="order-note">
+      ملاحظة
+    </label>
+
+    <textarea
+      id="order-note"
+      placeholder="أي ملاحظة إضافية (اختياري)"
+    ></textarea>
+
+  </div>
+
+
+  <!-- ملخص الطلب -->
+  <div class="delivery-summary">
+
+    <div class="summary-line">
+
+      <span>
+        سعر المنتج
+      </span>
+
+      <strong id="summary-product">
+        ${formatPrice(price)} DA
+      </strong>
+
+    </div>
+
+
+    <div class="summary-line">
+
+      <span>
+        التوصيل
+      </span>
+
+      <strong id="summary-delivery">
+        —
+      </strong>
+
+    </div>
+
+
+    <div class="summary-line summary-total">
+
+      <span>
+        المجموع
+      </span>
+
+      <strong id="summary-total">
+        ${formatPrice(price)} DA
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <!-- زر تأكيد الطلب -->
+  <button
+    type="submit"
+    class="submit-btn"
+    id="submit-order-btn"
+  >
+    تأكيد الطلب
+  </button>
+
+</form>
+
+
+            </div>
+
+          </div>
+
+        </section>
+      `;
+
+
+      renderThumbnails();
+      bindProductEvents();
+      updateOrderSummary();
+        const scrollBar = document.querySelector('.scroll-to-order');
+const submitButton = document.getElementById('submit-order-btn');
+
+if (scrollBar && submitButton) {
+  const observer = new IntersectionObserver((entries) => {
+    scrollBar.style.display = entries[0].isIntersecting ? 'none' : 'block';
+  });
+
+  observer.observe(submitButton);
+}
+
+    }
+
+
+function renderColorOptions() {
+  const container = document.getElementById('product-colors');
+  if (!container) return;
+
+  container.innerHTML = `
+    <span class="product-colors-label">اللون:</span>
+    ${productColors.map(color => `
+      <button
+        type="button"
+        class="color-option ${
+          selectedColor && selectedColor.id === color.id ? 'active' : ''
+        }"
+        style="background:${escapeHtml(color.value)}"
+        title="${escapeHtml(color.name)}"
+        aria-label="${escapeHtml(color.name)}"
+        data-color-id="${color.id}"
+      ></button>
+    `).join('')}
+  `;
+
+  container.querySelectorAll('.color-option').forEach(button => {
+
+    button.addEventListener('click', () => {
+
+      const color = productColors.find(
+        item => item.id === Number(button.dataset.colorId)
+      );
+
+      if (!color) return;
+
+      selectedColor = color;
+
+      // تحديث لون التأكيد داخل نموذج الطلب
+      const orderColor =
+        document.getElementById('order-color');
+
+      if (orderColor) {
+        orderColor.value = String(color.id);
+      }
+
+      currentImages = color.images.length
+        ? [...color.images]
+        : (
+            currentProduct.image
+              ? [currentProduct.image]
+              : []
+          );
+
+      if (!currentImages.length) {
+        currentImages.push(
+          'https://via.placeholder.com/800x1000?text=Boutique+Blossom'
+        );
+      }
+
+      currentImageIndex = 0;
+
+      const mainImage =
+        document.getElementById('main-product-image');
+
+      if (mainImage) {
+        mainImage.src = currentImages[0];
+      }
+
+      renderThumbnails();
+      renderColorOptions();
+
+    });
+
+  });
 }
 
 
-    function updateAddressRequirement() {
 
-      const delivery =
-        document.getElementById(
-          'order-delivery'
-        );
+    function renderThumbnails() {
 
-      const address =
-        document.getElementById(
-          'order-address'
-        );
+      const container =
+        document.getElementById('thumbnails');
 
-      const label =
-        document.getElementById(
-          'address-label'
-        );
+      if (!container) return;
 
 
-      if (!delivery || !address || !label) {
-        return;
-      }
+      container.innerHTML =
+        currentImages.map(
+          (image, index) => `
 
+            <button
+              type="button"
+              class="thumbnail ${index === 0 ? 'active' : ''}"
+              data-image-index="${index}"
+            >
 
-      if (delivery.value === 'home') {
+              <img
+                src="${escapeHtml(image)}"
+                alt="صورة ${index + 1}"
+                loading="lazy"
+              >
 
-        address.required = true;
-        label.textContent =
-          'العنوان *';
+            </button>
 
-      } else {
+          `
+        ).join('');
 
-        address.required = false;
-        label.textContent =
-          'العنوان (اختياري)';
 
-      }
+      container
+        .querySelectorAll('.thumbnail')
+        .forEach(button => {
 
-    }
+          button.addEventListener(
+            'click',
+            () => {
 
+              const index =
+                Number(
+                  button.dataset.imageIndex
+                );
 
-    function updateOrderSummary() {
-
-      if (!currentProduct) return;
-
-
-      const quantityInput =
-        document.getElementById(
-          'order-qty'
-        );
-
-      const deliverySelect =
-        document.getElementById(
-          'order-delivery'
-        );
-
-      const wilayaSelect =
-        document.getElementById(
-          'order-wilaya'
-        );
-
-
-      const quantity =
-        Math.max(
-          1,
-          Number(quantityInput?.value || 1)
-        );
-
-
-      const subtotal =
-        Number(currentProduct.price || 0) *
-        quantity;
-
-
-      const delivery =
-        deliveryPrice(
-          deliverySelect?.value || 'home',
-          wilayaSelect?.value || ''
-        );
-
-
-      const total =
-        subtotal + delivery;
-
-
-      const productEl =
-        document.getElementById(
-          'summary-product'
-        );
-
-      const deliveryEl =
-        document.getElementById(
-          'summary-delivery'
-        );
-
-      const totalEl =
-        document.getElementById(
-          'summary-total'
-        );
-
-
-      if (productEl) {
-        productEl.textContent =
-          `${formatPrice(subtotal)} DA`;
-      }
-
-
-      if (deliveryEl) {
-
-        deliveryEl.textContent =
-          delivery > 0
-            ? `${formatPrice(delivery)} DA`
-            : 'يحدد لاحقًا';
-
-      }
-
-
-      if (totalEl) {
-
-        totalEl.textContent =
-          `${formatPrice(total)} DA`;
-
-      }
-
-    }
-
-
-
-    async function submitOrder(event) {
-
-      event.preventDefault();
-
-
-      if (!currentProduct) {
-        return;
-      }
-
-      activeOrderCount = await getActiveOrderCount();
-      if (activeOrderCount >= 2) {
-        showOrderLimitReached();
-        return;
-      }
-
-
-      const button =
-        document.getElementById(
-          'submit-order-btn'
-        );
-
-
-      const name =
-        document.getElementById(
-          'order-name'
-        ).value.trim();
-
-
-      const phone =
-        document.getElementById(
-          'order-phone'
-        ).value
-          .replace(/\s+/g, '')
-          .trim();
-
-
-      const size =
-        document.getElementById(
-          'order-size'
-        ).value;
-
-
-      const quantity =
-        Math.max(
-          1,
-          Number(
-            document.getElementById(
-              'order-qty'
-            ).value
-          ) || 1
-        );
-
-
-      const deliveryType =
-        document.getElementById(
-          'order-delivery'
-        ).value;
-
-
-      const wilayaCode =
-        document.getElementById(
-          'order-wilaya'
-        ).value;
-
-
-      const address =
-        document.getElementById(
-          'order-address'
-        ).value.trim();
-
-
-      const note =
-        document.getElementById(
-          'order-note'
-        ).value.trim();
-
-
-      /* ---------- Validation ---------- */
-
-      if (!name) {
-        alert('يرجى إدخال الاسم.');
-        return;
-      }
-
-
-      if (!phoneIsValid(phone)) {
-        alert(
-          'يرجى إدخال رقم هاتف جزائري صحيح.'
-        );
-        return;
-      }
-
-
-      if (!size) {
-        alert(
-          'يرجى اختيار المقاس.'
-        );
-        return;
-      }
-
-
-      if (productColors.length && !selectedColor) {
-        alert('يرجى اختيار اللون.');
-        return;
-      }
-
-      if (!wilayaCode) {
-        alert(
-          'يرجى اختيار الولاية.'
-        );
-        return;
-      }
-
-
-      if (
-        deliveryType === 'home' &&
-        !address
-      ) {
-        alert(
-          'يرجى إدخال العنوان.'
-        );
-        return;
-      }
-
-
-      trackMetaEvent('InitiateCheckout', {
-        content_ids: [String(currentProduct.id)],
-        content_name: productNameForTracking(),
-        content_type: 'product',
-        value: Number(currentProduct.price || 0) * quantity,
-        currency: 'DZD'
-      });
-
-      /* ---------- Disable button ---------- */
-
-      if (button) {
-
-        button.disabled = true;
-
-        button.textContent =
-          'جاري إرسال الطلب...';
-
-      }
-
-
-      try {
-
-        const wilaya =
-          WILAYAS.find(
-            item => item[0] === wilayaCode
-          );
-
-
-        const wilayaName =
-          wilaya
-            ? wilaya[1]
-            : '';
-
-
-        const unitPrice =
-          Number(
-            currentProduct.price || 0
-          );
-
-
-        const subtotal =
-          unitPrice * quantity;
-
-
-        const deliveryFee =
-          deliveryPrice(
-            deliveryType,
-            wilayaCode
-          );
-
-
-        const total =
-          subtotal + deliveryFee;
-
-
-        const productName =
-          parseTranslation(
-            currentProduct.name,
-            'منتج'
-          );
-
-
-        /* ---------- Same order structure
-           used by existing Admin ---------- */
-
-        const order = {
-
-          id:
-            'o' +
-            Date.now() +
-            Math.random()
-              .toString(36)
-              .slice(2, 7),
-
-
-          items: [
-
-            {
-
-              productId:
-                currentProduct.id,
-
-              productName:
-                productName,
-
-              price:
-                unitPrice,
-
-              size:
-                size,
-
-              qty:
-                quantity,
-
-              color:
-                selectedColor ? selectedColor.name : '',
-
-              image:
-                currentImages[0] || ''
+              changeMainImage(index);
 
             }
+          );
 
-          ],
-
-
-          productId:
-            currentProduct.id,
-
-
-          deviceId:
-            deviceId,
-
-
-          productName:
-            productName,
-
-
-          price:
-            subtotal,
-
-
-          qty:
-            quantity,
-
-
-          size:
-            size,
-
-
-          color:
-            selectedColor ? selectedColor.name : '',
-
-
-          subtotal:
-            subtotal,
-
-
-          deliveryType:
-            deliveryType,
-
-
-          deliveryFee:
-            deliveryFee,
-
-
-          total:
-            total,
-
-
-          wilayaCode:
-            wilayaCode,
-
-
-          wilayaName:
-            wilayaName,
-
-
-          name:
-            name,
-
-
-          phone:
-            phone,
-
-
-          address:
-            address,
-
-
-          note:
-            note,
-
-
-          status:
-            'new',
-
-
-          createdAt:
-            new Date().toISOString()
-
-        };
-
-
-        console.log(
-          'ORDER TO SEND:',
-          order
-        );
-
-
-        /* ---------- Save to existing
-           Supabase orders table ---------- */
-
-        const { error } =
-          await supabaseClient
-            .from('orders')
-            .insert({
-
-              id:
-                order.id,
-
-              data:
-                order,
-
-              created_at:
-                order.createdAt,
-
-              updated_at:
-                order.createdAt
-
-            });
-
-
-        if (error) {
-          throw error;
-        }
-
-
-        console.log(
-          'ORDER SAVED SUCCESSFULLY'
-        );
-
-// Convert DZD to EUR only for Meta Purchase event
-const DZD_TO_EUR_RATE = 0.0068;
-const totalEUR = Number((total * DZD_TO_EUR_RATE).toFixed(2));
-
-console.log('PURCHASE TRACKING REACHED', {
-  total,
-  totalEUR,
-  productId: currentProduct.id
-});
-
-console.log('META STATUS', {
-  initialized: metaPixelInitialized,
-  fbqExists: typeof window.fbq === 'function',
-  pixelId: trackingSettings.metaPixelId
-});
-
-trackMetaEvent('Purchase', {
-  content_ids: [String(currentProduct.id)],
-  content_name: productNameForTracking(),
-  content_type: 'product',
-  value: totalEUR,
-  currency: 'EUR'
-});
-
-        /* ---------- Send order notification to Telegram ---------- */
-        try {
-          const { data: telegramData, error: telegramError } =
-            await supabaseClient.functions.invoke('telegram-order', {
-              body: { data: order }
-            });
-
-          if (telegramError) {
-            console.error('TELEGRAM NOTIFICATION ERROR:', telegramError);
-          } else {
-            console.log('TELEGRAM NOTIFICATION SENT:', telegramData);
-          }
-        } catch (telegramError) {
-          console.error('TELEGRAM NOTIFICATION ERROR:', telegramError);
-        }
-
-        activeOrderCount += 1;
-
-        showSuccess(
-          order
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          'CREATE ORDER ERROR:',
-          error
-        );
-
-
-        alert(
-          'حدث خطأ أثناء إرسال الطلب. حاول مرة أخرى.'
-        );
-
-
-        if (button) {
-
-          button.disabled = false;
-
-          button.textContent =
-            'تأكيد الطلب';
-
-        }
-
-      }
-
-    }
-
-
-
-    function showSuccess(order) {
-
-      document.getElementById(
-        'app'
-      ).innerHTML = `
-
-        <div class="success-box">
-
-          <div class="message-card">
-
-            <div class="success-icon">
-              ✓
-            </div>
-
-            <h2>
-              تم إرسال طلبك بنجاح ❤️
-            </h2>
-
-            <p>
-              شكراً لك ${escapeHtml(order.name)}.
-            </p>
-
-            <p>
-              سنتواصل معك على الرقم
-              <strong>
-                ${escapeHtml(order.phone)}
-              </strong>
-              لتأكيد الطلب.
-            </p>
-
-            <a
-              href="/"
-              class="back-btn"
-            >
-              العودة إلى الصفحة الرئيسية
-            </a>
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-
-
-    function showError(message) {
-
-      document.getElementById(
-        'app'
-      ).innerHTML = `
-
-        <div class="error-box">
-
-          <div class="message-card">
-
-            <h2>
-              عذراً
-            </h2>
-
-            <p>
-              ${escapeHtml(message)}
-            </p>
-
-            <a
-              href="/"
-              class="back-btn"
-            >
-              العودة للمتجر
-            </a>
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-
-
-    async function init() {
-
-      // Load tracking settings first so Meta Pixel is ready before product events fire.
-      await loadDeliverySettings();
-      await loadProduct();
-
-      if (currentProduct) {
-        await refreshOrderAvailability();
-      }
-
-    }
-
-
-    init();
-
-
-    /* ---- header UI: language switch labels ---- */
-    (function(){
-      const lang = getLandingLang();
-      document.documentElement.lang = lang;
-      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-      document.querySelectorAll('[data-landing-lang]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.landingLang === lang);
-        btn.addEventListener('click', () => {
-          localStorage.setItem('blossom07:lang', btn.dataset.landingLang);
-          localStorage.setItem('blossom:lang', btn.dataset.landingLang);
-          window.location.reload();
         });
-      });
-      const labels = {en:{home:'Home',shop:'Shop',contact:'Contact'},fr:{home:'Accueil',shop:'Boutique',contact:'Contact'},ar:{home:'الرئيسية',shop:'المتجر',contact:'تواصل'}}[lang] || {};
-      document.querySelectorAll('[data-lkey]').forEach(el => { if(labels[el.dataset.lkey]) el.textContent = labels[el.dataset.lkey]; });
-    })();
 
-    /* ---- header UI: theme toggle ---- */
-    (function(){
-      const saved = localStorage.getItem('blossom-theme') || localStorage.getItem('blossom07:theme') || 'light';
-      document.documentElement.setAttribute('data-theme', saved);
-      const btn = document.getElementById('landing-theme-toggle');
-      const update = () => {
-        const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-        if (btn) btn.textContent = dark ? '☾' : '☼';
-      };
-      update();
-      if (btn) btn.addEventListener('click', () => {
-        const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-        const next = dark ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('blossom-theme', next); localStorage.setItem('blossom07:theme', next);
-        update();
-      });
-    })();
+    }
+
+
+    function changeMainImage(index) {
+
+      if (!currentImages[index]) return;
+
+      currentImageIndex = index;
+
+
+      const mainImage =
+        document.getElementById(
+          'main-product-image'
+        );
+
+      if (mainImage) {
+        mainImage.src =
+          currentImages[index];
+      }
+
+
+      document
+        .querySelectorAll('.thumbnail')
+        .forEach((button, i) => {
+
+          button.classList.toggle(
+            'active',
+            i === index
+          );
+
+        });
+
+    }
+
