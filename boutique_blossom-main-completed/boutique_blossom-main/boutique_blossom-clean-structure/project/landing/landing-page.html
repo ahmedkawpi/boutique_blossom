@@ -8,7 +8,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Poppins:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="css/landing.css">
@@ -21,98 +21,34 @@
 
 <div class="page">
 
-  <!-- Same storefront header structure -->
-
-  <header class="site-header sample-header">
+  <header class="top-bar">
 
 ```
-<div class="sample-nav-left">
+<nav class="landing-nav">
+  <a href="/" data-lkey="home">الرئيسية</a>
+  <a href="/#shop-grid" data-lkey="shop">المتجر</a>
+  <a href="/?contact=1" data-lkey="contact">تواصل</a>
+</nav>
 
-  <a
-    class="sample-nav-link active"
-    href="/"
-    data-nav="shop"
-    data-lkey="home"
-  >
-    الرئيسية
-  </a>
-
-  <a
-    class="sample-nav-link"
-    href="/#shop-grid"
-    data-scroll="shop-grid"
-    data-lkey="shop"
-  >
-    المتجر
-  </a>
-
-  <a
-    class="sample-nav-link"
-    href="/?contact=1"
-    data-lkey="contact"
-  >
-    تواصل
-  </a>
-
-</div>
-
-<a
-  class="sample-logo"
-  href="/"
-  data-nav="shop"
-  aria-label="Blossom"
->
-  <span class="sample-logo-flower">✿</span>
-  <span>Blossom</span>
+<a href="/" class="brand-link" aria-label="Boutique Blossom">
+  <div class="brand">Blossom ✿</div>
+  <div class="brand-small">Boutique Blossom</div>
 </a>
 
-<div class="sample-header-actions">
+<div class="landing-header-actions">
 
   <div class="lang-switch" aria-label="Language">
-
-    <button
-      type="button"
-      data-lang="en"
-      data-landing-lang="en"
-    >
-      EN
-    </button>
-
-    <button
-      type="button"
-      data-lang="fr"
-      data-landing-lang="fr"
-    >
-      FR
-    </button>
-
-    <button
-      type="button"
-      data-lang="ar"
-      data-landing-lang="ar"
-    >
-      ع
-    </button>
-
+    <button type="button" data-landing-lang="en">EN</button>
+    <button type="button" data-landing-lang="fr">FR</button>
+    <button type="button" data-landing-lang="ar">ع</button>
   </div>
 
   <button
-    class="theme-toggle sample-icon-btn"
-    id="theme-toggle-btn"
-    data-landing-theme-toggle
+    class="landing-theme"
+    id="landing-theme-toggle"
     type="button"
-    title="Toggle theme"
     aria-label="تبديل الوضع"
-  >
-    <svg
-      id="theme-icon"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      aria-hidden="true"
-    ></svg>
-  </button>
+  >☼</button>
 
 </div>
 ```
@@ -124,8 +60,9 @@
 </div>
 
 <!--
-  Same rule as the shop:
-  each file owns one job.
+  Same rule as the shop: each file below owns one job.
+  If a file here starts creeping past ~300 lines, split it again
+  rather than letting it become the next monolith.
 -->
 
 <script src="../js/src/config.js"></script>
