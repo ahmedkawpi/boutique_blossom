@@ -203,7 +203,16 @@
               id="thumbnails"
             ></div>
 
-            ${productColors.length ? `<div class="product-colors" id="product-colors"></div>` : ''}
+           ${productColors.length ? `<div class="product-colors" id="product-colors"></div>` : ''}
+
+<div class="scroll-to-order">
+  <button
+    type="button"
+    onclick="document.getElementById('order-form').scrollIntoView({ behavior: 'smooth' })"
+  >
+    اطلب الآن ↓
+  </button>
+</div>
 
           </div>
 
