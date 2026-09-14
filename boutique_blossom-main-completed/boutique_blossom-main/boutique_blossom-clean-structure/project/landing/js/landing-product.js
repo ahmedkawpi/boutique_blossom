@@ -603,12 +603,66 @@ if (product.sizes_enabled === true) {
         const scrollBar = document.querySelector('.scroll-to-order');
 const submitButton = document.getElementById('submit-order-btn');
 
+/* =========================
+   FLOATING ORDER BUTTON
+========================= */
+
 if (scrollBar && submitButton) {
+
+  let orderScrollStep = 0;
+
+  /* الضغط على زر الطلب */
+  scrollBar.querySelector('button')?.addEventListener('click', () => {
+
+    /* الضغطة الأولى */
+    if (orderScrollStep === 0) {
+
+      orderScrollStep = 1;
+
+      const orderForm =
+        document.getElementById('order-form');
+
+      if (orderForm) {
+        orderForm.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+
+      const button =
+        scrollBar.querySelector('button');
+
+      if (button) {
+        button.textContent = 'تأكيد الطلب ↓';
+      }
+
+    }
+
+    /* الضغطة الثانية */
+    else {
+
+      submitButton.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+
+    }
+
+  });
+
+
+  /* إخفاء الشريط عند الوصول للتأكيد */
   const observer = new IntersectionObserver((entries) => {
-    scrollBar.style.display = entries[0].isIntersecting ? 'none' : 'block';
+
+    const isVisible = entries[0].isIntersecting;
+
+    scrollBar.style.display =
+      isVisible ? 'none' : 'block';
+
   });
 
   observer.observe(submitButton);
+
 }
 
     }
