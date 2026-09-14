@@ -259,11 +259,7 @@
 
             <div class="divider"></div>
 
-<div class="scroll-to-order">
-  <button type="button" onclick="document.getElementById('order-form').scrollIntoView({ behavior: 'smooth' })">
-    اطلب الآن ↓
-  </button>
-</div>
+
             <!-- ================= ORDER BOX ================= -->
 
             <div class="order-box">
