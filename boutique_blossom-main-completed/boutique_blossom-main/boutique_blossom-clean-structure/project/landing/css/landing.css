@@ -1334,3 +1334,104 @@ textarea {
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(0,0,0,.18);
 }
+
+```css
+/* ================= ORDER FORM - COMPACT ================= */
+
+.form-section {
+  margin-bottom: 16px;
+}
+
+.form-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 9px;
+  opacity: 0.75;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+#order-form .field {
+  margin-bottom: 10px;
+}
+
+#order-form label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+#order-form input,
+#order-form select,
+#order-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#order-form textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+#order-form #order-note {
+  min-height: 58px;
+}
+
+#order-form .delivery-summary {
+  margin-top: 12px;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 600px) {
+
+  .form-section {
+    margin-bottom: 12px;
+  }
+
+  .form-section-title {
+    font-size: 12px;
+    margin-bottom: 7px;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  #order-form .field {
+    margin-bottom: 8px;
+  }
+
+  #order-form label {
+    font-size: 11px;
+    margin-bottom: 4px;
+  }
+
+  #order-form input,
+  #order-form select {
+    min-height: 42px;
+    padding: 8px 9px;
+  }
+
+  #order-form textarea {
+    min-height: 62px;
+  }
+
+  #order-form #order-note {
+    min-height: 55px;
+  }
+
+  #order-form .delivery-summary {
+    margin-top: 10px;
+  }
+
+}
+
+
