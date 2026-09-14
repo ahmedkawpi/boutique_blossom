@@ -510,6 +510,16 @@
       renderThumbnails();
       bindProductEvents();
       updateOrderSummary();
+        const scrollBar = document.querySelector('.scroll-to-order');
+const submitButton = document.getElementById('submit-order-btn');
+
+if (scrollBar && submitButton) {
+  const observer = new IntersectionObserver((entries) => {
+    scrollBar.style.display = entries[0].isIntersecting ? 'none' : 'block';
+  });
+
+  observer.observe(submitButton);
+}
 
     }
 
