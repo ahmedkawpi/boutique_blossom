@@ -1082,12 +1082,7 @@ button {
     margin-top: 7px !important;
   }
 
-  .description {
-    max-height: 3.1em;
-    overflow: hidden;
-    line-height: 1.5;
-    margin-bottom: 9px !important;
-  }
+
 
   .divider {
     margin: 9px 0 !important;
