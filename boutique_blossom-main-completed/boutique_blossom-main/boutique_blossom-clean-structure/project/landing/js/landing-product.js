@@ -228,7 +228,7 @@ if (product.sizes_enabled === true) {
 <div class="scroll-to-order">
   <button
     type="button"
-    onclick="document.getElementById('order-form').scrollIntoView({ behavior: 'smooth' })"
+    id="floating-order-btn"
   >
     اطلب الآن ↓
   </button>
