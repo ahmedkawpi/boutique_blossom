@@ -879,48 +879,157 @@ function renderProduct() {
   updateOrderSummary();
 
 
-  /* =====================================================
-     FLOATING ORDER BUTTON
-  ===================================================== */
+ /* =====================================================
+   FLOATING ORDER BUTTON
+   Step 1 → order information
+   Step 2 → summary + confirmation
+===================================================== */
 
-  const scrollBar =
-    document.querySelector(
-      '.scroll-to-order'
-    );
+const scrollBar =
+  document.querySelector('.scroll-to-order');
 
+const floatingButton =
+  document.getElementById('floating-order-btn');
 
-  const submitButton =
-    document.getElementById(
-      'submit-order-btn'
-    );
+const orderForm =
+  document.getElementById('order-form');
 
+const deliverySummary =
+  document.querySelector('.delivery-summary');
 
-  if (
-    scrollBar &&
-    submitButton
-  ) {
+const submitButton =
+  document.getElementById('submit-order-btn');
 
-    const observer =
-      new IntersectionObserver(
-        entries => {
-
-          scrollBar.style.display =
-            entries[0].isIntersecting
-              ? 'none'
-              : 'block';
-
-        }
-      );
+let floatingOrderStep = 0;
 
 
-    observer.observe(
+/* ---------- Button click ---------- */
+
+if (
+  scrollBar &&
+  floatingButton &&
+  orderForm
+) {
+
+  floatingButton.addEventListener(
+    'click',
+    () => {
+
+      /* STEP 1 */
+      if (floatingOrderStep === 0) {
+
+        orderForm.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+
+        floatingOrderStep = 1;
+
+        floatingButton.textContent =
+          'تأكيد الطلب ↓';
+
+        return;
+      }
+
+
+      /* STEP 2 */
+      const target =
+        deliverySummary ||
+        submitButton;
+
+      if (target) {
+
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+
+      }
+
+    }
+  );
+
+
+  /* ---------- Show / hide ---------- */
+
+  function updateFloatingOrderButton() {
+
+    if (
+      !deliverySummary &&
+      !submitButton
+    ) {
+
+      scrollBar.style.display =
+        'flex';
+
+      return;
+    }
+
+
+    const summaryRect =
+      deliverySummary
+        ? deliverySummary.getBoundingClientRect()
+        : null;
+
+
+    const submitRect =
       submitButton
-    );
+        ? submitButton.getBoundingClientRect()
+        : null;
+
+
+    /*
+      Hide the floating button only
+      when the final order area
+      reaches the screen.
+    */
+
+    const summaryReached =
+      summaryRect &&
+      summaryRect.top <=
+        window.innerHeight * 0.85;
+
+
+    const submitReached =
+      submitRect &&
+      submitRect.top <=
+        window.innerHeight * 0.95;
+
+
+    if (
+      summaryReached ||
+      submitReached
+    ) {
+
+      scrollBar.style.display =
+        'none';
+
+    } else {
+
+      scrollBar.style.display =
+        'flex';
+
+    }
 
   }
 
-}
 
+  updateFloatingOrderButton();
+
+
+  window.addEventListener(
+    'scroll',
+    updateFloatingOrderButton,
+    { passive: true }
+  );
+
+
+  window.addEventListener(
+    'resize',
+    updateFloatingOrderButton
+  );
+
+}
 
 /* =========================================================
    COLORS
