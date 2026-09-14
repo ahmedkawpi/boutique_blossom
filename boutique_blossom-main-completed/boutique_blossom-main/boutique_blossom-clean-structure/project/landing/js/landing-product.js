@@ -609,180 +609,75 @@ const submitButton = document.getElementById('submit-order-btn');
 
 if (scrollBar && submitButton) {
 
-  let orderScrollStep = 0;
+  const floatingButton = scrollBar.querySelector('button');
+  const orderForm = document.getElementById('order-form');
 
-  const floatingButton =
-    scrollBar.querySelector('button');
+  let orderStep = 0;
 
-  const orderForm =
-    document.getElementById('order-form');
+  if (floatingButton && orderForm) {
 
+    floatingButton.addEventListener('click', () => {
 
-  /* تحديث حالة الزر حسب مكان المستخدم */
-  const updateOrderButton = () => {
+      if (orderStep === 0) {
 
-    if (!orderForm || !floatingButton) return;
+        orderStep = 1;
 
-    const formTop =
-      orderForm.getBoundingClientRect().top;
-
-    /*
-      إذا رجعنا فوق بداية الفورم،
-      نرجع الزر للحالة الأولى
-    */
-    if (formTop > window.innerHeight * 0.35) {
-
-      orderScrollStep = 0;
-
-      floatingButton.textContent =
-        'اطلب الآن ↓';
-
-    } else {
-
-      /*
-        داخل الفورم أو بعده
-        ننتقل للخطوة الثانية
-      */
-      orderScrollStep = 1;
-
-      floatingButton.textContent =
-        'تأكيد الطلب ↓';
-
-    }
-
-  };
-
-
-  /* الضغط على الزر */
-  floatingButton?.addEventListener('click', () => {
-
-    /* الضغطة الأولى */
-    if (orderScrollStep === 0) {
-
-      orderScrollStep = 1;
-
-      if (orderForm) {
         orderForm.scrollIntoView({
           behavior: 'smooth',
           block: 'start'
         });
+
+        floatingButton.textContent = 'تأكيد الطلب ↓';
+
+      } else {
+
+        submitButton.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+
       }
-
-      floatingButton.textContent =
-        'تأكيد الطلب ↓';
-
-    }
-
-    /* الضغطة الثانية */
-    else {
-
-      submitButton.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
-
-    }
-
-  });
-
-
-  /* مراقبة الرجوع للأعلى */
-  window.addEventListener('scroll', updateOrderButton, {
-    passive: true
-  });
-
-
-  /* إخفاء الشريط عند الوصول للتأكيد */
-  const observer = new IntersectionObserver((entries) => {
-
-    const isVisible =
-      entries[0].isIntersecting;
-
-    scrollBar.style.display =
-      isVisible ? 'none' : 'block';
-
-  });
-
-  observer.observe(submitButton);
-
-
-  /* الحالة الأولى */
-  updateOrderButton();
-
-}
-
-
-function renderColorOptions() {
-  const container = document.getElementById('product-colors');
-  if (!container) return;
-
-  container.innerHTML = `
-    <span class="product-colors-label">اللون:</span>
-    ${productColors.map(color => `
-      <button
-        type="button"
-        class="color-option ${
-          selectedColor && selectedColor.id === color.id ? 'active' : ''
-        }"
-        style="background:${escapeHtml(color.value)}"
-        title="${escapeHtml(color.name)}"
-        aria-label="${escapeHtml(color.name)}"
-        data-color-id="${color.id}"
-      ></button>
-    `).join('')}
-  `;
-
-  container.querySelectorAll('.color-option').forEach(button => {
-
-    button.addEventListener('click', () => {
-
-      const color = productColors.find(
-        item => item.id === Number(button.dataset.colorId)
-      );
-
-      if (!color) return;
-
-      selectedColor = color;
-
-      // تحديث لون التأكيد داخل نموذج الطلب
-      const orderColor =
-        document.getElementById('order-color');
-
-      if (orderColor) {
-        orderColor.value = String(color.id);
-      }
-
-      currentImages = color.images.length
-        ? [...color.images]
-        : (
-            currentProduct.image
-              ? [currentProduct.image]
-              : []
-          );
-
-      if (!currentImages.length) {
-        currentImages.push(
-          'https://via.placeholder.com/800x1000?text=Boutique+Blossom'
-        );
-      }
-
-      currentImageIndex = 0;
-
-      const mainImage =
-        document.getElementById('main-product-image');
-
-      if (mainImage) {
-        mainImage.src = currentImages[0];
-      }
-
-      renderThumbnails();
-      renderColorOptions();
 
     });
 
-  });
-}
+    const observer = new IntersectionObserver((entries) => {
 
+      if (entries[0].isIntersecting) {
+
+        scrollBar.style.display = 'none';
+
+      } else {
+
+        scrollBar.style.display = 'block';
+
+        /*
+          إذا خرجنا فوق الفورم،
+          نرجع للخطوة الأولى
+        */
+        if (
+          orderForm.getBoundingClientRect().top >
+          window.innerHeight * 0.35
+        ) {
+
+          orderStep = 0;
+          floatingButton.textContent = 'اطلب الآن ↓';
+
+        } else {
+
+          orderStep = 1;
+          floatingButton.textContent = 'تأكيد الطلب ↓';
+
+        }
+
+      }
+
+    });
+
+    observer.observe(submitButton);
+
+  }
+
+}
 
 
     function renderThumbnails() {
