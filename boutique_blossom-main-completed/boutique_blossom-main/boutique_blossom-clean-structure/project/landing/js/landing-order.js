@@ -93,69 +93,120 @@
       }
     }
 
-    function bindProductEvents() {
+   function bindProductEvents() {
 
-      const deliverySelect =
-        document.getElementById(
-          'order-delivery'
-        );
+  const deliverySelect =
+    document.getElementById(
+      'order-delivery'
+    );
 
-      const wilayaSelect =
-        document.getElementById(
-          'order-wilaya'
-        );
+  const wilayaSelect =
+    document.getElementById(
+      'order-wilaya'
+    );
 
-      const quantityInput =
-        document.getElementById(
-          'order-qty'
-        );
+  const quantityInput =
+    document.getElementById(
+      'order-qty'
+    );
 
-      const form =
-        document.getElementById(
-          'order-form'
-        );
+  const orderColor =
+    document.getElementById(
+      'order-color'
+    );
+
+  const form =
+    document.getElementById(
+      'order-form'
+    );
 
 
-      if (deliverySelect) {
-        deliverySelect.addEventListener(
-          'change',
-          () => {
+  if (deliverySelect) {
+    deliverySelect.addEventListener(
+      'change',
+      () => {
 
-            updateAddressRequirement();
-            updateOrderSummary();
+        updateAddressRequirement();
+        updateOrderSummary();
 
-          }
-        );
       }
+    );
+  }
 
 
-      if (wilayaSelect) {
-        wilayaSelect.addEventListener(
-          'change',
-          updateOrderSummary
+  if (wilayaSelect) {
+    wilayaSelect.addEventListener(
+      'change',
+      updateOrderSummary
+    );
+  }
+
+
+  if (quantityInput) {
+    quantityInput.addEventListener(
+      'input',
+      updateOrderSummary
+    );
+  }
+
+
+  if (orderColor) {
+    orderColor.addEventListener(
+      'change',
+      () => {
+
+        const color = productColors.find(
+          item => item.id === Number(orderColor.value)
         );
+
+        if (!color) return;
+
+        selectedColor = color;
+
+        currentImages = color.images.length
+          ? [...color.images]
+          : (
+              currentProduct.image
+                ? [currentProduct.image]
+                : []
+            );
+
+        if (!currentImages.length) {
+          currentImages.push(
+            'https://via.placeholder.com/800x1000?text=Boutique+Blossom'
+          );
+        }
+
+        currentImageIndex = 0;
+
+        const mainImage =
+          document.getElementById(
+            'main-product-image'
+          );
+
+        if (mainImage) {
+          mainImage.src = currentImages[0];
+        }
+
+        renderThumbnails();
+        renderColorOptions();
+
       }
+    );
+  }
 
 
-      if (quantityInput) {
-        quantityInput.addEventListener(
-          'input',
-          updateOrderSummary
-        );
-      }
+  if (form) {
+    form.addEventListener(
+      'submit',
+      submitOrder
+    );
+  }
 
 
-      if (form) {
-        form.addEventListener(
-          'submit',
-          submitOrder
-        );
-      }
+  updateAddressRequirement();
 
-
-      updateAddressRequirement();
-
-    }
+}
 
 
     function updateAddressRequirement() {
