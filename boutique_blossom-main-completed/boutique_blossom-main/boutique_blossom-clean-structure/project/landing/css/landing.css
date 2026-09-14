@@ -1,231 +1,123 @@
-
 /* =========================================================
-   BOUTIQUE BLOSSOM
-   LANDING PRODUCT PAGE
-   CLEAN / MOBILE FIRST / PREMIUM
-========================================================= */
-
-
-/* =========================================================
-   ROOT
-========================================================= */
-
-:root {
-  --bg: #ffffff;
-  --surface: #ffffff;
-  --surface-soft: #faf7f9;
-  --text: #171717;
-  --text-soft: #666;
-  --border: #e8e5e6;
-
-  --accent: #b85c86;
-  --accent-light: #d98caf;
-  --accent-soft: rgba(184, 92, 134, .08);
-
-  --success: #4f8b68;
-
-  --radius: 14px;
-  --shadow: 0 10px 30px rgba(0, 0, 0, .06);
-}
-
-
-/* =========================================================
-   RESET
-========================================================= */
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-
-  background: var(--bg);
-  color: var(--text);
-
-  font-family:
-    Arial,
-    "Tahoma",
-    sans-serif;
-
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-img {
-  max-width: 100%;
-}
-
-
-/* =========================================================
-   APP
+   BOUTIQUE BLOSSOM — PRODUCT LANDING
+   CLEAN / MOBILE FIRST
+   IMPORTANT:
+   - Does NOT style header/navbar
+   - Product styles are scoped to #app
 ========================================================= */
 
 #app {
   width: 100%;
+  color: #171717;
 }
 
+/* =========================
+   PRODUCT LAYOUT
+========================= */
 
-/* =========================================================
-   PRODUCT SECTION
-========================================================= */
-
-.product-section {
+#app .product-section {
   width: min(1180px, calc(100% - 32px));
-
   margin: 0 auto;
-
-  padding: 30px 0 70px;
+  padding: 30px 0 80px;
 
   display: grid;
-  grid-template-columns:
-    minmax(0, 1fr)
-    minmax(0, 1fr);
-
-  gap: 45px;
-
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 44px;
   align-items: start;
 }
 
-
-/* =========================================================
-   GALLERY
-========================================================= */
-
-.gallery {
+#app .gallery,
+#app .product-info {
   min-width: 0;
 }
 
-.main-image-wrap {
-  width: 100%;
+/* =========================
+   MAIN PRODUCT IMAGE
+========================= */
 
+#app .main-image-wrap {
+  width: 100%;
   overflow: hidden;
-
-  border-radius: 18px;
-
-  background: #f7f5f6;
-
-  box-shadow: var(--shadow);
+  border-radius: 16px;
+  background: #f6f4f5;
 }
 
-.main-image {
+#app .main-image {
   display: block;
-
   width: 100%;
-
   aspect-ratio: 4 / 5;
-
   object-fit: cover;
-
-  transition:
-    transform .35s ease;
 }
 
-.main-image-wrap:hover .main-image {
-  transform: scale(1.015);
-}
-
-
-/* =========================================================
+/* =========================
    THUMBNAILS
-========================================================= */
+========================= */
 
-.thumbnails {
+#app .thumbnails {
   display: flex;
-
-  gap: 9px;
-
-  margin-top: 12px;
-
+  gap: 8px;
+  margin-top: 10px;
   overflow-x: auto;
+  padding-bottom: 2px;
 
   scrollbar-width: thin;
 }
 
-.thumbnail {
-  flex: 0 0 68px;
+#app .thumbnail {
+  flex: 0 0 64px;
 
-  width: 68px;
-  height: 68px;
+  width: 64px;
+  height: 64px;
 
   padding: 0;
 
+  border: 2px solid transparent;
+  border-radius: 9px;
+
   overflow: hidden;
 
-  border: 2px solid transparent;
-
-  border-radius: 10px;
-
   background: transparent;
-
   opacity: .72;
 
-  transition:
-    border-color .2s ease,
-    opacity .2s ease,
-    transform .2s ease;
+  cursor: pointer;
 }
 
-.thumbnail:hover {
-  opacity: 1;
-  transform: translateY(-1px);
-}
-
-.thumbnail.active {
-  border-color: var(--accent);
+#app .thumbnail.active {
+  border-color: #b85c86;
   opacity: 1;
 }
 
-.thumbnail img {
+#app .thumbnail img {
+  display: block;
+
   width: 100%;
   height: 100%;
 
   object-fit: cover;
-
-  display: block;
 }
 
-
-/* =========================================================
+/* =========================
    COLORS
-========================================================= */
+========================= */
 
-.product-colors {
+#app .product-colors {
   display: flex;
-
   align-items: center;
   flex-wrap: wrap;
 
-  gap: 11px;
+  gap: 10px;
 
-  margin-top: 16px;
+  margin-top: 15px;
 }
 
-.product-colors-label {
+#app .product-colors-label {
   flex-basis: 100%;
-
-  color: var(--text);
 
   font-size: 15px;
   font-weight: 800;
 }
 
-.color-option {
+#app .color-option {
   position: relative;
 
   width: 36px;
@@ -237,123 +129,101 @@ img {
   padding: 0;
 
   border: 2px solid transparent;
-
   border-radius: 50%;
 
-  box-shadow:
-    0 2px 7px rgba(0, 0, 0, .15);
+  cursor: pointer;
 
-  transition:
-    transform .18s ease,
-    box-shadow .18s ease,
-    border-color .18s ease;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, .15);
 }
 
-.color-option:hover {
-  transform: scale(1.08);
-}
-
-.color-option.active {
+#app .color-option.active {
   border-color: #111;
 
   box-shadow:
     0 0 0 3px rgba(184, 92, 134, .18),
-    0 4px 10px rgba(0, 0, 0, .14);
-
-  transform: scale(1.08);
+    0 3px 8px rgba(0, 0, 0, .14);
 }
 
-.color-option.active::after {
+#app .color-option.active::after {
   content: "✓";
 
   position: absolute;
-
   inset: 0;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  color: white;
+  color: #fff;
 
   font-size: 14px;
   font-weight: 900;
 
-  text-shadow:
-    0 1px 3px rgba(0, 0, 0, .7);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .8);
 }
 
-
-/* =========================================================
+/* =========================
    FLOATING ORDER BUTTON
-========================================================= */
+   DOES NOT AFFECT HEADER
+========================= */
 
-.scroll-to-order {
+#app .scroll-to-order {
   position: fixed;
 
-  right: 22px;
-  bottom: 22px;
+  left: 50%;
+  bottom: 20px;
 
-  z-index: 1000;
+  transform: translateX(-50%);
+
+  z-index: 9999;
 
   margin: 0;
+  padding: 0;
+
+  display: flex;
+  justify-content: center;
 
   pointer-events: none;
 }
 
-.scroll-to-order button {
+#app .scroll-to-order button {
   pointer-events: auto;
 
+  min-width: 150px;
   min-height: 48px;
 
-  padding: 11px 21px;
+  padding: 11px 22px;
 
   border: 0;
-
   border-radius: 999px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #171717,
-      var(--accent)
-    );
-
+  background: #171717;
   color: #fff;
 
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 900;
 
-  box-shadow:
-    0 8px 25px rgba(0, 0, 0, .2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, .22);
 
-  transition:
-    transform .2s ease,
-    box-shadow .2s ease;
+  cursor: pointer;
+
+  white-space: nowrap;
 }
 
-.scroll-to-order:hover {
-  transform: translateY(-2px);
-
-  box-shadow:
-    0 12px 30px rgba(0, 0, 0, .25);
+#app .scroll-to-order button:active {
+  transform: scale(.97);
 }
 
+/* =========================
+   PRODUCT INFORMATION
+========================= */
 
-/* =========================================================
-   PRODUCT INFO
-========================================================= */
-
-.product-info {
-  min-width: 0;
-}
-
-.category {
+#app .category {
   display: inline-block;
 
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 
-  color: var(--accent);
+  color: #b85c86;
 
   font-size: 12px;
   font-weight: 800;
@@ -361,58 +231,47 @@ img {
   text-transform: uppercase;
 }
 
-.product-name {
+#app .product-name {
   margin: 0;
 
-  color: var(--text);
+  color: #171717;
 
   font-size: 30px;
   line-height: 1.25;
 
   font-weight: 900;
-
-  letter-spacing: -.3px;
 }
 
-
-/* =========================================================
-   PRICE
-========================================================= */
-
-.price-row {
+#app .price-row {
   display: flex;
-
   align-items: center;
   flex-wrap: wrap;
 
-  gap: 10px;
+  gap: 9px;
 
-  margin-top: 15px;
+  margin-top: 14px;
 }
 
-.price {
-  color: var(--accent);
+#app .price {
+  color: #b85c86;
 
-  font-size: 31px;
-
+  font-size: 30px;
   line-height: 1;
 
   font-weight: 900;
 }
 
-.old-price {
+#app .old-price {
   color: #999;
 
   font-size: 14px;
-
   font-weight: 600;
 
   text-decoration: line-through;
 }
 
-.discount-badge {
+#app .discount-badge {
   display: inline-flex;
-
   align-items: center;
   justify-content: center;
 
@@ -422,72 +281,57 @@ img {
 
   border-radius: 999px;
 
-  background: var(--accent);
-
+  background: #b85c86;
   color: #fff;
 
   font-size: 11px;
   font-weight: 900;
 }
 
+#app .description {
+  margin-top: 13px;
 
-/* =========================================================
-   DESCRIPTION
-========================================================= */
-
-.description {
-  margin-top: 14px;
-
-  color: var(--text-soft);
+  color: #666;
 
   font-size: 15px;
-
   line-height: 1.8;
 }
 
-
-/* =========================================================
+/* =========================
    TRUST
-========================================================= */
+========================= */
 
-.product-trust {
+#app .product-trust {
   display: flex;
-
   flex-wrap: wrap;
-
-  gap: 7px;
-
-  margin-top: 15px;
-}
-
-.trust-item {
-  display: inline-flex;
-
-  align-items: center;
 
   gap: 6px;
 
-  min-height: 32px;
+  margin-top: 14px;
+}
 
-  padding: 6px 9px;
+#app .trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 
-  border:
-    1px solid rgba(184, 92, 134, .16);
+  min-height: 30px;
 
-  border-radius: 9px;
+  padding: 5px 8px;
 
-  background: var(--accent-soft);
+  border: 1px solid rgba(184, 92, 134, .16);
+  border-radius: 8px;
 
-  color: var(--text-soft);
+  background: rgba(184, 92, 134, .06);
+
+  color: #666;
 
   font-size: 11px;
-
   font-weight: 700;
 }
 
-.trust-icon {
+#app .trust-icon {
   display: flex;
-
   align-items: center;
   justify-content: center;
 
@@ -496,52 +340,48 @@ img {
 
   border-radius: 50%;
 
-  background: var(--accent);
-
-  color: white;
+  background: #b85c86;
+  color: #fff;
 
   font-size: 10px;
   font-weight: 900;
 }
 
-
-/* =========================================================
+/* =========================
    DIVIDER
-========================================================= */
+========================= */
 
-.divider {
+#app .divider {
   width: 100%;
-
   height: 1px;
 
   margin: 20px 0;
 
-  background: var(--border);
+  background: #e8e5e6;
 }
 
-
-/* =========================================================
+/* =========================
    ORDER FORM
-========================================================= */
+========================= */
 
-#order-form {
+#app #order-form {
   width: 100%;
 }
 
-.form-section {
+/* =========================
+   FORM SECTIONS
+========================= */
+
+#app .form-section {
   position: relative;
 
   margin-bottom: 18px;
+  padding-bottom: 17px;
 
-  padding-bottom: 18px;
-
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid #e8e5e6;
 }
 
-
-/* Colored separator between sections */
-
-.form-section:not(:last-of-type)::after {
+#app .form-section:not(:last-of-type)::after {
   content: "";
 
   position: absolute;
@@ -549,41 +389,32 @@ img {
   right: 0;
   bottom: -1px;
 
-  width: 55px;
+  width: 65px;
   height: 2px;
 
   border-radius: 999px;
 
-  background:
-    linear-gradient(
-      90deg,
-      var(--accent),
-      var(--accent-light)
-    );
+  background: linear-gradient(
+    90deg,
+    #b85c86,
+    #d98caf
+  );
 }
 
-
-/* =========================================================
-   FORM SECTION TITLE
-========================================================= */
-
-.form-section-title {
+#app .form-section-title {
   display: flex;
-
   align-items: center;
-
   gap: 9px;
 
   margin-bottom: 12px;
 
-  color: var(--text);
+  color: #171717;
 
   font-size: 15px;
-
   font-weight: 900;
 }
 
-.form-section-title::before {
+#app .form-section-title::before {
   content: "";
 
   width: 4px;
@@ -593,20 +424,18 @@ img {
 
   border-radius: 999px;
 
-  background:
-    linear-gradient(
-      to bottom,
-      var(--accent),
-      var(--accent-light)
-    );
+  background: linear-gradient(
+    to bottom,
+    #b85c86,
+    #d98caf
+  );
 }
 
+/* =========================
+   FORM FIELDS
+========================= */
 
-/* =========================================================
-   FORM GRID
-========================================================= */
-
-.field-row {
+#app .field-row {
   display: grid;
 
   grid-template-columns:
@@ -615,99 +444,77 @@ img {
   gap: 12px;
 }
 
-
-/* =========================================================
-   FIELD
-========================================================= */
-
-.field {
+#app .field {
   min-width: 0;
 
   margin-bottom: 11px;
 }
 
-.field label {
+#app .field label {
   display: block;
 
   margin-bottom: 6px;
 
-  color: var(--text);
+  color: #171717;
 
   font-size: 14px;
-
   font-weight: 700;
 }
 
-.field input,
-.field select,
-.field textarea {
+#app .field input,
+#app .field select,
+#app .field textarea {
   display: block;
 
   width: 100%;
 
   min-height: 46px;
 
-  padding: 11px 13px;
+  padding: 10px 13px;
 
-  border:
-    1px solid var(--border);
-
+  border: 1px solid #e3e0e1;
   border-radius: 10px;
 
   outline: none;
 
-  background: var(--surface);
-
-  color: var(--text);
+  background: #fff;
+  color: #171717;
 
   font-size: 14px;
-
-  transition:
-    border-color .2s ease,
-    box-shadow .2s ease;
 }
 
-.field textarea {
+#app .field textarea {
   min-height: 72px;
 
   resize: vertical;
 }
 
-.field input::placeholder,
-.field textarea::placeholder {
-  color: #aaa;
-}
-
-.field input:focus,
-.field select:focus,
-.field textarea:focus {
-  border-color: var(--accent);
+#app .field input:focus,
+#app .field select:focus,
+#app .field textarea:focus {
+  border-color: #b85c86;
 
   box-shadow:
-    0 0 0 3px rgba(184, 92, 134, .09);
+    0 0 0 3px rgba(184, 92, 134, .08);
 }
 
+/* =========================
+   SUMMARY
+========================= */
 
-/* =========================================================
-   DELIVERY SUMMARY
-========================================================= */
-
-.delivery-summary {
-  margin-top: 16px;
+#app .delivery-summary {
+  margin-top: 15px;
 
   padding: 12px;
 
-  border:
-    1px solid rgba(184, 92, 134, .14);
+  border: 1px solid rgba(184, 92, 134, .14);
+  border-radius: 12px;
 
-  border-radius: 13px;
-
-  background: var(--surface-soft);
+  background: #faf7f9;
 }
 
-.summary-line {
+#app .summary-line {
   display: flex;
-
   align-items: center;
   justify-content: space-between;
 
@@ -715,44 +522,40 @@ img {
 
   padding: 7px 2px;
 
-  color: var(--text-soft);
+  color: #666;
 
   font-size: 13px;
 }
 
-.summary-line strong {
-  color: var(--text);
-
+#app .summary-line strong {
+  color: #171717;
   font-weight: 800;
 }
 
-.summary-total {
+#app .summary-total {
   margin-top: 5px;
 
   padding-top: 11px;
 
-  border-top:
-    1px solid var(--border);
+  border-top: 1px solid #e5e1e2;
 
-  color: var(--text);
+  color: #171717;
 
   font-size: 15px;
-
   font-weight: 900;
 }
 
-.summary-total strong {
-  color: var(--accent);
+#app .summary-total strong {
+  color: #b85c86;
 
   font-size: 18px;
 }
 
+/* =========================
+   SUBMIT
+========================= */
 
-/* =========================================================
-   MAIN SUBMIT BUTTON
-========================================================= */
-
-.submit-btn {
+#app .submit-btn {
   display: block;
 
   width: 100%;
@@ -762,421 +565,264 @@ img {
   margin-top: 13px;
 
   border: 0;
+  border-radius: 11px;
 
-  border-radius: 12px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #171717,
-      var(--accent)
-    );
-
+  background: #171717;
   color: #fff;
 
   font-size: 14px;
-
   font-weight: 900;
 
-  box-shadow:
-    0 8px 22px rgba(184, 92, 134, .2);
-
-  transition:
-    transform .2s ease,
-    box-shadow .2s ease;
+  cursor: pointer;
 }
 
-.submit-btn:hover {
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 11px 27px rgba(184, 92, 134, .25);
+#app .submit-btn:active {
+  transform: scale(.99);
 }
 
-.submit-btn:active {
-  transform: translateY(0);
-}
-
-
-/* =========================================================
+/* =========================
    DARK MODE
-========================================================= */
+========================= */
 
-[data-theme="dark"] {
-  --bg: #0c0c0c;
-  --surface: #151515;
-  --surface-soft: #191517;
-
-  --text: #f3f3f3;
-  --text-soft: #aaa;
-
-  --border: #292929;
-
-  --accent: #d27ca3;
-  --accent-light: #e49abb;
-
-  --accent-soft: rgba(210, 124, 163, .09);
+[data-theme="dark"] #app {
+  color: #f3f3f3;
 }
 
-[data-theme="dark"] .main-image-wrap {
+[data-theme="dark"] #app .main-image-wrap {
   background: #171717;
-
-  box-shadow:
-    0 12px 35px rgba(0, 0, 0, .3);
 }
 
-[data-theme="dark"] .color-option.active {
-  border-color: #fff;
+[data-theme="dark"] #app .product-name,
+[data-theme="dark"] #app .form-section-title,
+[data-theme="dark"] #app .field label,
+[data-theme="dark"] #app .summary-line strong {
+  color: #f3f3f3;
 }
 
-[data-theme="dark"] .field input,
-[data-theme="dark"] .field select,
-[data-theme="dark"] .field textarea {
+[data-theme="dark"] #app .description,
+[data-theme="dark"] #app .trust-item,
+[data-theme="dark"] #app .summary-line {
+  color: #aaa;
+}
+
+[data-theme="dark"] #app .divider,
+[data-theme="dark"] #app .form-section {
+  border-color: #292929;
+}
+
+[data-theme="dark"] #app .field input,
+[data-theme="dark"] #app .field select,
+[data-theme="dark"] #app .field textarea {
   background: #151515;
-
   color: #fff;
-
   border-color: #2b2b2b;
 }
 
-[data-theme="dark"] .field input:focus,
-[data-theme="dark"] .field select:focus,
-[data-theme="dark"] .field textarea:focus {
-  border-color: var(--accent);
+[data-theme="dark"] #app .delivery-summary {
+  background: #191517;
+  border-color: #34242d;
 }
 
-[data-theme="dark"] .old-price {
-  color: #777;
+[data-theme="dark"] #app .summary-total {
+  border-color: #292929;
 }
 
+[data-theme="dark"] #app .color-option.active {
+  border-color: #fff;
+}
 
-/* =========================================================
+/* =========================
    TABLET
-========================================================= */
+========================= */
 
 @media (max-width: 850px) {
-
-  .product-section {
+  #app .product-section {
     grid-template-columns: 1fr;
 
     gap: 28px;
 
     padding-top: 20px;
   }
-
-  .product-info {
-    width: 100%;
-  }
-
 }
 
-
-/* =========================================================
+/* =========================
    MOBILE
-========================================================= */
+========================= */
 
 @media (max-width: 600px) {
 
-  body {
-    font-size: 14px;
-  }
-
-  .product-section {
+  #app .product-section {
     width: calc(100% - 24px);
 
-    padding:
-      14px
-      0
-      60px;
+    padding-top: 14px;
+    padding-bottom: 70px;
 
     gap: 22px;
   }
 
-
-  /* ---------- Image ---------- */
-
-  .main-image-wrap {
-    border-radius: 15px;
+  #app .main-image-wrap {
+    border-radius: 14px;
   }
 
-  .main-image {
+  #app .main-image {
     aspect-ratio: 4 / 5;
   }
 
-
-  /* ---------- Thumbnails ---------- */
-
-  .thumbnails {
-    gap: 7px;
-
-    margin-top: 9px;
-  }
-
-  .thumbnail {
+  #app .thumbnail {
     flex-basis: 58px;
 
     width: 58px;
     height: 58px;
   }
 
-
-  /* ---------- Colors ---------- */
-
-  .product-colors {
-    gap: 9px;
-
+  #app .product-colors {
     margin-top: 13px;
   }
 
-  .product-colors-label {
-    font-size: 15px;
+  #app .color-option {
+    width: 35px;
+    height: 35px;
+
+    min-width: 35px;
+    min-height: 35px;
   }
 
-  .color-option {
-    width: 34px;
-    height: 34px;
-
-    min-width: 34px;
-    min-height: 34px;
-  }
-
-
-  /* ---------- Product info ---------- */
-
-  .category {
-    font-size: 11px;
-
-    margin-bottom: 5px;
-  }
-
-  .product-name {
+  #app .product-name {
     font-size: 24px;
-
-    line-height: 1.3;
   }
 
-  .price-row {
-    gap: 8px;
-
-    margin-top: 12px;
-  }
-
-  .price {
+  #app .price {
     font-size: 27px;
   }
 
-  .old-price {
-    font-size: 13px;
-  }
-
-  .description {
-    margin-top: 10px;
-
+  #app .description {
     font-size: 14px;
-
-    line-height: 1.75;
   }
 
-
-  /* ---------- Trust ---------- */
-
-  .product-trust {
-    gap: 5px;
-
-    margin-top: 12px;
-  }
-
-  .trust-item {
-    min-height: 29px;
-
-    padding: 5px 7px;
-
-    font-size: 10px;
-  }
-
-
-  /* ---------- Form ---------- */
-
-  .divider {
-    margin: 16px 0;
-  }
-
-  .form-section {
+  #app .form-section {
     margin-bottom: 14px;
-
     padding-bottom: 14px;
   }
 
-  .form-section-title {
+  #app .form-section-title {
     margin-bottom: 10px;
-
     font-size: 14px;
   }
 
-  .field-row {
+  #app .field-row {
     gap: 9px;
   }
 
-  .field {
+  #app .field {
     margin-bottom: 9px;
   }
 
-  .field label {
+  #app .field label {
     margin-bottom: 5px;
-
     font-size: 13px;
   }
 
-  .field input,
-  .field select,
-  .field textarea {
+  #app .field input,
+  #app .field select,
+  #app .field textarea {
     min-height: 43px;
 
-    padding:
-      9px
-      11px;
+    padding: 9px 11px;
 
     font-size: 13px;
   }
 
-  .field textarea {
+  #app .field textarea {
     min-height: 64px;
   }
 
-
-  /* ---------- Summary ---------- */
-
-  .delivery-summary {
-    margin-top: 12px;
-
+  #app .delivery-summary {
     padding: 10px;
   }
 
-  .summary-line {
+  #app .summary-line {
     padding: 6px 2px;
-
     font-size: 12px;
   }
 
-  .summary-total {
+  #app .summary-total {
     font-size: 14px;
   }
 
-  .summary-total strong {
+  #app .summary-total strong {
     font-size: 16px;
   }
 
-
-  /* ---------- Submit ---------- */
-
-  .submit-btn {
+  #app .submit-btn {
     min-height: 48px;
-
-    margin-top: 11px;
 
     font-size: 13px;
   }
 
+  /* Floating button */
+  #app .scroll-to-order {
+    left: 50%;
+    bottom: 14px;
 
-  /* ---------- Floating order ---------- */
-
-  .scroll-to-order {
-    right: 12px;
-
-    bottom: 12px;
+    transform: translateX(-50%);
   }
 
-  .scroll-to-order button {
-    min-height: 45px;
+  #app .scroll-to-order button {
+    min-width: 145px;
+    min-height: 46px;
 
-    padding:
-      10px
-      17px;
+    padding: 10px 20px;
 
-    font-size: 12px;
+    font-size: 13px;
   }
-
 }
 
-
-/* =========================================================
-   SMALL PHONES
-========================================================= */
+/* =========================
+   VERY SMALL PHONES
+========================= */
 
 @media (max-width: 390px) {
 
-  .product-section {
+  #app .product-section {
     width: calc(100% - 20px);
   }
 
-  .product-name {
+  #app .product-name {
     font-size: 22px;
   }
 
-  .price {
+  #app .price {
     font-size: 25px;
   }
 
-  .field-row {
+  #app .field-row {
     grid-template-columns: 1fr;
   }
 
-  .color-option {
-    width: 33px;
-    height: 33px;
-
-    min-width: 33px;
-    min-height: 33px;
-  }
-
-  .product-trust {
+  #app .product-trust {
     display: grid;
 
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
   }
 
-  .trust-item {
+  #app .trust-item {
     justify-content: center;
   }
 
-  .trust-item:last-child {
+  #app .trust-item:last-child {
     grid-column: 1 / -1;
   }
-
 }
 
-
-/* =========================================================
+/* =========================
    ACCESSIBILITY
-========================================================= */
+========================= */
 
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline:
-    2px solid var(--accent);
-
+#app button:focus-visible,
+#app input:focus-visible,
+#app select:focus-visible,
+#app textarea:focus-visible {
+  outline: 2px solid #b85c86;
   outline-offset: 2px;
-}
-
-
-/* =========================================================
-   REDUCED MOTION
-========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    transition: none !important;
-    animation: none !important;
-  }
-
 }
