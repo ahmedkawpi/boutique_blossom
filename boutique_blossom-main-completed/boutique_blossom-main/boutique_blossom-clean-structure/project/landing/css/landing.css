@@ -1313,3 +1313,18 @@ textarea {
   }
 }
 
+.scroll-to-order {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.scroll-to-order button {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 10px;
+  background: #e0117a;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
