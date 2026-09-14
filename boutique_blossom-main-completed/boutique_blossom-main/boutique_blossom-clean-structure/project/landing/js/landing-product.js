@@ -611,16 +611,55 @@ if (scrollBar && submitButton) {
 
   let orderScrollStep = 0;
 
-  /* الضغط على زر الطلب */
-  scrollBar.querySelector('button')?.addEventListener('click', () => {
+  const floatingButton =
+    scrollBar.querySelector('button');
+
+  const orderForm =
+    document.getElementById('order-form');
+
+
+  /* تحديث حالة الزر حسب مكان المستخدم */
+  const updateOrderButton = () => {
+
+    if (!orderForm || !floatingButton) return;
+
+    const formTop =
+      orderForm.getBoundingClientRect().top;
+
+    /*
+      إذا رجعنا فوق بداية الفورم،
+      نرجع الزر للحالة الأولى
+    */
+    if (formTop > window.innerHeight * 0.35) {
+
+      orderScrollStep = 0;
+
+      floatingButton.textContent =
+        'اطلب الآن ↓';
+
+    } else {
+
+      /*
+        داخل الفورم أو بعده
+        ننتقل للخطوة الثانية
+      */
+      orderScrollStep = 1;
+
+      floatingButton.textContent =
+        'تأكيد الطلب ↓';
+
+    }
+
+  };
+
+
+  /* الضغط على الزر */
+  floatingButton?.addEventListener('click', () => {
 
     /* الضغطة الأولى */
     if (orderScrollStep === 0) {
 
       orderScrollStep = 1;
-
-      const orderForm =
-        document.getElementById('order-form');
 
       if (orderForm) {
         orderForm.scrollIntoView({
@@ -629,12 +668,8 @@ if (scrollBar && submitButton) {
         });
       }
 
-      const button =
-        scrollBar.querySelector('button');
-
-      if (button) {
-        button.textContent = 'تأكيد الطلب ↓';
-      }
+      floatingButton.textContent =
+        'تأكيد الطلب ↓';
 
     }
 
@@ -651,10 +686,17 @@ if (scrollBar && submitButton) {
   });
 
 
+  /* مراقبة الرجوع للأعلى */
+  window.addEventListener('scroll', updateOrderButton, {
+    passive: true
+  });
+
+
   /* إخفاء الشريط عند الوصول للتأكيد */
   const observer = new IntersectionObserver((entries) => {
 
-    const isVisible = entries[0].isIntersecting;
+    const isVisible =
+      entries[0].isIntersecting;
 
     scrollBar.style.display =
       isVisible ? 'none' : 'block';
@@ -663,9 +705,11 @@ if (scrollBar && submitButton) {
 
   observer.observe(submitButton);
 
-}
 
-    }
+  /* الحالة الأولى */
+  updateOrderButton();
+
+}
 
 
 function renderColorOptions() {
